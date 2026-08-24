@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<j:jelly
+    trim="false"
+    xmlns:j="jelly:core"
+    xmlns:g="glide"
+    xmlns:g2="null">
+
+    <style>
+        html,
+        body {
+            overflow-y: auto !important;
+            height: auto !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .entrust-container {
+            font-family: Arial, Helvetica, sans-serif;
+            max-width: 580px;
+            margin: 4px auto;
+            padding: 0 24px 24px;
+            color: #2e3a45;
+        }
+
+        .entrust-section {
+            background: #ffffff;
+            border: 1px solid #dfe3e8;
+            border-radius: 6px;
+            padding: 24px;
+        }
+
+        .info-block {
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #253746;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 7px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #7b8792;
+        }
+
+        .section-divider {
+            height: 1px;
+            margin: 22px 0;
+            background: #e5e9ed;
+        }
+
+
+        /* -------------------------
+           Webhook
+        -------------------------- */
+
+        .webhook-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .webhook-url {
+            flex: 1;
+            min-width: 0;
+            height: 38px;
+            padding: 8px 11px;
+            border: 1px solid #b8c2cc;
+            border-right: 0;
+            border-radius: 4px 0 0 4px;
+            background: #f3f5f7;
+            color: #586773;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .btn-copy {
+            height: 38px;
+            padding: 0 16px;
+            border: 1px solid #1769aa;
+            border-radius: 0 4px 4px 0;
+            background: #1769aa;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #125b94;
+            border-color: #125b94;
+        }
+
+        .webhook-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+            margin-top: 9px;
+            font-size: 12px;
+            color: #6f7d88;
+        }
+
+        .webhook-meta span {
+            position: relative;
+        }
+
+        .webhook-meta span:not(:last-child)::after {
+            content: "•";
+            position: absolute;
+            right: -11px;
+            color: #b4bcc3;
+        }
+
+        .webhook-meta strong {
+            color: #34495e;
+        }
+
+
+        /* -------------------------
+           Roles
+        -------------------------- */
+
+        .roles-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 11px 0;
+        }
+
+        .role-item:first-child {
+            padding-top: 0;
+        }
+
+        .role-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .role-item + .role-item {
+            border-top: 1px solid #eef0f2;
+        }
+
+        .role-info {
+            min-width: 0;
+        }
+
+        .role-title {
+            margin-bottom: 2px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .role-description {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #7b8792;
+        }
+
+        .role-code {
+            flex-shrink: 0;
+            padding: 4px 7px;
+            border-radius: 3px;
+            background: #f3f5f7;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11px;
+            color: #586773;
+        }
+
+
+        /* -------------------------
+           Email
+        -------------------------- */
+
+        .email-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+        }
+
+        .email-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #eef4f8;
+            color: #1769aa;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .email-content {
+            min-width: 0;
+        }
+
+        .email-text {
+            margin-bottom: 5px;
+            font-size: 13px;
+            line-height: 1.45;
+            color: #586773;
+        }
+
+        .email-path {
+            font-size: 12px;
+            line-height: 1.45;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+
+        /* -------------------------
+           Finish
+        -------------------------- */
+
+        .btn-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn {
+            height: 40px;
+            padding: 0 22px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #28a745;
+            border: 1px solid #28a745;
+            color: #ffffff;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+            border-color: #218838;
+        }
+
+
+        /* -------------------------
+           Responsive
+        -------------------------- */
+
+        @media (max-width: 640px) {
+
+            .entrust-container {
+                padding: 0 16px 24px;
+            }
+
+            .entrust-section {
+                padding: 20px;
+            }
+
+            .role-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+    </style>
+
+
+    <div class="entrust-container">
+
+        <div class="entrust-section">
+
+
+            <!-- Webhook -->
+
+            <div class="info-block">
+
+                <div class="info-title">
+                    Webhook
+                </div>
+
+
+                <div class="webhook-row">
+
+                    <input
+                        id="webhook_url"
+                        class="webhook-url"
+                        type="text"
+                        readonly="true"
+                        value=""
+                    />
+
+                    <button
+                        id="btn_copy_webhook_url"
+                        type="button"
+                        class="btn-copy">
+                        Copy
+                    </button>
+
+                </div>
+
+
+                <div class="webhook-meta">
+
+                    <span>
+                        <strong>POST</strong>
+                    </span>
+
+                    <span>
+                        application/json
+                    </span>
+
+                    <span>
+                        HMAC signature validation
+                    </span>
+
+                </div>
+
+
+                <div class="hint">
+                    Configure this URL as the webhook callback URL in Entrust.
+                </div>
+
+            </div>
+
+
+            <div class="section-divider"></div>
+
+
+            <!-- Application Roles -->
+
+            <div class="info-block">
+
+                <div class="info-title">
+                    Application Roles
+                </div>
+
+
+                <div class="roles-list">
+
+
+                    <!-- Administrator -->
+
+                    <div class="role-item">
+
+                        <div class="role-info">
+
+                            <div class="role-title">
+                                Administrator
+                            </div>
+
+                            <div class="role-description">
+                                Configure and manage Identity Verification.
+                            </div>
+
+                        </div>
+
+                        <div class="role-code">
+                            x_entru_entrustidv.admin
+                        </div>
+
+                    </div>
+
+
+                    <!-- Agent -->
+
+                    <div class="role-item">
+
+                        <div class="role-info">
+
+                            <div class="role-title">
+                                Agent
+                            </div>
+
+                            <div class="role-description">
+                                Initiate identity verification from supported records.
+                            </div>
+
+                        </div>
+
+                        <div class="role-code">
+                            x_entru_entrustidv.agent
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="section-divider"></div>
+
+
+            <!-- Email Configuration -->
+
+            <div class="info-block">
+
+                <div class="info-title">
+                    Email Configuration
+                </div>
+
+
+                <div class="email-row">
+
+                    <div class="email-icon">
+                        @
+                    </div>
+
+
+                    <div class="email-content">
+
+                        <div class="email-text">
+                            Enable outbound email so verification links can be delivered to users.
+                        </div>
+
+                        <div class="email-path">
+                            All → System Properties → Email Properties → Outbound Email Configuration
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Finish -->
+
+            <div class="btn-row">
+
+                <button
+                    id="btn_finish"
+                    type="button"
+                    class="btn btn-save">
+                    Finish
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <script src="./setup-information.client.js" type="module"></script>
+</j:jelly>

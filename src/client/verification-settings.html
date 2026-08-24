@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
+  <style>html,
+    body {
+        overflow-y: auto !important;
+        height: auto !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .entrust-container {
+        font-family: Arial, Helvetica, sans-serif;
+        max-width: 580px;
+        margin: 4px auto;
+        padding: 0 24px 24px;
+        color: #2e3a45;
+    }
+
+    .entrust-section {
+        background: #ffffff;
+        border: 1px solid #dfe3e8;
+        border-radius: 6px;
+        padding: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 7px;
+        color: #34495e;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        height: 38px;
+        padding: 8px 11px;
+        border: 1px solid #b8c2cc;
+        border-radius: 4px;
+        background: #ffffff;
+        color: #263746;
+        font-size: 14px;
+        box-sizing: border-box;
+        outline: none;
+        transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #4c86a8;
+        box-shadow: 0 0 0 2px rgba(76, 134, 168, 0.12);
+    }
+
+    .form-group input::placeholder {
+        color: #9ba7b2;
+    }
+
+    .hint {
+        display: block;
+        font-size: 12px;
+        color: #7b8792;
+        margin-top: 7px;
+        line-height: 1.45;
+    }
+
+    .req {
+        color: #c83c3c;
+        margin-left: 2px;
+    }
+
+    .optional {
+        margin-left: 5px;
+        font-size: 11px;
+        font-weight: 400;
+        color: #88949e;
+    }
+
+    .input-with-suffix {
+        display: flex;
+        width: 100%;
+    }
+
+    .input-with-suffix input {
+        border-radius: 4px 0 0 4px;
+    }
+
+    .input-suffix {
+        display: flex;
+        align-items: center;
+        height: 38px;
+        padding: 0 13px;
+        border: 1px solid #b8c2cc;
+        border-left: 0;
+        border-radius: 0 4px 4px 0;
+        background: #f3f5f7;
+        color: #586773;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .secret-status {
+        display: none;
+        margin-top: 9px;
+        padding: 9px 11px;
+        border-radius: 4px;
+        background: #f1f8f4;
+        border: 1px solid #c8e2d1;
+        color: #3c6b4d;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .btn-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .btn {
+        height: 40px;
+        padding: 0 22px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-save {
+        background: #28a745;
+        border: 1px solid #28a745;
+        color: #ffffff;
+    }
+
+    .btn-save:hover {
+        background: #218838;
+        border-color: #218838;
+    }
+
+    .btn-save:disabled {
+        background: #aaa;
+        border-color: #aaa;
+        cursor: not-allowed;
+    }
+
+    .status {
+        display: none;
+        margin-top: 16px;
+        padding: 11px 14px;
+        border-radius: 4px;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .status.success {
+        background: #edf7f1;
+        color: #326545;
+        border: 1px solid #bdddc9;
+    }
+
+    .status.error {
+        background: #fdf0f0;
+        color: #9b3232;
+        border: 1px solid #e5bcbc;
+    }
+
+    @media (max-width: 640px) {
+        .entrust-container {
+            padding: 0 16px 24px;
+        }
+
+        .entrust-section {
+            padding: 20px;
+        }
+    }</style>
+  <div class="entrust-container">
+    <div class="entrust-section">
+      <!-- Workflow ID -->
+      <div class="form-group">
+        <label for="workflow_id">Workflow ID
+          <span class="req">*</span>
+        </label>
+        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
+        <span class="hint">The Entrust workflow that will be used for identity verification requests.</span>
+      </div>
+      <!-- Link Expiry -->
+      <div class="form-group">
+        <label for="link_expiry">Link Expiry
+          <span class="req">*</span>
+        </label>
+        <div class="input-with-suffix">
+          <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
+          <span class="input-suffix">minutes</span>
+        </div>
+        <span class="hint">How long the verification link remains valid.</span>
+      </div>
+      <!-- Delivery Channel -->
+      <div class="form-group">
+        <label for="delivery_channel">Delivery Channel
+          <span class="req">*</span>
+        </label>
+        <select id="delivery_channel" name="delivery_channel">
+          <option value="email">Email</option>
+        </select>
+        <span class="hint">Channel used to send the verification request to the user.</span>
+      </div>
+      <!-- Webhook Secret -->
+      <div class="form-group">
+        <label for="webhook_secret">Webhook Secret
+          <span class="req">*</span>
+        </label>
+        <input id="webhook_secret" name="webhook_secret" type="password" autocomplete="new-password" placeholder="Enter webhook secret"></input>
+        <span class="hint">Used to verify that webhook requests originate from Entrust.</span>
+        <div id="webhook_secret_status" class="secret-status">A webhook secret is already configured.
+                Leave this field blank to keep the existing secret,
+                or enter a new value to replace it.</div>
+      </div>
+      <!-- Redirect URL -->
+      <div class="form-group">
+        <label for="redirect_url">Redirect URL
+          <span class="optional">Optional</span>
+        </label>
+        <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete"></input>
+        <span class="hint">Leave blank unless users should be redirected to a specific page after completing verification.</span>
+      </div>
+      <!-- Actions -->
+      <div class="btn-row">
+        <button id="btn_save" type="button" class="btn btn-save">Save</button>
+      </div>
+      <!-- Status Messages -->
+      <div id="idv_success_message" class="status success"></div>
+      <div id="idv_error_message" class="status error"></div>
+    </div>
+  </div>
+  <script src="./verification-settings.client.js" type="module"></script>
+</j:jelly>
