@@ -1,0 +1,6 @@
+{
+  "scope": "x_entru_entrustidv",
+  "scopeId": "d964561f47f20b1016bda144846d43ca",
+  "name": "Entrust IDV",
+  "tsconfigPath": "./src/server/tsconfig.json"
+}
