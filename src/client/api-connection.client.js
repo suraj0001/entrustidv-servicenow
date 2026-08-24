@@ -169,6 +169,7 @@ _el("btn_test").addEventListener("click", () => {
 // --- Save ---
 
 _el("btn_save").addEventListener("click", function () {
+  var lenError;
   var region = _el("idv_region").value.trim();
   var baseUrl = _el("idv_base_url").value.trim();
   var tokenUrl = _el("idv_token_url").value.trim();
@@ -186,7 +187,7 @@ _el("btn_save").addEventListener("click", function () {
     return;
   }
   if (hasNew) {
-    var lenError = _validateCredentialLength(clientId, clientSecret);
+    lenError = _validateCredentialLength(clientId, clientSecret);
     if (lenError) {
       _idvShowStatus("error", lenError);
       return;

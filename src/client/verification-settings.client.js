@@ -157,13 +157,14 @@ function validateWebhookSecret() {
 
 function validateRedirectUrl() {
   var value = _value("redirect_url");
+  var url;
 
   if (!value) {
     return true;
   }
 
   try {
-    var url = new URL(value);
+    url = new URL(value);
 
     if (url.protocol !== "http:" && url.protocol !== "https:") {
       showError("Redirect URL must use http or https.");
