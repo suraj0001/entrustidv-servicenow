@@ -8,22 +8,22 @@ function onLoad() {
 
   var TERMINAL_STATUSES = {
     approved: true,
-  declined: true,
-  abandoned: true,
-  error: true,
+    declined: true,
+    abandoned: true,
+    error: true,
   };
 
   var STATUS_LABELS = {
-  awaiting: "Pending",
-  pending: "Pending",
-  processing: "In Process",
-  review: "Review Required",
-  awaiting_input: "Awaiting Input",
-  approved: "Approved",
-  declined: "Declined",
-  abandoned: "Abandoned",
-  error: "Error",
-  not_started: "Not Started",
+    awaiting: "Pending",
+    pending: "Pending",
+    processing: "In Process",
+    review: "Review Required",
+    awaiting_input: "Awaiting Input",
+    approved: "Approved",
+    declined: "Declined",
+    abandoned: "Abandoned",
+    error: "Error",
+    not_started: "Not Started",
 };
 
   var sourceTable = g_form.getTableName();

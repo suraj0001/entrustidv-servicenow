@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<j:jelly
-    trim="false"
-    xmlns:j="jelly:core"
-    xmlns:g="glide"
-    xmlns:g2="null">
-
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
     <style>
         html,
         body {
@@ -59,7 +54,6 @@
             background: #e5e9ed;
         }
 
-
         /* -------------------------
            Webhook
         -------------------------- */
@@ -86,9 +80,9 @@
         .btn-copy {
             height: 38px;
             padding: 0 16px;
-            border: 1px solid #1769aa;
+            border: 1px solid #8e3a9d;
             border-radius: 0 4px 4px 0;
-            background: #1769aa;
+            background: #8e3a9d;
             color: #ffffff;
             font-size: 13px;
             font-weight: 600;
@@ -97,8 +91,8 @@
         }
 
         .btn-copy:hover {
-            background: #125b94;
-            border-color: #125b94;
+            background: #732e80;
+            border-color: #732e80;
         }
 
         .webhook-meta {
@@ -115,7 +109,7 @@
         }
 
         .webhook-meta span:not(:last-child)::after {
-            content: "•";
+            content: '•';
             position: absolute;
             right: -11px;
             color: #b4bcc3;
@@ -124,7 +118,6 @@
         .webhook-meta strong {
             color: #34495e;
         }
-
 
         /* -------------------------
            Roles
@@ -177,11 +170,10 @@
             padding: 4px 7px;
             border-radius: 3px;
             background: #f3f5f7;
-            font-family: Consolas, "Courier New", monospace;
+            font-family: Consolas, 'Courier New', monospace;
             font-size: 11px;
             color: #586773;
         }
-
 
         /* -------------------------
            Email
@@ -224,7 +216,6 @@
             color: #34495e;
         }
 
-
         /* -------------------------
            Finish
         -------------------------- */
@@ -245,23 +236,45 @@
         }
 
         .btn-save {
-            background: #28a745;
-            border: 1px solid #28a745;
+            background: #6d2077;
+            border: 1px solid #6d2077;
             color: #ffffff;
         }
 
         .btn-save:hover {
-            background: #218838;
-            border-color: #218838;
+            background: #561960;
+            border-color: #561960;
         }
-
 
         /* -------------------------
            Responsive
         -------------------------- */
 
-        @media (max-width: 640px) {
+        .entrust-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: -24px -24px 24px -24px;
+            padding: 20px 24px;
+            background: #6d2077;
+            border-radius: 5px 5px 0 0;
+        }
 
+        .entrust-page-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .entrust-page-subtitle {
+            font-size: 12px;
+            color: #ffffff;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 640px) {
             .entrust-container {
                 padding: 0 16px 24px;
             }
@@ -278,23 +291,24 @@
         }
     </style>
 
-
     <div class="entrust-container">
-
         <div class="entrust-section">
-
+            <div class="entrust-header">
+                <div>
+                    <div class="entrust-page-title">Setup Information</div>
+                    <div class="entrust-page-subtitle">
+                        Review your webhook endpoint, application roles, and
+                        email configuration
+                    </div>
+                </div>
+            </div>
 
             <!-- Webhook -->
 
             <div class="info-block">
-
-                <div class="info-title">
-                    Webhook
-                </div>
-
+                <div class="info-title">Webhook</div>
 
                 <div class="webhook-row">
-
                     <input
                         id="webhook_url"
                         class="webhook-url"
@@ -306,155 +320,98 @@
                     <button
                         id="btn_copy_webhook_url"
                         type="button"
-                        class="btn-copy">
+                        class="btn-copy"
+                    >
                         Copy
                     </button>
-
                 </div>
 
-
                 <div class="webhook-meta">
-
                     <span>
                         <strong>POST</strong>
                     </span>
 
-                    <span>
-                        application/json
-                    </span>
+                    <span> application/json </span>
 
-                    <span>
-                        HMAC signature validation
-                    </span>
-
+                    <span> HMAC signature validation </span>
                 </div>
-
 
                 <div class="hint">
                     Configure this URL as the webhook callback URL in Entrust.
                 </div>
-
             </div>
 
-
             <div class="section-divider"></div>
-
 
             <!-- Application Roles -->
 
             <div class="info-block">
-
-                <div class="info-title">
-                    Application Roles
-                </div>
-
+                <div class="info-title">Application Roles</div>
 
                 <div class="roles-list">
-
-
                     <!-- Administrator -->
 
                     <div class="role-item">
-
                         <div class="role-info">
-
-                            <div class="role-title">
-                                Administrator
-                            </div>
+                            <div class="role-title">Administrator</div>
 
                             <div class="role-description">
                                 Configure and manage Identity Verification.
                             </div>
-
                         </div>
 
-                        <div class="role-code">
-                            x_entru_entrustidv.admin
-                        </div>
-
+                        <div class="role-code">x_entru_entrustidv.admin</div>
                     </div>
-
 
                     <!-- Agent -->
 
                     <div class="role-item">
-
                         <div class="role-info">
-
-                            <div class="role-title">
-                                Agent
-                            </div>
+                            <div class="role-title">Agent</div>
 
                             <div class="role-description">
-                                Initiate identity verification from supported records.
+                                Initiate identity verification from supported
+                                records.
                             </div>
-
                         </div>
 
-                        <div class="role-code">
-                            x_entru_entrustidv.agent
-                        </div>
-
+                        <div class="role-code">x_entru_entrustidv.agent</div>
                     </div>
-
-
                 </div>
-
             </div>
 
-
             <div class="section-divider"></div>
-
 
             <!-- Email Configuration -->
 
             <div class="info-block">
-
-                <div class="info-title">
-                    Email Configuration
-                </div>
-
+                <div class="info-title">Email Configuration</div>
 
                 <div class="email-row">
-
-                    <div class="email-icon">
-                        @
-                    </div>
-
+                    <div class="email-icon">@</div>
 
                     <div class="email-content">
-
                         <div class="email-text">
-                            Enable outbound email so verification links can be delivered to users.
+                            Enable outbound email so verification links can be
+                            delivered to users.
                         </div>
 
                         <div class="email-path">
-                            All → System Properties → Email Properties → Outbound Email Configuration
+                            All → System Properties → Email Properties →
+                            Outbound Email Configuration
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
 
             <!-- Finish -->
 
             <div class="btn-row">
-
-                <button
-                    id="btn_finish"
-                    type="button"
-                    class="btn btn-save">
+                <button id="btn_finish" type="button" class="btn btn-save">
                     Finish
                 </button>
-
             </div>
-
-
         </div>
-
     </div>
     <script src="./setup-information.client.js" type="module"></script>
 </j:jelly>

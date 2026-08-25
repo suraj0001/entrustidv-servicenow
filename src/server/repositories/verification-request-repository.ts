@@ -100,3 +100,34 @@ export function updateVerificationStatusByWorkflowRunId(
 
   return Boolean(gr.update());
 }
+
+export function updateEvidenceFolderByWorkflowRunId(
+  workflowRunId: string,
+  evidenceFolderHref: string,
+): boolean {
+  if (!workflowRunId || !evidenceFolderHref) {
+      return false
+  }
+
+  const gr = new GlideRecord(
+      VERIFICATION_REQUEST_TABLE,
+  )
+
+  gr.addQuery(
+      'workflow_run_id',
+      workflowRunId,
+  )
+
+  gr.query()
+
+  if (!gr.next()) {
+      return false
+  }
+
+  gr.setValue(
+      'evidence_folder_href',
+      evidenceFolderHref,
+  )
+
+  return Boolean(gr.update())
+}

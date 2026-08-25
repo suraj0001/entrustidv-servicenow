@@ -1,6 +1,7 @@
 import { gs } from '@servicenow/glide'
 
 import {
+    updateEvidenceFolderByWorkflowRunId,
     updateVerificationStatusByWorkflowRunId,
 } from '../repositories/verification-request-repository.ts'
 
@@ -20,6 +21,7 @@ interface WorkflowWebhookPayload {
             status?: string
             task_spec_id?: string
             task_def_id?: string
+            href?: string
             started_at_iso8601?: string
             completed_at_iso8601?: string
         }
@@ -62,6 +64,9 @@ export function processWebhook(
 
         case 'workflow_run.completed':
             return processWorkflowRunCompleted(payload)
+
+        case 'workflow_run_evidence_folder.created':
+            return processEvidenceFolderCreated(payload)    
 
         default:
             return {
@@ -106,7 +111,7 @@ function processWorkflowTaskStarted(
 
     return updateStatus(
         workflowRunId,
-        'processing',
+        payload.resource.status,
     )
 }
 
@@ -229,6 +234,69 @@ function updateStatus(
             workflowRunId +
             ' status=' +
             status,
+    )
+
+    return {
+        status: 'success',
+    }
+}
+
+function processEvidenceFolderCreated(
+    payload: NonNullable<WorkflowWebhookPayload['payload']>,
+): WebhookHandleResult {
+    if (
+        payload.resource_type !==
+        'workflow_run_evidence_folder'
+    ) {
+        return {
+            status: 'error',
+            message:
+                'Invalid resource type for workflow_run_evidence_folder.created',
+        }
+    }
+
+    const workflowRunId =
+        payload.resource?.workflow_run_id ||
+        payload.object?.workflow_run_id ||
+        payload.object?.id ||
+        ''
+
+    const evidenceFolderHref =
+        payload.object?.href || ''
+
+    if (!workflowRunId || !evidenceFolderHref) {
+        gs.error(
+            '[IDV_WEBHOOK] Evidence folder event missing workflow_run_id or href',
+        )
+
+        return {
+            status: 'error',
+            message:
+                'Missing workflow run id or evidence folder href',
+        }
+    }
+
+    const updated =
+        updateEvidenceFolderByWorkflowRunId(
+            workflowRunId,
+            evidenceFolderHref,
+        )
+
+    if (!updated) {
+        gs.warn(
+            '[IDV_WEBHOOK] No verification request found for evidence folder workflow_run_id=' +
+                workflowRunId,
+        )
+
+        return {
+            status: 'not_found',
+        }
+    }
+
+    gs.info(
+        '[IDV_WEBHOOK] Evidence folder reference saved' +
+            ' workflow_run_id=' +
+            workflowRunId,
     )
 
     return {

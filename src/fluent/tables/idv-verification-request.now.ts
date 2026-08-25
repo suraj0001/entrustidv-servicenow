@@ -53,6 +53,12 @@ export const x_entru_entrustidv_verification_request = Table({
       mandatory: true,
       maxLength: 50,
     }),
+
+    evidence_folder_href: StringColumn({
+      label: 'Evidence Folder Reference',
+      mandatory: false,
+      maxLength: 500,
+    }),
   },
 
   audit: true,

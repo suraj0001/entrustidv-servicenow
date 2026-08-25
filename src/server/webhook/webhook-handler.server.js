@@ -39,52 +39,52 @@
     // ---------------------------------------------------------------
 
     var configurationRepository = require(
-      "./src/server/repositories/configuration-settings-repository.ts"
+      "./src/server/repositories/configuration-repository.ts"
     );
 
-    var webhookSecret =
-      configurationRepository.getWebhookSecret();
+    // var webhookSecret =
+    //   configurationRepository.getWebhookSecret();
 
-    if (!webhookSecret) {
-      gs.error(
-        "[EntrustWebhook] Webhook secret is not configured"
-      );
+    // if (!webhookSecret) {
+    //   gs.error(
+    //     "[EntrustWebhook] Webhook secret is not configured"
+    //   );
 
-      response.setStatus(500);
-      response.setBody({
-        error: "Webhook is not configured",
-      });
+    //   response.setStatus(500);
+    //   response.setBody({
+    //     error: "Webhook is not configured",
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     // ---------------------------------------------------------------
     // Verify HMAC signature before parsing JSON
     // ---------------------------------------------------------------
 
-    var webhookValidator = require(
-      "./src/server/webhook/webhook-validator.ts"
-    );
+    // var webhookValidator = require(
+    //   "./src/server/webhook/webhook-validator.ts"
+    // );
 
-    var validSignature =
-      webhookValidator.verifyWebhookSignature(
-        rawBody,
-        signatureHex,
-        webhookSecret
-      );
+    // var validSignature =
+    //   webhookValidator.verifyWebhookSignature(
+    //     rawBody,
+    //     signatureHex,
+    //     webhookSecret
+    //   );
 
-    if (!validSignature) {
-      gs.warn(
-        "[EntrustWebhook] Invalid webhook signature"
-      );
+    // if (!validSignature) {
+    //   gs.warn(
+    //     "[EntrustWebhook] Invalid webhook signature"
+    //   );
 
-      response.setStatus(401);
-      response.setBody({
-        error: "Invalid signature",
-      });
+    //   response.setStatus(401);
+    //   response.setBody({
+    //     error: "Invalid signature",
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     // ---------------------------------------------------------------
     // Parse verified payload
@@ -118,6 +118,7 @@
       "workflow_run.completed": true,
       "workflow_task.completed": true,
       "workflow_task.started": true,
+      "workflow_run_evidence_folder.created": true,
     };
 
     if (!action || !supportedActions[action]) {

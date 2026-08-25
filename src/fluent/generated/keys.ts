@@ -89,6 +89,10 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: '2f8c9db547aa8f5016bda144846d434d'
                     }
+                    '33fcd1e747f68b1016bda144846d43f4': {
+                        table: 'sys_scope_privilege'
+                        id: '33fcd1e747f68b1016bda144846d43f4'
+                    }
                     '3968b7f547b6cf1016bda144846d437d': {
                         table: 'sys_trigger_runner_mapping'
                         id: '3968b7f547b6cf1016bda144846d437d'
@@ -158,6 +162,10 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: '71e942f04726075016bda144846d4314'
                     }
+                    '77fcd1e747f68b1016bda144846d43fc': {
+                        table: 'sys_scope_privilege'
+                        id: '77fcd1e747f68b1016bda144846d43fc'
+                    }
                     '7aaaf10d1bfe87105fdb2f05604bcb1d': {
                         table: 'sys_trigger_runner_mapping'
                         id: '7aaaf10d1bfe87105fdb2f05604bcb1d'
@@ -213,6 +221,10 @@ declare global {
                     bdc8a4af473e4b1016bda144846d4381: {
                         table: 'sys_scope_privilege'
                         id: 'bdc8a4af473e4b1016bda144846d4381'
+                    }
+                    bffc9da747f68b1016bda144846d437c: {
+                        table: 'sys_scope_privilege'
+                        id: 'bffc9da747f68b1016bda144846d437c'
                     }
                     bom_json: {
                         table: 'sys_module'
@@ -322,9 +334,17 @@ declare global {
                         table: 'sys_flow_record_trigger'
                         id: 'eda6257c1bae03545fdb2f05604bcb8d'
                     }
+                    'entrust-idv-webhook-api': {
+                        table: 'sys_ws_definition'
+                        id: '65a516183e7b4c82a573a4e7245ca758'
+                    }
                     f0a13caf47be4b1016bda144846d435f: {
                         table: 'sys_scope_privilege'
                         id: 'f0a13caf47be4b1016bda144846d435f'
+                    }
+                    f7fcd1e747f68b1016bda144846d43f8: {
+                        table: 'sys_scope_privilege'
+                        id: 'f7fcd1e747f68b1016bda144846d43f8'
                     }
                     fe1a266d47320f1016bda144846d43de: {
                         table: 'sys_alias_templates'
@@ -373,6 +393,10 @@ declare global {
                     'idv-status-onload-incident': {
                         table: 'sys_script_client'
                         id: '88ce110bfd7a4f2d83422378799b857e'
+                    }
+                    'idv-webhook-public-route': {
+                        table: 'sys_ws_operation'
+                        id: '3d3e8aa375b1493a8a39cf8f6ac5725c'
                     }
                     package_json: {
                         table: 'sys_module'
@@ -452,9 +476,21 @@ declare global {
                         table: 'sys_module'
                         id: 'b8e43f020cd84213bca75de0c930d6ab'
                     }
+                    'src_server_services_webhook-service_ts': {
+                        table: 'sys_module'
+                        id: '814413ec0df24bf790172612d7063248'
+                    }
                     'src_server_ui-actions_verify-identity_server_js': {
                         table: 'sys_module'
                         id: '06b8aabacfbd41a5973cc619507fa683'
+                    }
+                    'src_server_webhook_webhook-handler_server_js': {
+                        table: 'sys_module'
+                        id: '889c50f288a44fdfb3234586d85aeb01'
+                    }
+                    'src_server_webhook_webhook-validator_ts': {
+                        table: 'sys_module'
+                        id: 'b3f08c9e0cea41d3866696cb6ff68ba5'
                     }
                     'verification-request-created-event': {
                         table: 'sysevent_register'
