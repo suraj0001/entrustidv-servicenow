@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 function onLoad() {
-  var STATUS_FIELD = "x_entru_entrustidv_idv_status";
+  var STATUS_FIELD = "x_entru_entrustidv_verification_status";
 
   var POLL_INTERVAL_MS = 5000;
   var MAX_POLL_DURATION_MS = 10 * 60 * 1000;
@@ -31,6 +31,8 @@ function onLoad() {
   }
 
   g_form.setReadOnly(STATUS_FIELD, true);
+
+  g_form.setValue(STATUS_FIELD, "Not Started");
 
   loadStatus();
 

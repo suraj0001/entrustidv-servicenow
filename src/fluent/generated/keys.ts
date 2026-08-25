@@ -299,10 +299,12 @@ declare global {
                     display_verification_status_hr_case: {
                         table: 'sys_script'
                         id: 'fb5f204b08ef459e9f0d9a512130ebe9'
+                        deleted: true
                     }
                     display_verification_status_incident: {
                         table: 'sys_script'
                         id: 'a69ffbbc6735463395a80cc85471928f'
+                        deleted: true
                     }
                     e90faa1b473a0b1016bda144846d43c0: {
                         table: 'sys_trigger_runner_mapping'
@@ -360,6 +362,18 @@ declare global {
                         table: 'sys_security_acl'
                         id: 'addbaac3a8684e9bbfdce0f3dd051f8b'
                     }
+                    'idv-status-ajax': {
+                        table: 'sys_script_include'
+                        id: 'a2da6597bea942c29e8f32b0d41dfffe'
+                    }
+                    'idv-status-onload-hr-case': {
+                        table: 'sys_script_client'
+                        id: '70c28533dc0145d18c687b035258da6a'
+                    }
+                    'idv-status-onload-incident': {
+                        table: 'sys_script_client'
+                        id: '88ce110bfd7a4f2d83422378799b857e'
+                    }
                     package_json: {
                         table: 'sys_module'
                         id: 'dc06b07b4b5846799dcdaae65c8f6b55'
@@ -380,9 +394,14 @@ declare global {
                         table: 'sys_module'
                         id: 'fd537cd0dd7646d7983c58f372e93b3a'
                     }
+                    'src_server_ajax_idv-status-ajax_server_js': {
+                        table: 'sys_module'
+                        id: '1936c96b90f148dc953ee8196efdf957'
+                    }
                     'src_server_business-rules_display-verification-status_ts': {
                         table: 'sys_module'
                         id: 'f801d82f2f784fcc82c1c48504f99efa'
+                        deleted: true
                     }
                     src_server_constants_ts: {
                         table: 'sys_module'
