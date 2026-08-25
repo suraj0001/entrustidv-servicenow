@@ -190,7 +190,7 @@
         <label for="workflow_id">Workflow ID
           <span class="req">*</span>
         </label>
-        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID">
+        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
         <span class="hint">The Entrust workflow that will be used for identity verification requests.</span>
       </div>
       <!-- Link Expiry -->
@@ -199,7 +199,7 @@
           <span class="req">*</span>
         </label>
         <div class="input-with-suffix">
-          <input id="link_expiry" name="link_expiry" type="number" min="1" value="60">
+          <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
           <span class="input-suffix">minutes</span>
         </div>
         <span class="hint">How long the verification link remains valid.</span>
@@ -219,7 +219,7 @@
         <label for="webhook_secret">Webhook Secret
           <span class="req">*</span>
         </label>
-        <input id="webhook_secret" name="webhook_secret" type="password" autocomplete="new-password" placeholder="Enter webhook secret">
+        <input id="webhook_secret" name="webhook_secret" type="password" autocomplete="new-password" placeholder="Enter webhook secret"></input>
         <span class="hint">Used to verify that webhook requests originate from Entrust.</span>
         <div id="webhook_secret_status" class="secret-status">A webhook secret is already configured.
                 Leave this field blank to keep the existing secret,
@@ -230,7 +230,7 @@
         <label for="redirect_url">Redirect URL
           <span class="optional">Optional</span>
         </label>
-        <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete">
+        <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete"></input>
         <span class="hint">Leave blank unless users should be redirected to a specific page after completing verification.</span>
       </div>
       <!-- Actions -->
