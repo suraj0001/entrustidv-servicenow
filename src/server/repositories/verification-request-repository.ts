@@ -79,32 +79,24 @@ export function findVerificationStatus(sourceTable: string, sourceRecordId: stri
   return "";
 }
 
-export interface UpdatedVerificationSource {
-  sourceTable: string;
-  sourceRecordId: string;
-}
-
 export function updateVerificationStatusByWorkflowRunId(
   workflowRunId: string,
   status: string,
-): UpdatedVerificationSource | null {
+): boolean {
   if (!workflowRunId || !status) {
-    return null;
+    return false;
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+
   gr.addQuery("workflow_run_id", workflowRunId);
   gr.query();
 
   if (!gr.next()) {
-    return null;
+    return false;
   }
 
   gr.setValue("status", status);
-  gr.update();
 
-  return {
-    sourceTable: (gr.getValue("source_table") as string) || "",
-    sourceRecordId: (gr.getValue("source_record") as string) || "",
-  };
+  return Boolean(gr.update());
 }
