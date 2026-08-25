@@ -113,28 +113,50 @@
 
     var payload = body && body.payload;
     var action = payload && payload.action;
+    var resourceType =
+      payload && payload.resource_type;
+    
+    var workflowRunId =
+      (payload &&
+        payload.resource &&
+        payload.resource.workflow_run_id) ||
+      (payload &&
+        payload.object &&
+        payload.object.workflow_run_id) ||
+      (action === "workflow_run.completed" &&
+        payload &&
+        payload.resource &&
+        payload.resource.id) ||
+      "";
 
-    var supportedActions = {
-      "workflow_run.completed": true,
-      "workflow_task.completed": true,
-      "workflow_task.started": true,
-      "workflow_run_evidence_folder.created": true,
-    };
-
-    if (!action || !supportedActions[action]) {
       gs.info(
-        "[EntrustWebhook] Ignoring unsupported action=" +
-          String(action)
+        "[EntrustWebhook] Event received" +
+          " action=" + String(action || "") +
+          " resource_type=" + String(resourceType || "") +
+          " workflow_run_id=" + String(workflowRunId || "")
       );
 
-      response.setStatus(200);
-      response.setBody({
-        received: true,
-        processed: false,
-      });
-
-      return;
-    }
+      var supportedActions = {
+        "workflow_run.completed": true,
+        "workflow_task.completed": true,
+        "workflow_task.started": true,
+        "workflow_run_evidence_folder.created": true,
+      };
+      
+      if (!action || !supportedActions[action]) {
+        gs.info(
+          "[EntrustWebhook] Ignoring unsupported action=" +
+            String(action)
+        );
+      
+        response.setStatus(200);
+        response.setBody({
+          received: true,
+          processed: false,
+        });
+      
+        return;
+      }
 
     // ---------------------------------------------------------------
     // Delegate verified event to business logic

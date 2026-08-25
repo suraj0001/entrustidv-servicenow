@@ -84,21 +84,69 @@ export function updateVerificationStatusByWorkflowRunId(
   status: string,
 ): boolean {
   if (!workflowRunId || !status) {
-    return false;
+      return false
   }
 
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  const gr = new GlideRecord(
+      VERIFICATION_REQUEST_TABLE,
+  )
 
-  gr.addQuery("workflow_run_id", workflowRunId);
-  gr.query();
+  gr.addQuery(
+      'workflow_run_id',
+      workflowRunId,
+  )
+
+  gr.setLimit(1)
+  gr.query()
 
   if (!gr.next()) {
-    return false;
+      gs.warn(
+          '[VerificationRequestRepository] No record for workflow_run_id=' +
+              workflowRunId,
+      )
+
+      return false
   }
 
-  gr.setValue("status", status);
+  gs.info(
+      '[VerificationRequestRepository] Record found' +
+          ' sys_id=' +
+          gr.getUniqueValue() +
+          ' workflow_run_id=' +
+          ((gr.getValue('workflow_run_id') as string) || '') +
+          ' old_status=' +
+          ((gr.getValue('status') as string) || '') +
+          ' new_status=' +
+          status,
+  )
 
-  return Boolean(gr.update());
+  gr.setValue(
+      'status',
+      status,
+  )
+
+  const updateResult =
+      String(gr.update() || '')
+
+  if (!updateResult) {
+      gs.error(
+          '[VerificationRequestRepository] Update failed' +
+              ' workflow_run_id=' +
+              workflowRunId,
+      )
+
+      return false
+  }
+
+  gs.info(
+      '[VerificationRequestRepository] Status updated' +
+          ' workflow_run_id=' +
+          workflowRunId +
+          ' status=' +
+          status,
+  )
+
+  return true
 }
 
 export function updateEvidenceFolderByWorkflowRunId(

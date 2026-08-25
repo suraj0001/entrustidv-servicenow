@@ -158,7 +158,7 @@ function processWorkflowTaskCompleted(
      */
     return updateStatus(
         workflowRunId,
-        'processing',
+        payload.resource.status,
     )
 }
 

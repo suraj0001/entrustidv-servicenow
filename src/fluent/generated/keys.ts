@@ -712,6 +712,14 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_dictionary'
+                        id: '25178f21003b420fb44bb9a846da3c7f'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'evidence_folder_href'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: '25c64c11f2ca4dcba7a2c61ab8de42ec'
                         key: {
@@ -1076,6 +1084,15 @@ declare global {
                         key: {
                             name: 'sn_hr_core_case'
                             element: 'NULL'
+                            language: 'en'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
+                        id: '54c77c8c3d72468b90a868bcf058d41e'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'evidence_folder_href'
                             language: 'en'
                         }
                     },
