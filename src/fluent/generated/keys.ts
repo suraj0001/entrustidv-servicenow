@@ -142,6 +142,10 @@ declare global {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: '6d0faa1b473a0b1016bda144846d43c6'
                     }
+                    '70a13c2347fe4b1016bda144846d43b4': {
+                        table: 'sys_scope_privilege'
+                        id: '70a13c2347fe4b1016bda144846d43b4'
+                    }
                     '71e942f04726075016bda144846d4314': {
                         table: 'sys_trigger_runner_mapping'
                         id: '71e942f04726075016bda144846d4314'
@@ -288,6 +292,10 @@ declare global {
                         table: 'sys_flow_record_trigger'
                         id: 'eda6257c1bae03545fdb2f05604bcb8d'
                     }
+                    f0a13caf47be4b1016bda144846d435f: {
+                        table: 'sys_scope_privilege'
+                        id: 'f0a13caf47be4b1016bda144846d435f'
+                    }
                     fe1a266d47320f1016bda144846d43de: {
                         table: 'sys_alias_templates'
                         id: 'fe1a266d47320f1016bda144846d43de'
@@ -385,13 +393,33 @@ declare global {
                         table: 'sys_module'
                         id: 'ddb1af52bcf54d1dbf03edcde2ed46f1'
                     }
+                    'src_server_services_verification-service_ts': {
+                        table: 'sys_module'
+                        id: 'aacb91489ff34445ac0029a78d0ac684'
+                    }
                     'src_server_services_verification-settings-service_ts': {
                         table: 'sys_module'
                         id: 'b8e43f020cd84213bca75de0c930d6ab'
                     }
+                    'src_server_ui-actions_verify-identity_server_js': {
+                        table: 'sys_module'
+                        id: '06b8aabacfbd41a5973cc619507fa683'
+                    }
+                    'verification-request-created-event': {
+                        table: 'sysevent_register'
+                        id: '30c8f5efccaa41bfaf475b204b554f50'
+                    }
                     'verification-settings-ajax': {
                         table: 'sys_script_include'
                         id: 'aa400554ce4c4fe5bd8df9115cf4fc18'
+                    }
+                    'verification-smart-capture-link-notification': {
+                        table: 'sysevent_email_action'
+                        id: '945c5538b21641a1b2eaeaa8cf0fb8b0'
+                    }
+                    'verify-identity-ui-action': {
+                        table: 'sys_ui_action'
+                        id: '8280f65e883548eabc46af8bf35bd59b'
                     }
                 }
                 composite: [
@@ -880,6 +908,19 @@ declare global {
                         key: {
                             name: 'x_entru_entrustidv_configuration'
                             element: 'workflow_id'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_action_role'
+                        id: '4de0bd3b2b6140048920dc6fdc9d5143'
+                        key: {
+                            sys_ui_action: '8280f65e883548eabc46af8bf35bd59b'
+                            sys_user_role: {
+                                id: '9d98b30022304913b6421a32934f1a56'
+                                key: {
+                                    name: 'x_entru_entrustidv.agent'
+                                }
+                            }
                         }
                     },
                     {

@@ -1,5 +1,5 @@
 import { GlideRecord, gs } from "@servicenow/glide";
-import { ConnectionProvider } from "@servicenow/glide/sn_cc";
+import { ConnectionInfoProvider } from "@servicenow/glide/sn_cc";
 
 import { ALIAS_ID, BASE_URLS, CONFIG_TABLE, type EntrustRegion } from "../constants.ts";
 
@@ -323,7 +323,7 @@ export class ApiConnectionRepository {
    * The API URL is NOT taken from http_connection anymore.
    */
   getConnectionInfo(aliasSysId: string): RuntimeConnectionInfo | null {
-    const provider = new ConnectionProvider();
+    const provider = new ConnectionInfoProvider();
     const connectionInfo = provider.getConnectionInfo(aliasSysId);
 
     if (!connectionInfo) {
@@ -375,7 +375,7 @@ export class ApiConnectionRepository {
       return null;
     }
 
-    const provider = new ConnectionProvider();
+    const provider = new ConnectionInfoProvider();
     const connectionInfo = provider.getConnectionInfo(alias.sysId);
 
     if (!connectionInfo) {

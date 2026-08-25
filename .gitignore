@@ -5,3 +5,5 @@ node_modules/
 target/
 *.tsbuildinfo
 .jest_cache
+src/fluent/generated/other/oauth-entity/
+src/fluent/generated/other/oauth-entity-profile/

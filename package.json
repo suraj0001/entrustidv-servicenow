@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
-    "@servicenow/glide": "27.0.5",
-    "@servicenow/sdk": "4.11.0",
+    "@servicenow/glide": "26.0.1",
+    "@servicenow/sdk": "4.9.2",
     "typescript": "5.5.4"
   }
 }
