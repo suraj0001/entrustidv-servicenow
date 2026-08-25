@@ -41,6 +41,10 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '1e592067477e4b1016bda144846d4383'
                     }
+                    '218189e347b28b1016bda144846d4327': {
+                        table: 'sys_scope_privilege'
+                        id: '218189e347b28b1016bda144846d4327'
+                    }
                     '2362253947ea8f5016bda144846d4307': {
                         table: 'sys_flow_record_trigger'
                         id: '2362253947ea8f5016bda144846d4307'
@@ -126,6 +130,10 @@ declare global {
                         table: 'oauth_entity_profile'
                         id: '5645a76947ba0f1016bda144846d4328'
                     }
+                    '598149e347b28b1016bda144846d43cf': {
+                        table: 'sys_scope_privilege'
+                        id: '598149e347b28b1016bda144846d43cf'
+                    }
                     '60dd2a9f47f20b1016bda144846d43c7': {
                         table: 'sys_pd_trigger_instance'
                         id: '60dd2a9f47f20b1016bda144846d43c7'
@@ -174,6 +182,10 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: '904f6f7d4736cf1016bda144846d4351'
                     }
+                    '918149e347b28b1016bda144846d43d4': {
+                        table: 'sys_scope_privilege'
+                        id: '918149e347b28b1016bda144846d43d4'
+                    }
                     '944f6f7d4736cf1016bda144846d4350': {
                         table: 'sys_flow_record_trigger'
                         id: '944f6f7d4736cf1016bda144846d4350'
@@ -219,6 +231,10 @@ declare global {
                         table: 'sys_pd_snapshot_chunk'
                         id: 'c02ae4e7477e4b1016bda144846d43a9'
                     }
+                    c090c12347b28b1016bda144846d43f3: {
+                        table: 'sys_scope_privilege'
+                        id: 'c090c12347b28b1016bda144846d43f3'
+                    }
                     c2c8e4ef473e4b1016bda144846d43d8: {
                         table: 'sys_scope_privilege'
                         id: 'c2c8e4ef473e4b1016bda144846d43d8'
@@ -246,6 +262,10 @@ declare global {
                     ca7f0a5be6cddc2ae2635d929331d8aa: {
                         table: 'sys_pd_activity'
                         id: 'ca7f0a5be6cddc2ae2635d929331d8aa'
+                    }
+                    cc90892347b28b1016bda144846d431e: {
+                        table: 'sys_scope_privilege'
+                        id: 'cc90892347b28b1016bda144846d431e'
                     }
                     cfa4b028cd38b92161c4f4819c5d0ed4: {
                         table: 'sys_pd_lane'
@@ -275,6 +295,14 @@ declare global {
                     da592067477e4b1016bda144846d4373: {
                         table: 'sys_scope_privilege'
                         id: 'da592067477e4b1016bda144846d4373'
+                    }
+                    display_verification_status_hr_case: {
+                        table: 'sys_script'
+                        id: 'fb5f204b08ef459e9f0d9a512130ebe9'
+                    }
+                    display_verification_status_incident: {
+                        table: 'sys_script'
+                        id: 'a69ffbbc6735463395a80cc85471928f'
                     }
                     e90faa1b473a0b1016bda144846d43c0: {
                         table: 'sys_trigger_runner_mapping'
@@ -351,6 +379,10 @@ declare global {
                     'src_server_admin-setup-pages_verification-settings-validator_ts': {
                         table: 'sys_module'
                         id: 'fd537cd0dd7646d7983c58f372e93b3a'
+                    }
+                    'src_server_business-rules_display-verification-status_ts': {
+                        table: 'sys_module'
+                        id: 'f801d82f2f784fcc82c1c48504f99efa'
                     }
                     src_server_constants_ts: {
                         table: 'sys_module'
