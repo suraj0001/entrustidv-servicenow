@@ -55,136 +55,65 @@ export function processWebhook(
         }
     }
 
-    switch (payload.action) {
-        case 'workflow_task.started':
-            return processWorkflowTaskStarted(payload)
+    gs.info('[IDV_WEBHOOK] action=' + (payload.action || 'unknown'))
 
-        case 'workflow_task.completed':
-            return processWorkflowTaskCompleted(payload)
+    if (payload.action === 'workflow_run_evidence_folder.created') {
+        const workflowRunId =
+            payload.resource?.workflow_run_id ||
+            payload.object?.workflow_run_id ||
+            payload.object?.id ||
+            ''
 
-        case 'workflow_run.completed':
-            return processWorkflowRunCompleted(payload)
+        const evidenceFolderHref = payload.object?.href || ''
 
-        case 'workflow_run_evidence_folder.created':
-            return processEvidenceFolderCreated(payload)    
+        if (!workflowRunId || !evidenceFolderHref) {
+            gs.error(
+                '[IDV_WEBHOOK] Evidence folder event missing workflow_run_id or href',
+            )
 
-        default:
             return {
-                status: 'ignored',
+                status: 'error',
+                message: 'Missing workflow run id or evidence folder href',
             }
-    }
-}
-
-function processWorkflowTaskStarted(
-    payload: NonNullable<WorkflowWebhookPayload['payload']>,
-): WebhookHandleResult {
-    if (payload.resource_type !== 'workflow_task') {
-        return {
-            status: 'error',
-            message: 'Invalid resource type for workflow_task.started',
         }
-    }
 
-    const workflowRunId =
-        payload.resource?.workflow_run_id ||
-        payload.object?.workflow_run_id ||
-        ''
-
-    if (!workflowRunId) {
-        gs.error(
-            '[IDV_WEBHOOK] workflow_task.started missing workflow_run_id',
+        const updated = updateEvidenceFolderByWorkflowRunId(
+            workflowRunId,
+            evidenceFolderHref,
         )
 
-        return {
-            status: 'error',
-            message: 'Missing workflow run id',
+        if (!updated) {
+            gs.warn(
+                '[IDV_WEBHOOK] No verification request found for evidence folder workflow_run_id=' +
+                    workflowRunId,
+            )
+
+            return { status: 'not_found' }
         }
-    }
 
-    gs.info(
-        '[IDV_WEBHOOK] workflow_task.started' +
-            ' workflow_run_id=' +
-            workflowRunId +
-            ' task_id=' +
-            (payload.object?.id || ''),
-    )
-
-    return updateStatus(
-        workflowRunId,
-        payload.resource.status,
-    )
-}
-
-function processWorkflowTaskCompleted(
-    payload: NonNullable<WorkflowWebhookPayload['payload']>,
-): WebhookHandleResult {
-    if (payload.resource_type !== 'workflow_task') {
-        return {
-            status: 'error',
-            message: 'Invalid resource type for workflow_task.completed',
-        }
-    }
-
-    const workflowRunId =
-        payload.resource?.workflow_run_id ||
-        payload.object?.workflow_run_id ||
-        ''
-
-    if (!workflowRunId) {
-        gs.error(
-            '[IDV_WEBHOOK] workflow_task.completed missing workflow_run_id',
+        gs.info(
+            '[IDV_WEBHOOK] Evidence folder reference saved workflow_run_id=' +
+                workflowRunId,
         )
 
-        return {
-            status: 'error',
-            message: 'Missing workflow run id',
-        }
+        return { status: 'success' }
     }
 
-    gs.info(
-        '[IDV_WEBHOOK] workflow_task.completed' +
-            ' workflow_run_id=' +
-            workflowRunId +
-            ' task_id=' +
-            (payload.object?.id || '') +
-            ' task_status=' +
-            (payload.object?.status || ''),
-    )
-
-    /*
-     * A completed task does NOT mean the workflow run is complete.
-     *
-     * Keep the overall verification in "processing".
-     */
-    return updateStatus(
-        workflowRunId,
-        payload.resource.status,
-    )
-}
-
-function processWorkflowRunCompleted(
-    payload: NonNullable<WorkflowWebhookPayload['payload']>,
-): WebhookHandleResult {
-    if (payload.resource_type !== 'workflow_run') {
-        return {
-            status: 'error',
-            message: 'Invalid resource type for workflow_run.completed',
-        }
-    }
-
+    // For all workflow status events, update the verification status
     const workflowRunId =
+        payload.resource?.workflow_run_id ||
         payload.resource?.id ||
+        payload.object?.workflow_run_id ||
         payload.object?.id ||
         ''
 
     const workflowStatus =
-        payload.resource?.status ||
-        payload.object?.status ||
-        ''
+        payload.resource?.status || payload.object?.status || ''
 
     if (!workflowRunId || !workflowStatus) {
         gs.error(
-            '[IDV_WEBHOOK] workflow_run.completed missing workflow_run_id or status',
+            '[IDV_WEBHOOK] Missing workflow_run_id or status for action=' +
+                payload.action,
         )
 
         return {
@@ -193,113 +122,26 @@ function processWorkflowRunCompleted(
         }
     }
 
-    gs.info(
-        '[IDV_WEBHOOK] workflow_run.completed' +
-            ' workflow_run_id=' +
-            workflowRunId +
-            ' status=' +
-            workflowStatus,
-    )
-
-    return updateStatus(
+    const updated = updateVerificationStatusByWorkflowRunId(
         workflowRunId,
         workflowStatus,
     )
-}
 
-function updateStatus(
-    workflowRunId: string,
-    status: string,
-): WebhookHandleResult {
-    const source =
-        updateVerificationStatusByWorkflowRunId(
-            workflowRunId,
-            status,
-        )
-
-    if (!source) {
+    if (!updated) {
         gs.warn(
             '[IDV_WEBHOOK] No verification request found for workflow_run_id=' +
                 workflowRunId,
         )
 
-        return {
-            status: 'not_found',
-        }
+        return { status: 'not_found' }
     }
 
     gs.info(
-        '[IDV_WEBHOOK] Verification status updated' +
-            ' workflow_run_id=' +
+        '[IDV_WEBHOOK] Verification status updated workflow_run_id=' +
             workflowRunId +
             ' status=' +
-            status,
+            workflowStatus,
     )
 
-    return {
-        status: 'success',
-    }
-}
-
-function processEvidenceFolderCreated(
-    payload: NonNullable<WorkflowWebhookPayload['payload']>,
-): WebhookHandleResult {
-    if (
-        payload.resource_type !==
-        'workflow_run_evidence_folder'
-    ) {
-        return {
-            status: 'error',
-            message:
-                'Invalid resource type for workflow_run_evidence_folder.created',
-        }
-    }
-
-    const workflowRunId =
-        payload.resource?.workflow_run_id ||
-        payload.object?.workflow_run_id ||
-        payload.object?.id ||
-        ''
-
-    const evidenceFolderHref =
-        payload.object?.href || ''
-
-    if (!workflowRunId || !evidenceFolderHref) {
-        gs.error(
-            '[IDV_WEBHOOK] Evidence folder event missing workflow_run_id or href',
-        )
-
-        return {
-            status: 'error',
-            message:
-                'Missing workflow run id or evidence folder href',
-        }
-    }
-
-    const updated =
-        updateEvidenceFolderByWorkflowRunId(
-            workflowRunId,
-            evidenceFolderHref,
-        )
-
-    if (!updated) {
-        gs.warn(
-            '[IDV_WEBHOOK] No verification request found for evidence folder workflow_run_id=' +
-                workflowRunId,
-        )
-
-        return {
-            status: 'not_found',
-        }
-    }
-
-    gs.info(
-        '[IDV_WEBHOOK] Evidence folder reference saved' +
-            ' workflow_run_id=' +
-            workflowRunId,
-    )
-
-    return {
-        status: 'success',
-    }
+    return { status: 'success' }
 }
