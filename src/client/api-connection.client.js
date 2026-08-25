@@ -25,7 +25,7 @@ function _ajax(method, params, callback) {
   for (var key in params) {
     if (params[key] !== undefined) ga.addParam(key, params[key]);
   }
-  ga.getXMLAnswer((answer) => {
+  ga.getXMLAnswer(function (answer) {
     var result = null;
     try {
       result = JSON.parse(answer);
@@ -37,9 +37,21 @@ function _ajax(method, params, callback) {
 // Returns an error message string or null if the credential fields are valid
 function _validateCredentialLength(clientId, clientSecret) {
   if (clientId.length < MIN_LEN || clientId.length > MAX_LEN)
-    return "Client ID must be between " + MIN_LEN + " and " + MAX_LEN + " characters.";
+    return (
+      "Client ID must be between " +
+      MIN_LEN +
+      " and " +
+      MAX_LEN +
+      " characters."
+    );
   if (clientSecret.length < MIN_LEN || clientSecret.length > MAX_LEN)
-    return "Client Secret must be between " + MIN_LEN + " and " + MAX_LEN + " characters.";
+    return (
+      "Client Secret must be between " +
+      MIN_LEN +
+      " and " +
+      MAX_LEN +
+      " characters."
+    );
   return null;
 }
 
@@ -83,8 +95,8 @@ function _clearStoredCredentialPlaceholders() {
 
 // --- Initialisation ---
 
-document.addEventListener("DOMContentLoaded", () => {
-  _ajax("getConfig", {}, (config) => {
+document.addEventListener("DOMContentLoaded", function () {
+  _ajax("getConfig", {}, function (config) {
     if (!config || !config.success) return;
     if (config.region) _el("idv_region").value = config.region;
     if (config.baseUrl) _el("idv_base_url").value = config.baseUrl;
@@ -101,20 +113,22 @@ document.addEventListener("DOMContentLoaded", () => {
 _el("idv_region").addEventListener("change", function () {
   var base = BASE_URLS[this.value] || "";
   _el("idv_base_url").value = base;
-  _el("idv_token_url").value = base ? base + "/" + API_VERSION + "/oauth/token" : "";
+  _el("idv_token_url").value = base
+    ? base + "/" + API_VERSION + "/oauth/token"
+    : "";
   if (_idvHasStoredCredentials) _clearStoredCredentialPlaceholders();
   _idvShowStatus("", "");
   _idvDisableSave();
 });
 
 // Credential edits invalidate the last successful test
-["idv_client_id", "idv_client_secret"].forEach((id) => {
+["idv_client_id", "idv_client_secret"].forEach(function (id) {
   _el(id).addEventListener("input", _idvDisableSave);
 });
 
 // --- Test Connection ---
 
-_el("btn_test").addEventListener("click", () => {
+_el("btn_test").addEventListener("click", function () {
   var region = _el("idv_region").value.trim();
   var clientId = _el("idv_client_id").value.trim();
   var clientSecret = _el("idv_client_secret").value;
@@ -152,14 +166,17 @@ _el("btn_test").addEventListener("click", () => {
       sysparm_client_id: clientId,
       sysparm_client_secret: clientSecret,
     },
-    (result) => {
+    function (result) {
       btn.disabled = false;
       btn.textContent = "Test Connection";
       if (result && result.success) {
         _idvShowStatus("success", "✅ " + result.message);
         _idvEnableSave();
       } else {
-        _idvShowStatus("error", "❌ " + (result ? result.message : "Unknown error."));
+        _idvShowStatus(
+          "error",
+          "❌ " + (result ? result.message : "Unknown error."),
+        );
         _idvDisableSave();
       }
     },
@@ -169,12 +186,12 @@ _el("btn_test").addEventListener("click", () => {
 // --- Save ---
 
 _el("btn_save").addEventListener("click", function () {
-  var lenError;
   var region = _el("idv_region").value.trim();
   var baseUrl = _el("idv_base_url").value.trim();
   var tokenUrl = _el("idv_token_url").value.trim();
   var clientId = _el("idv_client_id").value.trim();
   var clientSecret = _el("idv_client_secret").value;
+  var btn = this;
 
   if (!region || !baseUrl || !tokenUrl) {
     _idvShowStatus("error", "Please select a region.");
@@ -187,27 +204,27 @@ _el("btn_save").addEventListener("click", function () {
     return;
   }
   if (hasNew) {
-    lenError = _validateCredentialLength(clientId, clientSecret);
+    var lenError = _validateCredentialLength(clientId, clientSecret);
     if (lenError) {
       _idvShowStatus("error", lenError);
       return;
     }
   }
 
-  this.disabled = true;
-  this.textContent = "Saving…";
+  btn.disabled = true;
+  btn.textContent = "Saving…";
   _idvShowStatus("", "Saving configuration…");
 
-  _ajax("getAliasInfo", {}, (info) => {
+  _ajax("getAliasInfo", {}, function (info) {
     if (!info || !info.success) {
       _idvEnableSave();
-      this.textContent = "Save";
+      btn.textContent = "Save";
       _idvShowStatus("error", "❌ " + (info ? info.message : "Unknown error."));
       return;
     }
 
     if (info.hasConnection) {
-      _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, this);
+      _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, btn);
       return;
     }
 
@@ -225,19 +242,26 @@ _el("btn_save").addEventListener("click", function () {
       }),
     );
     ccGa.addParam("sysparm_aliasSysID", info.aliasSysId);
-    ccGa.getXMLAnswer((ccAnswer) => {
+    ccGa.getXMLAnswer(function (ccAnswer) {
       if (ccAnswer && /error|exception/i.test(ccAnswer)) {
         _idvEnableSave();
-        this.textContent = "Save";
+        btn.textContent = "Save";
         _idvShowStatus("error", "❌ Failed to create connection: " + ccAnswer);
         return;
       }
-      _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, this);
+      _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, btn);
     });
   });
 });
 
-function _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, btn) {
+function _idvFinishSave(
+  region,
+  baseUrl,
+  tokenUrl,
+  clientId,
+  clientSecret,
+  btn,
+) {
   _ajax(
     "saveConfig",
     {
@@ -247,13 +271,16 @@ function _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, btn) 
       sysparm_client_id: clientId || undefined,
       sysparm_client_secret: clientSecret || undefined,
     },
-    (result) => {
+    function (result) {
       btn.textContent = "Save";
       _idvEnableSave();
       if (result && result.success) {
         _idvShowStatus("success", "✅ " + result.message);
       } else {
-        _idvShowStatus("error", "❌ " + (result ? result.message : "Unknown error."));
+        _idvShowStatus(
+          "error",
+          "❌ " + (result ? result.message : "Unknown error."),
+        );
       }
     },
   );
