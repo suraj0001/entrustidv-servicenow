@@ -1,241 +1,84 @@
 /* eslint-disable */
 
-(function process(
-  /* RESTAPIRequest */ request,
-  /* RESTAPIResponse */ response
-) {
-  var rawBody = request.body.dataString;
-  var signatureHex = request.getHeader("X-SHA2-Signature");
-
-  if (!signatureHex) {
-    gs.warn(
-      "[EntrustWebhook] Missing X-SHA2-Signature header"
-    );
-
-    response.setStatus(401);
-    response.setBody({
-      error: "Missing signature",
-    });
-
-    return;
-  }
-
-  if (!rawBody) {
-    gs.warn(
-      "[EntrustWebhook] Empty request body"
-    );
-
-    response.setStatus(400);
-    response.setBody({
-      error: "Empty body",
-    });
-
-    return;
-  }
-
+(function process(request, response) {
   try {
-    // ---------------------------------------------------------------
-    // Load configured webhook secret
-    // ---------------------------------------------------------------
+      var signature = request.getHeader('X-SHA2-Signature');
+      var rawBody = request.body.dataString;
 
-    var configurationRepository = require(
-      "./src/server/repositories/configuration-repository.ts"
-    );
+      if (!signature) {
+          gs.warn('[EntrustWebhook] Missing X-SHA2-Signature');
 
-    // var webhookSecret =
-    //   configurationRepository.getWebhookSecret();
-
-    // if (!webhookSecret) {
-    //   gs.error(
-    //     "[EntrustWebhook] Webhook secret is not configured"
-    //   );
-
-    //   response.setStatus(500);
-    //   response.setBody({
-    //     error: "Webhook is not configured",
-    //   });
-
-    //   return;
-    // }
-
-    // ---------------------------------------------------------------
-    // Verify HMAC signature before parsing JSON
-    // ---------------------------------------------------------------
-
-    // var webhookValidator = require(
-    //   "./src/server/webhook/webhook-validator.ts"
-    // );
-
-    // var validSignature =
-    //   webhookValidator.verifyWebhookSignature(
-    //     rawBody,
-    //     signatureHex,
-    //     webhookSecret
-    //   );
-
-    // if (!validSignature) {
-    //   gs.warn(
-    //     "[EntrustWebhook] Invalid webhook signature"
-    //   );
-
-    //   response.setStatus(401);
-    //   response.setBody({
-    //     error: "Invalid signature",
-    //   });
-
-    //   return;
-    // }
-
-    // ---------------------------------------------------------------
-    // Parse verified payload
-    // ---------------------------------------------------------------
-
-    var body;
-
-    try {
-      body = JSON.parse(rawBody);
-    } catch (parseError) {
-      gs.warn(
-        "[EntrustWebhook] Invalid JSON payload"
-      );
-
-      response.setStatus(400);
-      response.setBody({
-        error: "Invalid JSON",
-      });
-
-      return;
-    }
-
-    // ---------------------------------------------------------------
-    // Only handle supported Entrust events
-    // ---------------------------------------------------------------
-
-    var payload = body && body.payload;
-    var action = payload && payload.action;
-    var resourceType =
-      payload && payload.resource_type;
-    
-    var workflowRunId =
-      (payload &&
-        payload.resource &&
-        payload.resource.workflow_run_id) ||
-      (payload &&
-        payload.object &&
-        payload.object.workflow_run_id) ||
-      (action === "workflow_run.completed" &&
-        payload &&
-        payload.resource &&
-        payload.resource.id) ||
-      "";
-
-      gs.info(
-        "[EntrustWebhook] Event received" +
-          " action=" + String(action || "") +
-          " resource_type=" + String(resourceType || "") +
-          " workflow_run_id=" + String(workflowRunId || "")
-      );
-
-      var supportedActions = {
-        "workflow_run.completed": true,
-        "workflow_task.completed": true,
-        "workflow_task.started": true,
-        "workflow_run_evidence_folder.created": true,
-      };
-      
-      if (!action || !supportedActions[action]) {
-        gs.info(
-          "[EntrustWebhook] Ignoring unsupported action=" +
-            String(action)
-        );
-      
-        response.setStatus(200);
-        response.setBody({
-          received: true,
-          processed: false,
-        });
-      
-        return;
+          response.setStatus(401);
+          response.setBody({
+              success: false,
+              message: 'Missing webhook signature'
+          });
+          return;
       }
 
-    // ---------------------------------------------------------------
-    // Delegate verified event to business logic
-    // ---------------------------------------------------------------
+      if (!rawBody) {
+          gs.warn('[EntrustWebhook] Empty webhook body');
 
-    var webhookService = require(
-      "./src/server/services/webhook-service.ts"
-    );
+          response.setStatus(400);
+          response.setBody({
+              success: false,
+              message: 'Empty request body'
+          });
+          return;
+      }
 
-    var result =
-      webhookService.processWebhook(body);
+      var webhookValidator = require(
+          './webhook-signature-validator.ts'
+      );
 
-    // ---------------------------------------------------------------
-    // Map service result to HTTP response
-    // ---------------------------------------------------------------
+      var isValid = webhookValidator.validate(rawBody, signature);
 
-    if (result.status === "ignored") {
+      if (!isValid) {
+          gs.warn('[EntrustWebhook] Invalid webhook signature');
+
+          response.setStatus(401);
+          response.setBody({
+              success: false,
+              message: 'Invalid webhook signature'
+          });
+          return;
+      }
+
+      var event;
+
+      try {
+          event = JSON.parse(rawBody);
+      } catch (e) {
+          gs.warn('[EntrustWebhook] Invalid JSON payload');
+
+          response.setStatus(400);
+          response.setBody({
+              success: false,
+              message: 'Invalid JSON payload'
+          });
+          return;
+      }
+
+      var webhookService = require(
+          '../services/webhook-service.ts'
+      );
+
+      webhookService.processWebhook(event);
+
       response.setStatus(200);
-
       response.setBody({
-        received: true,
-        processed: false,
+          success: true
       });
+  } catch (e) {
+      gs.error(
+          '[EntrustWebhook] Unexpected webhook processing error: ' +
+              e
+      );
 
-      return;
-    }
-
-    if (result.status === "not_found") {
-      response.setStatus(200);
-
+      response.setStatus(500);
       response.setBody({
-        received: true,
-        processed: false,
-        reason: "verification_request_not_found",
+          success: false,
+          message: 'Webhook processing failed'
       });
-
-      return;
-    }
-
-    if (result.status === "error") {
-      response.setStatus(400);
-
-      response.setBody({
-        received: true,
-        processed: false,
-        error:
-          result.message ||
-          "Invalid webhook payload",
-      });
-
-      return;
-    }
-
-    response.setStatus(200);
-
-    response.setBody({
-      received: true,
-      processed: true,
-    });
-  } catch (error) {
-    gs.error(
-      "[EntrustWebhook] Processing failed. message=" +
-        (
-          error && error.message
-            ? error.message
-            : String(error)
-        ) +
-        " | stack=" +
-        (
-          error && error.stack
-            ? error.stack
-            : "n/a"
-        )
-    );
-
-    response.setStatus(500);
-
-    response.setBody({
-      error: "Webhook processing failed",
-    });
   }
 })(request, response);

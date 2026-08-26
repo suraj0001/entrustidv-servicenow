@@ -1,147 +1,153 @@
 import { gs } from '@servicenow/glide'
+import * as verificationRequestRepository
+    from '../repositories/verification-request-repository.ts'
 
-import {
-    updateEvidenceFolderByWorkflowRunId,
-    updateVerificationStatusByWorkflowRunId,
-} from '../repositories/verification-request-repository.ts'
-
-export interface WebhookHandleResult {
-    status: 'success' | 'ignored' | 'not_found' | 'error'
-    message?: string
+interface EntrustWebhookEvent {
+    payload?: EntrustWebhookPayload
 }
 
-interface WorkflowWebhookPayload {
-    payload?: {
-        action?: string
-        resource_type?: string
-
-        object?: {
-            id?: string
-            workflow_run_id?: string
-            status?: string
-            task_spec_id?: string
-            task_def_id?: string
-            href?: string
-            started_at_iso8601?: string
-            completed_at_iso8601?: string
-        }
-
-        resource?: {
-            id?: string
-            workflow_run_id?: string
-            status?: string
-            applicant_id?: string
-            workflow_id?: string
-            task_def_id?: string
-
-            output?: {
-                workflow_output?: string
-            }
-        }
+interface EntrustWebhookPayload {
+    resource_type?: string
+    action?: string
+    object?: {
+        id?: string
+        task_def_id?: string
+        workflow_run_id?: string
+        status?: string
+        href?: string
+    }
+    resource?: {
+        id?: string
+        workflow_run_id?: string
+        status?: string
     }
 }
 
-export function processWebhook(
-    body: WorkflowWebhookPayload,
-): WebhookHandleResult {
-    const payload = body?.payload
+const STATUS_IN_PROGRESS = 'in_progress'
+
+const TERMINAL_STATUSES = [
+    'approved',
+    'declined',
+    'review',
+    'abandoned',
+    'error',
+]
+
+export function processWebhook(event: EntrustWebhookEvent): void {
+    const payload = event.payload
 
     if (!payload) {
-        gs.error('[IDV_WEBHOOK] Invalid or missing payload')
-
-        return {
-            status: 'error',
-            message: 'Invalid payload structure',
-        }
+        throw new Error('Webhook payload is missing')
     }
 
-    gs.info('[IDV_WEBHOOK] action=' + (payload.action || 'unknown'))
-
-    if (payload.action === 'workflow_run_evidence_folder.created') {
-        const workflowRunId =
-            payload.resource?.workflow_run_id ||
-            payload.object?.workflow_run_id ||
-            payload.object?.id ||
-            ''
-
-        const evidenceFolderHref = payload.object?.href || ''
-
-        if (!workflowRunId || !evidenceFolderHref) {
-            gs.error(
-                '[IDV_WEBHOOK] Evidence folder event missing workflow_run_id or href',
-            )
-
-            return {
-                status: 'error',
-                message: 'Missing workflow run id or evidence folder href',
-            }
-        }
-
-        const updated = updateEvidenceFolderByWorkflowRunId(
-            workflowRunId,
-            evidenceFolderHref,
-        )
-
-        if (!updated) {
-            gs.warn(
-                '[IDV_WEBHOOK] No verification request found for evidence folder workflow_run_id=' +
-                    workflowRunId,
-            )
-
-            return { status: 'not_found' }
-        }
-
-        gs.info(
-            '[IDV_WEBHOOK] Evidence folder reference saved workflow_run_id=' +
-                workflowRunId,
-        )
-
-        return { status: 'success' }
-    }
-
-    // For all workflow status events, update the verification status
-    const workflowRunId =
-        payload.resource?.workflow_run_id ||
-        payload.resource?.id ||
-        payload.object?.workflow_run_id ||
-        payload.object?.id ||
-        ''
-
-    const workflowStatus =
-        payload.resource?.status || payload.object?.status || ''
-
-    if (!workflowRunId || !workflowStatus) {
-        gs.error(
-            '[IDV_WEBHOOK] Missing workflow_run_id or status for action=' +
-                payload.action,
-        )
-
-        return {
-            status: 'error',
-            message: 'Missing workflow run id or status',
-        }
-    }
-
-    const updated = updateVerificationStatusByWorkflowRunId(
-        workflowRunId,
-        workflowStatus,
-    )
-
-    if (!updated) {
-        gs.warn(
-            '[IDV_WEBHOOK] No verification request found for workflow_run_id=' +
-                workflowRunId,
-        )
-
-        return { status: 'not_found' }
+    if (!payload.action) {
+        throw new Error('Webhook action is missing')
     }
 
     gs.info(
-        '[IDV_WEBHOOK] Verification status updated workflow_run_id=' +
-            workflowRunId +
-            ' status=' +
-            workflowStatus,
+        `[EntrustWebhook] Event received action=${payload.action}, ` +
+            `resource_type=${payload.resource_type || ''}`
     )
 
-    return { status: 'success' }
+    switch (payload.action) {
+        case 'workflow_task.started':
+        case 'workflow_task.completed':
+            processWorkflowTaskEvent(payload)
+            break
+
+        case 'workflow_run.completed':
+            processWorkflowRunCompleted(payload)
+            break
+
+        case 'workflow_run_evidence_folder.created':
+            processEvidenceFolderCreated(payload)
+            break
+
+        default:
+            gs.info(
+                `[EntrustWebhook] Ignoring unsupported event action=${payload.action}`
+            )
+    }
+}
+
+function processWorkflowTaskEvent(
+    payload: EntrustWebhookPayload
+): void {
+    const workflowRunId = payload.object?.workflow_run_id
+
+    if (!workflowRunId) {
+        throw new Error(
+            `workflow_run_id missing for ${payload.action}`
+        )
+    }
+
+    const verificationRequest =
+        verificationRequestRepository.findVerificationRequestById(workflowRunId)
+
+    if (!verificationRequest) {
+        gs.warn(
+            `[EntrustWebhook] No verification request found for workflow_run_id=${workflowRunId}`
+        )
+        return
+    }
+
+    const currentStatus = String(
+        verificationRequest.status || ''
+    ).toLowerCase()
+
+    if (TERMINAL_STATUSES.includes(currentStatus)) {
+        return
+    }
+
+    if (currentStatus !== STATUS_IN_PROGRESS) {
+        verificationRequestRepository.updateStatusByWorkflowRunId(
+            workflowRunId,
+            STATUS_IN_PROGRESS
+        )
+    }
+}
+
+function processWorkflowRunCompleted(
+    payload: EntrustWebhookPayload
+): void {
+    const workflowRunId =
+        payload.resource?.id ||
+        payload.object?.id
+
+    const status =
+        payload.resource?.status ||
+        payload.object?.status
+
+    if (!workflowRunId || !status) {
+        throw new Error(
+            'workflow_run.completed payload is missing required data'
+        )
+    }
+
+    repository.updateStatusByWorkflowRunId(
+        workflowRunId,
+        status
+    )
+}
+
+function processEvidenceFolderCreated(
+    payload: EntrustWebhookPayload
+): void {
+    const workflowRunId =
+        payload.object?.workflow_run_id ||
+        payload.resource?.workflow_run_id
+
+    const evidenceFolderHref =
+        payload.object?.href
+
+    if (!workflowRunId || !evidenceFolderHref) {
+        throw new Error(
+            'workflow_run_evidence_folder.created payload is missing required data'
+        )
+    }
+
+    repository.updateEvidenceFolderHrefByWorkflowRunId(
+        workflowRunId,
+        evidenceFolderHref
+    )
 }

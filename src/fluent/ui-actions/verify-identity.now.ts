@@ -1,9 +1,9 @@
-import "@servicenow/sdk/global";
-import { UiAction } from "@servicenow/sdk/core";
+import '@servicenow/sdk/global'
+import { UiAction } from '@servicenow/sdk/core'
 
 UiAction({
-  $id: Now.ID["verify-identity-ui-action"],
-  table: 'task',
+    $id: Now.ID['verify-identity-ui-action'],
+    table: 'task',
     name: 'Verify Identity',
     actionName: 'executeVerifyIdentity',
     active: true,
@@ -15,14 +15,14 @@ UiAction({
         showLink: false,
         showContextMenu: false,
     },
-    condition:
-        "current.getTableName() == 'incident' || current.getTableName() == 'sn_hr_core_case'",
+    condition: "current.getTableName() == 'incident' || current.getTableName() == 'sn_hr_core_case'",
     roles: ['x_entru_entrustidv.agent'],
     client: {
         isClient: true,
+        isUi11Compatible: true,
         isUi16Compatible: true,
         onClick: 'executeVerifyIdentity()',
     },
     script: Now.include('../../client/verify-identity.client.js'),
-    comments: 'Starts Entrust identity verification for the current record.',
-});
+    comments: 'Starts Entrust identity verification for the current record.'
+})

@@ -1,3 +1,4 @@
+/* eslint-disable */
 var VerifyIdentityAjax = Class.create();
 
 VerifyIdentityAjax.prototype = Object.extendsObject(
