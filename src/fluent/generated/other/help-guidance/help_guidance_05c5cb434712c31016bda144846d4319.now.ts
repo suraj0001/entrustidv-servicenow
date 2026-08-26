@@ -6,9 +6,9 @@ Record({
     data: {
         active: 'true',
         checklist:
-            '<p>Before you begin<br />Have the following available:</p><ul><li>Entrust Identity Verification API credentials</li><li>IDV API region</li><li>IDV Workflow ID</li><li>ServiceNow administrator access</li></ul><p>Optional</p><ul><li> ServiceNow inbound OAuth configuration if OAuth protection will be used for webhooks </li></ul>',
+            '<p>Before you begin<br />Have the following available:</p><ul><li>Entrust Identity Verification API credentials</li><li>IDV API region</li><li>IDV Workflow ID</li><li>ServiceNow administrator access</li><li>Webhook Token</li></ul>',
         description: 'Configure the Entrust Identity Verification',
-        interaction_status: 'IN_PROGRESS',
+        interaction_status: 'COMPLETE',
         name: 'Entrust Identity Verification Setup',
         process_definition: '2cdd2a9f47f20b1016bda144846d43c6',
         product_name: 'Entrust Identity Verification Setup',
