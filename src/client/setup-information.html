@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
-  <style>html,
+    <style>
+        html,
         body {
             overflow-y: auto !important;
             height: auto !important;
@@ -214,6 +216,16 @@
             color: #34495e;
         }
 
+        /* -------------------------
+           Finish
+        -------------------------- */
+
+        .btn-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
         .btn {
             height: 40px;
             padding: 0 22px;
@@ -238,30 +250,6 @@
            Responsive
         -------------------------- */
 
-        .entrust-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin: -24px -24px 24px -24px;
-            padding: 20px 24px;
-            background: #6d2077;
-            border-radius: 5px 5px 0 0;
-        }
-
-        .entrust-page-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #ffffff;
-            line-height: 1.2;
-        }
-
-        .entrust-page-subtitle {
-            font-size: 12px;
-            color: #ffffff;
-            margin-top: 3px;
-            line-height: 1.4;
-        }
-
         @media (max-width: 640px) {
             .entrust-container {
                 padding: 0 16px 24px;
@@ -276,71 +264,113 @@
                 align-items: flex-start;
                 gap: 6px;
             }
-        }</style>
-  <div class="entrust-container">
-    <div class="entrust-section">
-      <div class="entrust-header">
-        <div>
-          <div class="entrust-page-title">Setup Information</div>
-          <div class="entrust-page-subtitle">Review your webhook endpoint, application roles, and
-                        email configuration</div>
-        </div>
-      </div>
-      <!-- Webhook -->
-      <div class="info-block">
-        <div class="info-title">Webhook</div>
-        <div class="webhook-row">
-          <input id="webhook_url" class="webhook-url" type="text" readonly="true" value=""></input>
-          <button id="btn_copy_webhook_url" type="button" class="btn-copy">Copy</button>
-        </div>
-        <div class="webhook-meta">
-          <span>
-            <strong>POST</strong>
-          </span>
-          <span>application/json</span>
-          <span>HMAC signature validation</span>
-        </div>
-        <div class="hint">Configure this URL as the webhook callback URL in Entrust.</div>
-      </div>
-      <div class="section-divider"></div>
-      <!-- Application Roles -->
-      <div class="info-block">
-        <div class="info-title">Application Roles</div>
-        <div class="roles-list">
-          <!-- Administrator -->
-          <div class="role-item">
-            <div class="role-info">
-              <div class="role-title">Administrator</div>
-              <div class="role-description">Configure and manage Identity Verification.</div>
+        }
+    </style>
+
+    <div class="entrust-container">
+        <div class="entrust-section">
+
+            <!-- Webhook -->
+
+            <div class="info-block">
+                <div class="info-title">Webhook</div>
+
+                <div class="webhook-row">
+                    <input
+                        id="webhook_url"
+                        class="webhook-url"
+                        type="text"
+                        readonly="true"
+                        value=""
+                    />
+
+                    <button
+                        id="btn_copy_webhook_url"
+                        type="button"
+                        class="btn-copy"
+                    >
+                        Copy
+                    </button>
+                </div>
+
+                <div class="webhook-meta">
+                    <span>
+                        <strong>POST</strong>
+                    </span>
+
+                    <span> application/json </span>
+
+                    <span> HMAC signature validation </span>
+                </div>
+
+                <div class="hint">
+                    Configure this URL as the webhook callback URL in Entrust.
+                </div>
             </div>
-            <div class="role-code">x_entru_entrustidv.admin</div>
-          </div>
-          <!-- Agent -->
-          <div class="role-item">
-            <div class="role-info">
-              <div class="role-title">Agent</div>
-              <div class="role-description">Initiate identity verification from supported
-                                records.</div>
+
+            <div class="section-divider"></div>
+
+            <!-- Application Roles -->
+
+            <div class="info-block">
+                <div class="info-title">Application Roles</div>
+
+                <div class="roles-list">
+                    <!-- Administrator -->
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-title">Administrator</div>
+
+                            <div class="role-description">
+                                Configure and manage Identity Verification.
+                            </div>
+                        </div>
+
+                        <div class="role-code">x_entru_entrustidv.admin</div>
+                    </div>
+
+                    <!-- Agent -->
+
+                    <div class="role-item">
+                        <div class="role-info">
+                            <div class="role-title">Agent</div>
+
+                            <div class="role-description">
+                                Initiate identity verification from supported
+                                records.
+                            </div>
+                        </div>
+
+                        <div class="role-code">x_entru_entrustidv.agent</div>
+                    </div>
+                </div>
             </div>
-            <div class="role-code">x_entru_entrustidv.agent</div>
-          </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Email Configuration -->
+
+            <div class="info-block">
+                <div class="info-title">Email Configuration</div>
+
+                <div class="email-row">
+                    <div class="email-icon">@</div>
+
+                    <div class="email-content">
+                        <div class="email-text">
+                            Enable outbound email so verification links can be
+                            delivered to users.
+                        </div>
+
+                        <div class="email-path">
+                            All → System Properties → Email Properties →
+                            Outbound Email Configuration
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="section-divider"></div>
-      <!-- Email Configuration -->
-      <div class="info-block">
-        <div class="info-title">Email Configuration</div>
-        <div class="email-row">
-          <div class="email-icon">@</div>
-          <div class="email-content">
-            <div class="email-text">Enable outbound email so verification links can be
-                            delivered to users.</div>
-            <div class="email-path">All → System Properties → Email Properties →
-                            Outbound Email Configuration</div>
-          </div>
-        </div>
-      </div>      
     </div>
-  </div>
-  <script src="./setup-information.client.js" type="module"></script>
+    <script src="./setup-information.client.js" type="module"></script>
 </j:jelly>

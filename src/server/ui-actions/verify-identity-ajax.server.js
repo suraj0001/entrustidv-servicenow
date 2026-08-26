@@ -31,6 +31,7 @@ VerifyIdentityAjax.prototype = Object.extendsObject(
                 return JSON.stringify({
                     success: true,
                     status: result.status,
+                    workflowRunId: result.workflowRunId,
                 });
             } catch (e) {
                 gs.error(

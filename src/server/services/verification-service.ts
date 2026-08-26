@@ -10,8 +10,8 @@ import { findSourceRecordContext } from '../repositories/source-record-repositor
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
 import {
     createVerificationRequest,
+    findLatestVerificationStatus,
     findVerificationRequestById,
-    findVerificationStatus,
 } from '../repositories/verification-request-repository.ts'
 
 export interface StartVerificationResult {
@@ -35,7 +35,7 @@ export function startVerification(
     gs.info(`[VerificationService] sourceContext resolved: sourceTable=${sourceContext.sourceTable}, sourceRecordId=${sourceContext.sourceRecordId}, subjectUserId=${sourceContext.subjectUserId}`)
 
     if (
-        findVerificationStatus(
+        findLatestVerificationStatus(
             sourceContext.sourceTable,
             sourceContext.sourceRecordId,
         )

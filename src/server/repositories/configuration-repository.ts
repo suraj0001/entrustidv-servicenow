@@ -19,7 +19,7 @@ export type VerificationSettingsReadResult = {
   workflowId: string;
   linkExpiry: number;
   deliveryChannel: string;
-  hasWebhookSecret: boolean;
+  webhookSecret: string;
   redirectUrl: string;
 };
 
@@ -41,7 +41,7 @@ export function getVerificationSettings(): VerificationSettingsReadResult | null
     workflowId,
     linkExpiry: Number.isNaN(linkExpiry) ? 0 : linkExpiry,
     deliveryChannel,
-    hasWebhookSecret: webhookSecret.length > 0,
+    webhookSecret: webhookSecret,
     redirectUrl,
   };
 }

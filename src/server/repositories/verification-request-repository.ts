@@ -12,6 +12,22 @@ export interface CreateVerificationRequest {
   status: string;
 }
 
+export interface VerificationRequest {
+  sysId: string
+  workflowRunId: string
+  workflowVersionId: string
+  applicantId: string
+  status: string
+  sourceTable: string
+  sourceRecordId: string
+  evidenceFolderHref: string
+}
+
+export type VerificationStatusRecord = {
+  workflowRunId: string
+  status: string
+}
+
 export function createVerificationRequest(input: CreateVerificationRequest): string {
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
   gr.initialize();
@@ -47,36 +63,92 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
   return gr;
 }
 
-export function findVerificationStatus(sourceTable: string, sourceRecordId: string): string {
+export function findVerificationRequestByWorkflowRunId(
+  workflowRunId: string,
+): VerificationRequest | null {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+
+  gr.addQuery('workflow_run_id', workflowRunId)
+  gr.setLimit(1)
+  gr.query()
+
+  if (!gr.next()) {
+    return null
+  }
+
+  return {
+    sysId: gr.getUniqueValue(),
+    workflowRunId: gr.getValue('workflow_run_id') ?? '',
+    workflowVersionId: gr.getValue('workflow_version_id') ?? '',
+    applicantId: gr.getValue('applicant_id') ?? '',
+    status: gr.getValue('status') ?? '',
+    sourceTable: gr.getValue('source_table') ?? '',
+    sourceRecordId: gr.getValue('source_record') ?? '',
+    evidenceFolderHref: gr.getValue('evidence_folder_href') ?? '',
+  }
+}
+
+export function findLatestVerificationStatus(sourceTable: string, sourceRecordId: string): VerificationStatusRecord | null {
   if (!sourceTable || !sourceRecordId) {
-    return "";
+    return null;
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
   gr.addQuery("source_table", sourceTable);
   gr.addQuery("source_record", sourceRecordId);
+  gr.orderByDesc('sys_created_on');
+  gr.setLimit(1)
+
   gr.query();
 
   if (gr.next()) {
     const status = (gr.getValue("status") as string) || "";
     gs.info(
-      "[VerificationRequestRepository] findVerificationStatus: sourceTable=" +
+      "[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=" +
         sourceTable +
         ", sourceRecordId=" +
         sourceRecordId +
         ", foundStatus=" +
         status,
     );
-    return status;
+    return {
+      workflowRunId: gr.getValue('workflow_run_id',) || '',
+      status: gr.getValue('status') || '',
+    }
   }
 
   gs.info(
-    "[VerificationRequestRepository] findVerificationStatus: no verification request found for sourceTable=" +
+    "[VerificationRequestRepository] findLatestVerificationStatus: no verification request found for sourceTable=" +
       sourceTable +
       ", sourceRecordId=" +
       sourceRecordId,
   );
-  return "";
+  return null;
+}
+
+export function findVerificationStatusByWorkflowRunId(
+  workflowRunId: string,
+): string | null {
+  const verificationRequest = new GlideRecord(
+    'x_entru_entrustidv_verification_request',
+  )
+
+  verificationRequest.addQuery(
+    'workflow_run_id',
+    workflowRunId,
+  )
+
+  verificationRequest.query()
+
+  if (!verificationRequest.next()) {
+    return null
+  }
+
+  return (
+    verificationRequest.getValue(
+      'status',
+    ) || null
+  )
 }
 
 export function updateStatusByWorkflowRunId(

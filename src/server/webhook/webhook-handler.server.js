@@ -27,22 +27,49 @@
           return;
       }
 
-      var webhookValidator = require(
-          './webhook-signature-validator.ts'
-      );
+      var configurationSettings = require(
+        "./src/server/services/configuration-service.ts"
+        );
 
-      var isValid = webhookValidator.validate(rawBody, signature);
+        var webhookSecret =
+            configurationSettings.getWebhookSecret();
 
-      if (!isValid) {
-          gs.warn('[EntrustWebhook] Invalid webhook signature');
+        if (!webhookSecret) {
+            gs.error(
+                '[EntrustWebhook] Webhook secret is not configured'
+            );
 
-          response.setStatus(401);
-          response.setBody({
-              success: false,
-              message: 'Invalid webhook signature'
-          });
-          return;
-      }
+            response.setStatus(500);
+            response.setBody({
+                success: false,
+                message: 'Webhook is not configured'
+            });
+            return;
+        }
+
+     var signatureValidator =
+    new EntrustWebhookSignatureValidator();
+
+var validSignature =
+    signatureValidator.validate(
+        rawBody,
+        signature,
+        webhookSecret
+    );
+
+if (!validSignature) {
+    gs.warn(
+        '[EntrustWebhook] Webhook signature validation failed'
+    );
+
+    response.setStatus(401);
+
+    response.setBody({
+        error: 'Invalid webhook signature'
+    });
+
+    return;
+}
 
       var event;
 
@@ -60,7 +87,7 @@
       }
 
       var webhookService = require(
-          '../services/webhook-service.ts'
+        "./src/server/services/webhook-service.ts"
       );
 
       webhookService.processWebhook(event);
