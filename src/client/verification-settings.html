@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
-    <style>
-        html,
+  <style>html,
         body {
             overflow-y: auto !important;
             height: auto !important;
@@ -224,122 +223,76 @@
             .entrust-section {
                 padding: 20px;
             }
-        }
-    </style>
-    <div class="entrust-container">
-        <div class="entrust-section">
-            <div class="entrust-header">
-                <div>
-                    <div class="entrust-page-title">Verification Settings</div>
-                    <div class="entrust-page-subtitle">
-                        Configure workflow, delivery, and security settings for
-                        identity verification
-                    </div>
-                </div>
-            </div>
-            <!-- Workflow ID -->
-            <div class="form-group">
-                <label for="workflow_id"
-                    >Workflow ID
-                    <span class="req">*</span>
-                </label>
-                <input
-                    id="workflow_id"
-                    name="workflow_id"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Enter Entrust workflow ID"
-                />
-                <span class="hint"
-                    >The Entrust workflow that will be used for identity
-                    verification requests.</span
-                >
-            </div>
-            <!-- Link Expiry -->
-            <div class="form-group">
-                <label for="link_expiry"
-                    >Link Expiry
-                    <span class="req">*</span>
-                </label>
-                <div class="input-with-suffix">
-                    <input
-                        id="link_expiry"
-                        name="link_expiry"
-                        type="number"
-                        min="1"
-                        value="60"
-                    />
-                    <span class="input-suffix">minutes</span>
-                </div>
-                <span class="hint"
-                    >How long the verification link remains valid.</span
-                >
-            </div>
-            <!-- Delivery Channel -->
-            <div class="form-group">
-                <label for="delivery_channel"
-                    >Delivery Channel
-                    <span class="req">*</span>
-                </label>
-                <select id="delivery_channel" name="delivery_channel">
-                    <option value="email">Email</option>
-                </select>
-                <span class="hint"
-                    >Channel used to send the verification request to the
-                    user.</span
-                >
-            </div>
-            <!-- Webhook Secret -->
-            <div class="form-group">
-                <label for="webhook_secret"
-                    >Webhook Secret
-                    <span class="req">*</span>
-                </label>
-                <input
-                    id="webhook_secret"
-                    name="webhook_secret"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Enter webhook secret"
-                />
-                <span class="hint"
-                    >Used to verify that webhook requests originate from
-                    Entrust.</span
-                >
-                <div id="webhook_secret_status" class="secret-status">
-                    A webhook secret is already configured. Leave this field
-                    blank to keep the existing secret, or enter a new value to
-                    replace it.
-                </div>
-            </div>
-            <!-- Redirect URL -->
-            <div class="form-group">
-                <label for="redirect_url"
-                    >Redirect URL
-                    <span class="optional">Optional</span>
-                </label>
-                <input
-                    id="redirect_url"
-                    name="redirect_url"
-                    type="url"
-                    autocomplete="off"
-                    placeholder="https://example.com/verification-complete"
-                />
-                <span class="hint"
-                    >Leave blank unless users should be redirected to a specific
-                    page after completing verification.</span
-                >
-            </div>
-            <!-- Actions -->
-            <div class="btn-row">
-                <button id="btn_save" type="button" class="btn btn-save">
-                    Save
-                </button>
-            </div>
-            <!-- Status Messages -->
-            <div id="idv_success_message" class="status success"></div>
-            <div id="idv_error_message" class="status error"></div>
+        }</style>
+  <div class="entrust-container">
+    <div class="entrust-section">
+      <div class="entrust-header">
+        <div>
+          <div class="entrust-page-title">Verification Settings</div>
+          <div class="entrust-page-subtitle">Configure workflow, delivery, and security settings for
+                        identity verification</div>
         </div>
+      </div>
+      <!-- Workflow ID -->
+      <div class="form-group">
+        <label for="workflow_id">Workflow ID
+          <span class="req">*</span>
+        </label>
+        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
+        <span class="hint">The Entrust workflow that will be used for identity
+                    verification requests.</span>
+      </div>
+      <!-- Link Expiry -->
+      <div class="form-group">
+        <label for="link_expiry">Link Expiry
+          <span class="req">*</span>
+        </label>
+        <div class="input-with-suffix">
+          <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
+          <span class="input-suffix">minutes</span>
+        </div>
+        <span class="hint">How long the verification link remains valid.</span>
+      </div>
+      <!-- Delivery Channel -->
+      <div class="form-group">
+        <label for="delivery_channel">Delivery Channel
+          <span class="req">*</span>
+        </label>
+        <select id="delivery_channel" name="delivery_channel">
+          <option value="email">Email</option>
+        </select>
+        <span class="hint">Channel used to send the verification request to the
+                    user.</span>
+      </div>
+      <!-- Webhook Secret -->
+      <div class="form-group">
+        <label for="webhook_secret">Webhook Secret
+          <span class="req">*</span>
+        </label>
+        <input id="webhook_secret" name="webhook_secret" type="password" autocomplete="new-password" placeholder="Enter webhook secret"></input>
+        <span class="hint">Used to verify that webhook requests originate from
+                    Entrust.</span>
+        <div id="webhook_secret_status" class="secret-status">A webhook secret is already configured. Leave this field
+                    blank to keep the existing secret, or enter a new value to
+                    replace it.</div>
+      </div>
+      <!-- Redirect URL -->
+      <div class="form-group">
+        <label for="redirect_url">Redirect URL
+          <span class="optional">Optional</span>
+        </label>
+        <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete"></input>
+        <span class="hint">Leave blank unless users should be redirected to a specific
+                    page after completing verification.</span>
+      </div>
+      <!-- Actions -->
+      <div class="btn-row">
+        <button id="btn_save" type="button" class="btn btn-save">Save</button>
+      </div>
+      <!-- Status Messages -->
+      <div id="idv_success_message" class="status success"></div>
+      <div id="idv_error_message" class="status error"></div>
     </div>
-    <script src="./verification-settings.client.js" type="module"></script>
+  </div>
+  <script src="./verification-settings.client.js" type="module"></script>
 </j:jelly>

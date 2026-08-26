@@ -12,6 +12,17 @@ export interface CreateVerificationRequest {
   status: string;
 }
 
+export interface VerificationRequest {
+  sysId: string
+  workflowRunId: string
+  workflowVersionId: string
+  applicantId: string
+  status: string
+  sourceTable: string
+  sourceRecordId: string
+  evidenceFolderHref: string
+}
+
 export function createVerificationRequest(input: CreateVerificationRequest): string {
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
   gr.initialize();
@@ -45,6 +56,31 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
   }
 
   return gr;
+}
+
+export function findVerificationRequestByWorkflowRunId(
+  workflowRunId: string,
+): VerificationRequest | null {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+
+  gr.addQuery('workflow_run_id', workflowRunId)
+  gr.setLimit(1)
+  gr.query()
+
+  if (!gr.next()) {
+    return null
+  }
+
+  return {
+    sysId: gr.getUniqueValue(),
+    workflowRunId: gr.getValue('workflow_run_id') ?? '',
+    workflowVersionId: gr.getValue('workflow_version_id') ?? '',
+    applicantId: gr.getValue('applicant_id') ?? '',
+    status: gr.getValue('status') ?? '',
+    sourceTable: gr.getValue('source_table') ?? '',
+    sourceRecordId: gr.getValue('source_record') ?? '',
+    evidenceFolderHref: gr.getValue('evidence_folder_href') ?? '',
+  }
 }
 
 export function findVerificationStatus(sourceTable: string, sourceRecordId: string): string {

@@ -27,12 +27,15 @@
           return;
       }
 
-      var configurationSettinngs = require(
-            '../services/configuration-service.ts'
+      var configurationSettings = require(
+        "./src/server/services/configuration-service.ts"
         );
 
+        gs.info(
+            '[EntrustWebhook] configuration file is found')
+
         var webhookSecret =
-            configurationSettinngs.getWebhookSecret();
+            configurationSettings.getWebhookSecret();
 
         if (!webhookSecret) {
             gs.error(
@@ -48,8 +51,13 @@
         }
 
       var webhookSignatureValidator = require(
-          './webhook-signature-validator.ts'
+        "./src/server/webhook/webhook-signature-validator.ts"
       );
+
+      gs.info(
+        '[EntrustWebhook] validation file is found'
+    );
+
 
       var isValid =
             webhookSignatureValidator.validate(

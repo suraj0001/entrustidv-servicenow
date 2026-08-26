@@ -1,4 +1,11 @@
-import { GlideCertificateEncryption, gs } from '@servicenow/glide'
+import {
+    CertificateEncryption,
+    gs
+} from '@servicenow/glide'
+
+interface GlideSystemWithBase64 {
+    base64Encode(source: string): string
+}
 
 const HMAC_ALGORITHM = 'HmacSHA256'
 const SHA256_HEX_LENGTH = 64
@@ -8,6 +15,7 @@ export function validate(
     signature: string,
     webhookSecret: string
 ): boolean {
+
     if (!rawBody || !signature || !webhookSecret) {
         return false
     }
@@ -15,7 +23,6 @@ export function validate(
     try {
         const receivedSignature = signature.trim().toLowerCase()
 
-        // SHA-256 signature should be exactly 64 hexadecimal characters.
         if (
             receivedSignature.length !== SHA256_HEX_LENGTH ||
             !/^[0-9a-f]+$/.test(receivedSignature)
@@ -24,21 +31,30 @@ export function validate(
         }
 
         /*
-         * GlideCertificateEncryption.generateMac() expects
-         * the HMAC key to be Base64 encoded.
+         * @servicenow/glide 26.0.1 does not expose base64Encode()
+         * in its GlideSystem TypeScript definition, although the
+         * method exists on scoped GlideSystem at runtime.
          */
-        const encodedSecret = gs.base64Encode(webhookSecret)
+        const glideSystem =
+            gs as unknown as GlideSystemWithBase64
 
-        const mac = new GlideCertificateEncryption()
+        /*
+         * generateMac() expects the HMAC key to be Base64 encoded.
+         */
+        const encodedSecret =
+            glideSystem.base64Encode(webhookSecret)
 
         /*
          * ServiceNow returns the generated MAC as Base64.
          */
-        const expectedSignatureBase64 = mac.generateMac(
-            encodedSecret,
-            HMAC_ALGORITHM,
-            rawBody
-        )
+        const mac = new CertificateEncryption()
+
+        const expectedSignatureBase64 =
+            mac.generateMac(
+                encodedSecret,
+                HMAC_ALGORITHM,
+                rawBody
+            )
 
         if (!expectedSignatureBase64) {
             return false
@@ -46,7 +62,7 @@ export function validate(
 
         /*
          * Entrust sends X-SHA2-Signature as hexadecimal,
-         * therefore convert ServiceNow's Base64 MAC to hex.
+         * so convert ServiceNow's Base64 MAC to hex.
          */
         const expectedSignature =
             base64ToHex(expectedSignatureBase64)
@@ -64,12 +80,6 @@ export function validate(
     }
 }
 
-/**
- * Converts a standard Base64 encoded byte sequence to hexadecimal.
- *
- * We do this manually because CertificateEncryption.generateMac()
- * returns Base64, while Entrust provides its signature as hex.
- */
 function base64ToHex(base64: string): string {
     const alphabet =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -134,14 +144,11 @@ function byteToHex(value: number): string {
         .padStart(2, '0')
 }
 
-/**
- * Constant-time comparison for two fixed-length SHA-256
- * hexadecimal signatures.
- */
 function constantTimeEquals(
     expected: string,
     actual: string
 ): boolean {
+
     if (
         expected.length !== SHA256_HEX_LENGTH ||
         actual.length !== SHA256_HEX_LENGTH

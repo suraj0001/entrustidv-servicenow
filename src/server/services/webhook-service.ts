@@ -82,11 +82,13 @@ function processWorkflowTaskEvent(
     }
 
     const verificationRequest =
-        verificationRequestRepository.findVerificationRequestById(workflowRunId)
-
+    verificationRequestRepository.findVerificationRequestByWorkflowRunId(
+      workflowRunId,
+    )
+  
     if (!verificationRequest) {
         gs.warn(
-            `[EntrustWebhook] No verification request found for workflow_run_id=${workflowRunId}`
+        `[ENTRUST_WEBHOOK] No verification request found for workflow_run_id=${workflowRunId}`,
         )
         return
     }
@@ -124,7 +126,7 @@ function processWorkflowRunCompleted(
         )
     }
 
-    repository.updateStatusByWorkflowRunId(
+    verificationRequestRepository.updateStatusByWorkflowRunId(
         workflowRunId,
         status
     )
@@ -146,7 +148,7 @@ function processEvidenceFolderCreated(
         )
     }
 
-    repository.updateEvidenceFolderHrefByWorkflowRunId(
+    verificationRequestRepository.updateEvidenceFolderHrefByWorkflowRunId(
         workflowRunId,
         evidenceFolderHref
     )
