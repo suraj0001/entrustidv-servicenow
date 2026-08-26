@@ -34,3 +34,37 @@ Record({
         source: '2cdd2a9f47f20b1016bda144846d43c6',
     },
 })
+Record({
+    $id: Now.ID['481416ab4772cb1016bda144846d432d'],
+    table: 'sys_pd_snapshot',
+    data: {
+        access: 'public',
+        derivatives:
+            '{"table":"sys_pd_snapshot","id":"481416ab4772cb1016bda144846d432d","name":"derivatives","type":"com.snc.pd.model.serialization.DerivativeFetcher"}',
+        name: 'entrust_identity_verification_setup',
+        process_definition:
+            '{"table":"sys_pd_snapshot","id":"481416ab4772cb1016bda144846d432d","name":"process_definition","type":"com.snc.pd.model.ProcessDefinition"}',
+        process_dependencies:
+            '{"table":"sys_pd_snapshot","id":"481416ab4772cb1016bda144846d432d","name":"process_dependencies","type":"com.snc.pd.model.dependency.InstructionBasedProcessDependenciesCollection"}',
+        process_plan:
+            '{"table":"sys_pd_snapshot","id":"481416ab4772cb1016bda144846d432d","name":"process_plan","type":"com.snc.process_flow.engine.ProcessPlan"}',
+        source: '2cdd2a9f47f20b1016bda144846d43c6',
+    },
+})
+Record({
+    $id: Now.ID['330806731bbacb105fdb2f05604bcb57'],
+    table: 'sys_pd_snapshot',
+    data: {
+        access: 'public',
+        derivatives:
+            '{"table":"sys_pd_snapshot","id":"330806731bbacb105fdb2f05604bcb57","name":"derivatives","type":"com.snc.pd.model.serialization.DerivativeFetcher"}',
+        name: 'entrust_identity_verification_setup',
+        process_definition:
+            '{"table":"sys_pd_snapshot","id":"330806731bbacb105fdb2f05604bcb57","name":"process_definition","type":"com.snc.pd.model.ProcessDefinition"}',
+        process_dependencies:
+            '{"table":"sys_pd_snapshot","id":"330806731bbacb105fdb2f05604bcb57","name":"process_dependencies","type":"com.snc.pd.model.dependency.InstructionBasedProcessDependenciesCollection"}',
+        process_plan:
+            '{"table":"sys_pd_snapshot","id":"330806731bbacb105fdb2f05604bcb57","name":"process_plan","type":"com.snc.process_flow.engine.ProcessPlan"}',
+        source: '2cdd2a9f47f20b1016bda144846d43c6',
+    },
+})

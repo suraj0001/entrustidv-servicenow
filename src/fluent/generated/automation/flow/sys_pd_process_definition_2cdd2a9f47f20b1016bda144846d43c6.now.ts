@@ -60,3 +60,63 @@ Record({
         table: 'help_user_interaction',
     },
 })
+Record({
+    $id: Now.ID['081416ab4772cb1016bda144846d432b'],
+    table: 'sys_trigger_runner_mapping',
+    data: {
+        active: 'true',
+        data: '{"trigger_on_unique_change":"false","parent_record":{"elementMapping":"{{triggerRecord}}","variableValue":"{{triggerRecord}}","elementMappingOrVariableValue":"{{triggerRecord}}"},"run_trigger":"run_once"}',
+        identifier: '60dd2a9f47f20b1016bda144846d43c7',
+        identifier_type: 'playbook',
+        runner: 'PDTriggerRunner',
+        trigger: 'c01416ab4772cb1016bda144846d432a',
+    },
+})
+Record({
+    $id: Now.ID['c01416ab4772cb1016bda144846d432a'],
+    table: 'sys_flow_record_trigger',
+    data: {
+        active: 'true',
+        condition: 'guidance.process_definition=2cdd2a9f47f20b1016bda144846d43c6',
+        on_delete: 'false',
+        on_insert: 'true',
+        on_update: 'true',
+        run_flow_in: 'background',
+        run_on_extended: 'false',
+        run_when_setting: 'both',
+        run_when_user_setting: 'any',
+        sys_domain: 'global',
+        sys_domain_path: '/',
+        table: 'help_user_interaction',
+    },
+})
+Record({
+    $id: Now.ID['ff0806731bbacb105fdb2f05604bcb54'],
+    table: 'sys_trigger_runner_mapping',
+    data: {
+        active: 'true',
+        data: '{"trigger_on_unique_change":"false","parent_record":{"elementMapping":"{{triggerRecord}}","variableValue":"{{triggerRecord}}","elementMappingOrVariableValue":"{{triggerRecord}}"},"run_trigger":"run_once"}',
+        identifier: '60dd2a9f47f20b1016bda144846d43c7',
+        identifier_type: 'playbook',
+        runner: 'PDTriggerRunner',
+        trigger: 'bb0806731bbacb105fdb2f05604bcb53',
+    },
+})
+Record({
+    $id: Now.ID['bb0806731bbacb105fdb2f05604bcb53'],
+    table: 'sys_flow_record_trigger',
+    data: {
+        active: 'true',
+        condition: 'guidance.process_definition=2cdd2a9f47f20b1016bda144846d43c6',
+        on_delete: 'false',
+        on_insert: 'true',
+        on_update: 'true',
+        run_flow_in: 'background',
+        run_on_extended: 'false',
+        run_when_setting: 'both',
+        run_when_user_setting: 'any',
+        sys_domain: 'global',
+        sys_domain_path: '/',
+        table: 'help_user_interaction',
+    },
+})
