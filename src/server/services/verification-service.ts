@@ -18,6 +18,7 @@ export interface StartVerificationResult {
     verificationRequestId: string
     workflowRunId: string
     smartCaptureUrl: string
+    status: string
 }
 
 export function startVerification(
@@ -125,7 +126,8 @@ export function startVerification(
     return {
         verificationRequestId,
         workflowRunId: workflowRun.workflowRunId,
-        smartCaptureUrl: workflowRun.smartCaptureUrl
+        smartCaptureUrl: workflowRun.smartCaptureUrl,
+        status: workflowRun.status
     }
 }
 
