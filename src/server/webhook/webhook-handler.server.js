@@ -27,11 +27,36 @@
           return;
       }
 
-      var webhookValidator = require(
+      var configurationSettinngs = require(
+            '../services/configuration-service.ts'
+        );
+
+        var webhookSecret =
+            configurationSettinngs.getWebhookSecret();
+
+        if (!webhookSecret) {
+            gs.error(
+                '[EntrustWebhook] Webhook secret is not configured'
+            );
+
+            response.setStatus(500);
+            response.setBody({
+                success: false,
+                message: 'Webhook is not configured'
+            });
+            return;
+        }
+
+      var webhookSignatureValidator = require(
           './webhook-signature-validator.ts'
       );
 
-      var isValid = webhookValidator.validate(rawBody, signature);
+      var isValid =
+            webhookSignatureValidator.validate(
+                rawBody,
+                signature,
+                webhookSecret
+            );
 
       if (!isValid) {
           gs.warn('[EntrustWebhook] Invalid webhook signature');

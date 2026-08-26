@@ -1,234 +1,161 @@
-import { GlideCertificateEncryption } from '@servicenow/glide'
+import { GlideCertificateEncryption, gs } from '@servicenow/glide'
 
-export function verifyWebhookSignature(
+const HMAC_ALGORITHM = 'HmacSHA256'
+const SHA256_HEX_LENGTH = 64
+
+export function validate(
     rawBody: string,
-    signatureHex: string,
-    secret: string,
+    signature: string,
+    webhookSecret: string
 ): boolean {
-    if (!rawBody || !signatureHex || !secret) {
+    if (!rawBody || !signature || !webhookSecret) {
         return false
     }
 
-    const receivedSignature = signatureHex
-        .trim()
-        .toLowerCase()
+    try {
+        const receivedSignature = signature.trim().toLowerCase()
 
-    if (!/^[0-9a-f]{64}$/.test(receivedSignature)) {
-        return false
-    }
+        // SHA-256 signature should be exactly 64 hexadecimal characters.
+        if (
+            receivedSignature.length !== SHA256_HEX_LENGTH ||
+            !/^[0-9a-f]+$/.test(receivedSignature)
+        ) {
+            return false
+        }
 
-    const encodedSecret = base64Encode(secret)
+        /*
+         * GlideCertificateEncryption.generateMac() expects
+         * the HMAC key to be Base64 encoded.
+         */
+        const encodedSecret = gs.base64Encode(webhookSecret)
 
-    const generatedBase64 =
-        GlideCertificateEncryption.generateMac(
+        const mac = new GlideCertificateEncryption()
+
+        /*
+         * ServiceNow returns the generated MAC as Base64.
+         */
+        const expectedSignatureBase64 = mac.generateMac(
             encodedSecret,
-            'HmacSHA256',
-            rawBody,
+            HMAC_ALGORITHM,
+            rawBody
         )
 
-    const generatedHex =
-        base64ToHex(generatedBase64).toLowerCase()
+        if (!expectedSignatureBase64) {
+            return false
+        }
 
-    return constantTimeEquals(
-        generatedHex,
-        receivedSignature,
-    )
+        /*
+         * Entrust sends X-SHA2-Signature as hexadecimal,
+         * therefore convert ServiceNow's Base64 MAC to hex.
+         */
+        const expectedSignature =
+            base64ToHex(expectedSignatureBase64)
+
+        return constantTimeEquals(
+            expectedSignature,
+            receivedSignature
+        )
+    } catch (error) {
+        gs.error(
+            `[WebhookSignatureValidator] Signature validation failed: ${String(error)}`
+        )
+
+        return false
+    }
 }
 
+/**
+ * Converts a standard Base64 encoded byte sequence to hexadecimal.
+ *
+ * We do this manually because CertificateEncryption.generateMac()
+ * returns Base64, while Entrust provides its signature as hex.
+ */
+function base64ToHex(base64: string): string {
+    const alphabet =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+    const input = base64.replace(/\s/g, '')
+
+    let hex = ''
+
+    for (let i = 0; i < input.length; i += 4) {
+        const char1 = input.charAt(i)
+        const char2 = input.charAt(i + 1)
+        const char3 = input.charAt(i + 2)
+        const char4 = input.charAt(i + 3)
+
+        const enc1 = alphabet.indexOf(char1)
+        const enc2 = alphabet.indexOf(char2)
+
+        const enc3 =
+            char3 === '=' ? 0 : alphabet.indexOf(char3)
+
+        const enc4 =
+            char4 === '=' ? 0 : alphabet.indexOf(char4)
+
+        if (
+            enc1 < 0 ||
+            enc2 < 0 ||
+            (char3 !== '=' && enc3 < 0) ||
+            (char4 !== '=' && enc4 < 0)
+        ) {
+            throw new Error('Invalid Base64 MAC')
+        }
+
+        const byte1 =
+            (enc1 << 2) |
+            (enc2 >> 4)
+
+        hex += byteToHex(byte1)
+
+        if (char3 !== '=') {
+            const byte2 =
+                ((enc2 & 15) << 4) |
+                (enc3 >> 2)
+
+            hex += byteToHex(byte2)
+        }
+
+        if (char4 !== '=') {
+            const byte3 =
+                ((enc3 & 3) << 6) |
+                enc4
+
+            hex += byteToHex(byte3)
+        }
+    }
+
+    return hex
+}
+
+function byteToHex(value: number): string {
+    return (value & 0xff)
+        .toString(16)
+        .padStart(2, '0')
+}
+
+/**
+ * Constant-time comparison for two fixed-length SHA-256
+ * hexadecimal signatures.
+ */
 function constantTimeEquals(
-    a: string,
-    b: string,
+    expected: string,
+    actual: string
 ): boolean {
-    if (a.length !== b.length) {
+    if (
+        expected.length !== SHA256_HEX_LENGTH ||
+        actual.length !== SHA256_HEX_LENGTH
+    ) {
         return false
     }
 
     let difference = 0
 
-    for (let i = 0; i < a.length; i++) {
+    for (let i = 0; i < SHA256_HEX_LENGTH; i++) {
         difference |=
-            a.charCodeAt(i) ^
-            b.charCodeAt(i)
+            expected.charCodeAt(i) ^
+            actual.charCodeAt(i)
     }
 
     return difference === 0
-}
-
-function base64Encode(value: string): string {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-    const bytes = utf8Bytes(value)
-
-    let result = ''
-
-    for (let i = 0; i < bytes.length; i += 3) {
-        const byte1 = bytes[i]
-        const byte2 =
-            i + 1 < bytes.length
-                ? bytes[i + 1]
-                : 0
-
-        const byte3 =
-            i + 2 < bytes.length
-                ? bytes[i + 2]
-                : 0
-
-        result += chars.charAt(byte1 >> 2)
-
-        result += chars.charAt(
-            ((byte1 & 3) << 4) |
-                (byte2 >> 4),
-        )
-
-        if (i + 1 < bytes.length) {
-            result += chars.charAt(
-                ((byte2 & 15) << 2) |
-                    (byte3 >> 6),
-            )
-        } else {
-            result += '='
-        }
-
-        if (i + 2 < bytes.length) {
-            result += chars.charAt(
-                byte3 & 63,
-            )
-        } else {
-            result += '='
-        }
-    }
-
-    return result
-}
-
-function utf8Bytes(value: string): number[] {
-    const bytes: number[] = []
-
-    for (let i = 0; i < value.length; i++) {
-        let code = value.charCodeAt(i)
-
-        if (code < 0x80) {
-            bytes.push(code)
-            continue
-        }
-
-        if (code < 0x800) {
-            bytes.push(
-                0xc0 | (code >> 6),
-                0x80 | (code & 0x3f),
-            )
-
-            continue
-        }
-
-        if (
-            code >= 0xd800 &&
-            code <= 0xdbff &&
-            i + 1 < value.length
-        ) {
-            const low =
-                value.charCodeAt(i + 1)
-
-            if (
-                low >= 0xdc00 &&
-                low <= 0xdfff
-            ) {
-                i++
-
-                code =
-                    0x10000 +
-                    ((code - 0xd800) << 10) +
-                    (low - 0xdc00)
-
-                bytes.push(
-                    0xf0 | (code >> 18),
-                    0x80 |
-                        ((code >> 12) & 0x3f),
-                    0x80 |
-                        ((code >> 6) & 0x3f),
-                    0x80 |
-                        (code & 0x3f),
-                )
-
-                continue
-            }
-        }
-
-        bytes.push(
-            0xe0 | (code >> 12),
-            0x80 | ((code >> 6) & 0x3f),
-            0x80 | (code & 0x3f),
-        )
-    }
-
-    return bytes
-}
-
-function base64ToHex(
-    base64: string,
-): string {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-    let result = ''
-
-    for (let i = 0; i < base64.length; i += 4) {
-        const c1 =
-            chars.indexOf(base64.charAt(i))
-
-        const c2 =
-            chars.indexOf(base64.charAt(i + 1))
-
-        const char3 =
-            base64.charAt(i + 2)
-
-        const char4 =
-            base64.charAt(i + 3)
-
-        const c3 =
-            char3 === '='
-                ? 0
-                : chars.indexOf(char3)
-
-        const c4 =
-            char4 === '='
-                ? 0
-                : chars.indexOf(char4)
-
-        const byte1 =
-            (c1 << 2) |
-            (c2 >> 4)
-
-        result += byteToHex(byte1)
-
-        if (char3 !== '=') {
-            const byte2 =
-                ((c2 & 15) << 4) |
-                (c3 >> 2)
-
-            result += byteToHex(byte2)
-        }
-
-        if (char4 !== '=') {
-            const byte3 =
-                ((c3 & 3) << 6) |
-                c4
-
-            result += byteToHex(byte3)
-        }
-    }
-
-    return result
-}
-
-function byteToHex(
-    value: number,
-): string {
-    const hex =
-        (value & 255).toString(16)
-
-    return hex.length === 1
-        ? '0' + hex
-        : hex
 }
