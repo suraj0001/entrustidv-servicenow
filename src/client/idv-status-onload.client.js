@@ -29,6 +29,11 @@ window.EntrustIdv =
             startedAt = new Date().getTime();
             errorCount = 0;
 
+            console.log(
+                '[idv-status-onload.client.js] Polling started: workflowRunId=' +
+                    runId
+            );
+
             scheduleNextPoll();
         }
 
@@ -90,9 +95,28 @@ window.EntrustIdv =
                 );
 
                 if (!result.shouldPoll) {
+                    console.log(
+                        '[idv-status-onload.client.js] Polling completed (terminal status): workflowRunId=' +
+                            requestedWorkflowRunId +
+                            ', status=' +
+                            result.status +
+                            ', displayStatus=' +
+                            (result.displayStatus ||
+                                formatIdvStatus(result.status))
+                    );
                     stopPolling();
                     return;
                 }
+
+                console.log(
+                    '[idv-status-onload.client.js] Polling in progress: workflowRunId=' +
+                        requestedWorkflowRunId +
+                        ', status=' +
+                        result.status +
+                        ', displayStatus=' +
+                        (result.displayStatus ||
+                            formatIdvStatus(result.status))
+                );
 
                 scheduleNextPoll();
             });
@@ -107,6 +131,12 @@ window.EntrustIdv =
                 elapsed >=
                 IDV_MAX_POLL_DURATION_MS
             ) {
+                console.log(
+                    '[idv-status-onload.client.js] Polling ended (max duration ' +
+                        IDV_MAX_POLL_DURATION_MS / 1000 +
+                        's reached): workflowRunId=' +
+                        workflowRunId
+                );
                 stopPolling();
                 return;
             }
@@ -124,6 +154,12 @@ window.EntrustIdv =
                 errorCount >=
                 IDV_MAX_CONSECUTIVE_ERRORS
             ) {
+                console.log(
+                    '[idv-status-onload.client.js] Polling ended (max consecutive errors ' +
+                        IDV_MAX_CONSECUTIVE_ERRORS +
+                        ' reached): workflowRunId=' +
+                        workflowRunId
+                );
                 stopPolling();
                 return;
             }
@@ -227,8 +263,27 @@ function loadInitialIdvStatus(
             result.shouldPoll &&
             result.workflowRunId
         ) {
+            console.log(
+                '[idv-status-onload.client.js] Initial status requires polling: workflowRunId=' +
+                    result.workflowRunId +
+                    ', status=' +
+                    result.status +
+                    ', displayStatus=' +
+                    (result.displayStatus ||
+                        formatIdvStatus(result.status))
+            );
             window.EntrustIdv.startPolling(
                 result.workflowRunId
+            );
+        } else {
+            console.log(
+                '[idv-status-onload.client.js] Initial status loaded, polling not required: workflowRunId=' +
+                    (result.workflowRunId || 'none') +
+                    ', status=' +
+                    result.status +
+                    ', displayStatus=' +
+                    (result.displayStatus ||
+                        formatIdvStatus(result.status))
             );
         }
     });

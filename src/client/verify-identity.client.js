@@ -49,7 +49,13 @@ function executeVerifyIdentity() {
         g_form.clearMessages();
         g_form.addInfoMessage('Identity verification started.');
 
-       if (result.workflowRunId && window.EntrustIdv && typeof window.EntrustIdv.startPolling === 'function') {
+        if (result.workflowRunId && window.EntrustIdv && typeof window.EntrustIdv.startPolling === 'function') {
+            console.log(
+                '[verify-identity.client.js] Triggering polling: workflowRunId=' +
+                    result.workflowRunId +
+                    ', status=' +
+                    result.status
+            );
             window.EntrustIdv.startPolling(result.workflowRunId);
         }
     });
