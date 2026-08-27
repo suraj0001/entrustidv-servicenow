@@ -31,9 +31,6 @@
         "./src/server/services/configuration-service.ts"
         );
 
-        gs.info(
-            '[EntrustWebhook] configuration file is found')
-
         var webhookSecret =
             configurationSettings.getWebhookSecret();
 
@@ -90,7 +87,7 @@ if (!validSignature) {
       }
 
       var webhookService = require(
-          '../services/webhook-service.ts'
+        "./src/server/services/webhook-service.ts"
       );
 
       webhookService.processWebhook(event);

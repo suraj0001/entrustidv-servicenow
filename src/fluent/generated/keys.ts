@@ -122,6 +122,10 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: '3968b7f547b6cf1016bda144846d437d'
                     }
+                    '3af7fe001b8b83105fdb2f05604bcb32': {
+                        table: 'sys_scope_privilege'
+                        id: '3af7fe001b8b83105fdb2f05604bcb32'
+                    }
                     '3b0806731bbacb105fdb2f05604bcb5b': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '3b0806731bbacb105fdb2f05604bcb5b'
@@ -154,6 +158,10 @@ declare global {
                     '4451f5c31b224b105fdb2f05604bcbaa': {
                         table: 'sys_trigger_runner_mapping'
                         id: '4451f5c31b224b105fdb2f05604bcbaa'
+                    }
+                    '4685344c1b8743105fdb2f05604bcb78': {
+                        table: 'sys_scope_privilege'
+                        id: '4685344c1b8743105fdb2f05604bcb78'
                     }
                     '481416ab4772cb1016bda144846d432d': {
                         table: 'sys_pd_snapshot'
@@ -514,6 +522,10 @@ declare global {
                         table: 'sys_ws_definition'
                         id: '65a516183e7b4c82a573a4e7245ca758'
                     }
+                    'entrust-webhook-signature-validator': {
+                        table: 'sys_script_include'
+                        id: 'ff0199dfa69d44b69ff0b9cf06bfdd1f'
+                    }
                     f0a13caf47be4b1016bda144846d435f: {
                         table: 'sys_scope_privilege'
                         id: 'f0a13caf47be4b1016bda144846d435f'
@@ -703,10 +715,16 @@ declare global {
                     'src_server_webhook_entrust-webhook-hmac-bridge_server_js': {
                         table: 'sys_module'
                         id: 'dd79d69636d44c7dbbdd13d9d8fc7e68'
+                        deleted: true
                     }
                     'src_server_webhook_entrust-webhook-hmac-global_server_js': {
                         table: 'sys_module'
                         id: '118ee902a05d49dcbbdd0dd3a78a6392'
+                        deleted: true
+                    }
+                    'src_server_webhook_entrust-webhook-signature-validator_server_js': {
+                        table: 'sys_module'
+                        id: 'ce0a5c58dab948568cc45cee51c182e7'
                     }
                     'src_server_webhook_webhook-handler_server_js': {
                         table: 'sys_module'
@@ -715,6 +733,7 @@ declare global {
                     'src_server_webhook_webhook-signature-validator_ts': {
                         table: 'sys_module'
                         id: 'da9f6a043bf04751b025301945438744'
+                        deleted: true
                     }
                     'src_server_webhook_webhook-validator_ts': {
                         table: 'sys_module'
