@@ -50,32 +50,29 @@
             return;
         }
 
-      var webhookSignatureValidator = require(
-        "./src/server/webhook/webhook-signature-validator.ts"
-      );
+     var signatureValidator =
+    new EntrustWebhookSignatureValidator();
 
-      gs.info(
-        '[EntrustWebhook] validation file is found'
+var validSignature =
+    signatureValidator.validate(
+        rawBody,
+        signature,
+        webhookSecret
     );
 
+if (!validSignature) {
+    gs.warn(
+        '[EntrustWebhook] Webhook signature validation failed'
+    );
 
-      var isValid =
-            webhookSignatureValidator.validate(
-                rawBody,
-                signature,
-                webhookSecret
-            );
+    response.setStatus(401);
 
-      if (!isValid) {
-          gs.warn('[EntrustWebhook] Invalid webhook signature');
+    response.setBody({
+        error: 'Invalid webhook signature'
+    });
 
-          response.setStatus(401);
-          response.setBody({
-              success: false,
-              message: 'Invalid webhook signature'
-          });
-          return;
-      }
+    return;
+}
 
       var event;
 

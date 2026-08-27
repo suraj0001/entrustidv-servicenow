@@ -700,6 +700,14 @@ declare global {
                         table: 'sys_module'
                         id: 'c8619c445149452f83541a417fe946d1'
                     }
+                    'src_server_webhook_entrust-webhook-hmac-bridge_server_js': {
+                        table: 'sys_module'
+                        id: 'dd79d69636d44c7dbbdd13d9d8fc7e68'
+                    }
+                    'src_server_webhook_entrust-webhook-hmac-global_server_js': {
+                        table: 'sys_module'
+                        id: '118ee902a05d49dcbbdd0dd3a78a6392'
+                    }
                     'src_server_webhook_webhook-handler_server_js': {
                         table: 'sys_module'
                         id: '889c50f288a44fdfb3234586d85aeb01'
