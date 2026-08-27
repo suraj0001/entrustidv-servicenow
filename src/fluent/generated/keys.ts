@@ -699,6 +699,10 @@ declare global {
                         table: 'sys_module'
                         id: 'b8e43f020cd84213bca75de0c930d6ab'
                     }
+                    'src_server_services_verification-status-service_ts': {
+                        table: 'sys_module'
+                        id: '92c7bc16609f467dac406b82a74cddbe'
+                    }
                     'src_server_services_webhook-service_ts': {
                         table: 'sys_module'
                         id: '814413ec0df24bf790172612d7063248'

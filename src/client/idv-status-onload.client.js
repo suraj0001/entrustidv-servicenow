@@ -1,53 +1,54 @@
 /* eslint-disable */
 
 function onLoad() {
-  var STATUS_FIELD = "x_entru_entrustidv_verification_status";
+  var STATUS_FIELD =
+    "x_entru_entrustidv_verification_status";
 
   var POLL_INTERVAL_MS = 5000;
-  var MAX_POLL_DURATION_MS = 10 * 60 * 1000;
 
-  var TERMINAL_STATUSES = {
-    approved: true,
-    declined: true,
-    abandoned: true,
-    error: true,
-  };
+  var MAX_POLL_DURATION_MS =
+    10 * 60 * 1000;
 
-  var STATUS_LABELS = {
-    awaiting: "Pending",
-    pending: "Pending",
-    processing: "In Process",
-    review: "Review Required",
-    awaiting_input: "Awaiting Input",
-    approved: "Approved",
-    declined: "Declined",
-    abandoned: "Abandoned",
-    error: "Error",
-    not_started: "Not Started",
-};
+  var MAX_CONSECUTIVE_ERRORS = 3;
 
-  var sourceTable = g_form.getTableName();
-  var sourceSysId = g_form.getUniqueValue();
-  var pollingStartedAt = new Date().getTime();
+  var sourceTable =
+    g_form.getTableName();
+
+  var sourceSysId =
+    g_form.getUniqueValue();
+
+  var workflowRunId = null;
+
+  var pollingStartedAt =
+    new Date().getTime();
+
+  var consecutiveErrors = 0;
 
   if (!sourceSysId) {
     return;
   }
 
-  g_form.setReadOnly(STATUS_FIELD, true);
+  g_form.setReadOnly(
+    STATUS_FIELD,
+    true
+  );
 
-  g_form.setValue(STATUS_FIELD, "Not Started");
+  loadInitialStatus();
 
-  loadStatus();
-
-  function loadStatus() {
+  /*
+   * First request:
+   *
+   * Find the latest verification attempt
+   * using source table + source record.
+   */
+  function loadInitialStatus() {
     var ga = new GlideAjax(
       "x_entru_entrustidv.IdvStatusAjax"
     );
 
     ga.addParam(
       "sysparm_name",
-      "getStatus"
+      "getLatestStatus"
     );
 
     ga.addParam(
@@ -60,59 +61,160 @@ function onLoad() {
       sourceSysId
     );
 
-    ga.getXMLAnswer(function (answer) {
-      if (!answer) {
-        return;
-      }
+    ga.getXMLAnswer(
+      function (answer) {
+        var result =
+          parseResult(answer);
 
-      var result;
+        if (!result) {
+          handlePollingError(
+            loadInitialStatus
+          );
+          return;
+        }
 
-      try {
-        result = JSON.parse(answer);
-      } catch (e) {
-        return;
-      }
+        consecutiveErrors = 0;
 
-      if (!result.success) {
-        return;
-      }
-
-      applyStatus(result.status);
-
-      if (shouldContinuePolling(result.status)) {
-        setTimeout(
-          loadStatus,
-          POLL_INTERVAL_MS
+        applyStatus(
+          result.displayStatus
         );
+
+        workflowRunId =
+          result.workflowRunId;
+
+        if (
+          result.shouldPoll &&
+          workflowRunId
+        ) {
+          scheduleNextPoll(
+            pollWorkflowRun
+          );
+        }
       }
-    });
-  }
-
-  function applyStatus(status) {
-    var label =
-      STATUS_LABELS[status] ||
-      status ||
-      "Not Started";
-
-    g_form.setValue(
-      STATUS_FIELD,
-      label
     );
   }
 
-  function shouldContinuePolling(status) {
-    if (!status || status === "not_started") {
-      return false;
+  /*
+   * Subsequent requests:
+   *
+   * Poll the exact verification attempt
+   * using workflow_run_id.
+   */
+  function pollWorkflowRun() {
+    if (!workflowRunId) {
+      return;
     }
 
-    if (TERMINAL_STATUSES[status]) {
-      return false;
+    var ga = new GlideAjax(
+      "x_entru_entrustidv.IdvStatusAjax"
+    );
+
+    ga.addParam(
+      "sysparm_name",
+      "getStatusByWorkflowRunId"
+    );
+
+    ga.addParam(
+      "sysparm_workflow_run_id",
+      workflowRunId
+    );
+
+    ga.getXMLAnswer(
+      function (answer) {
+        var result =
+          parseResult(answer);
+
+        if (!result) {
+          handlePollingError(
+            pollWorkflowRun
+          );
+          return;
+        }
+
+        consecutiveErrors = 0;
+
+        applyStatus(
+          result.displayStatus
+        );
+
+        if (result.shouldPoll) {
+          scheduleNextPoll(
+            pollWorkflowRun
+          );
+        }
+      }
+    );
+  }
+
+  function parseResult(answer) {
+    if (!answer) {
+      return null;
     }
 
+    try {
+      var result =
+        JSON.parse(answer);
+
+      if (
+        !result ||
+        !result.success
+      ) {
+        return null;
+      }
+
+      return result;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function applyStatus(
+    displayStatus
+  ) {
+    if (!displayStatus) {
+      return;
+    }
+
+    g_form.setValue(
+      STATUS_FIELD,
+      displayStatus
+    );
+  }
+
+  function scheduleNextPoll(
+    callback
+  ) {
     var elapsed =
       new Date().getTime() -
       pollingStartedAt;
 
-    return elapsed < MAX_POLL_DURATION_MS;
+    if (
+      elapsed >=
+      MAX_POLL_DURATION_MS
+    ) {
+      return;
+    }
+
+    setTimeout(
+      callback,
+      POLL_INTERVAL_MS
+    );
+  }
+
+  function handlePollingError(
+    retryFunction
+  ) {
+    consecutiveErrors++;
+
+    if (
+      consecutiveErrors >=
+      MAX_CONSECUTIVE_ERRORS
+    ) {
+      return;
+    }
+
+    scheduleNextPoll(
+      retryFunction
+    );
   }
 }
