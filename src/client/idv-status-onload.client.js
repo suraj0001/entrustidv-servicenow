@@ -86,8 +86,30 @@ function onLoad() {
           result.shouldPoll &&
           workflowRunId
         ) {
+          console.log(
+            "[Entrust IDV] Polling started: workflowRunId=" +
+              workflowRunId +
+              ", status=" +
+              result.status +
+              ", displayStatus=" +
+              result.displayStatus +
+              ", table=" +
+              sourceTable +
+              ", recordId=" +
+              sourceSysId
+          );
+
           scheduleNextPoll(
             pollWorkflowRun
+          );
+        } else {
+          console.log(
+            "[Entrust IDV] Polling not required: workflowRunId=" +
+              workflowRunId +
+              ", status=" +
+              result.status +
+              ", displayStatus=" +
+              result.displayStatus
           );
         }
       }
@@ -138,8 +160,26 @@ function onLoad() {
         );
 
         if (result.shouldPoll) {
+          console.log(
+            "[Entrust IDV] Polling in progress: workflowRunId=" +
+              workflowRunId +
+              ", status=" +
+              result.status +
+              ", displayStatus=" +
+              result.displayStatus
+          );
+
           scheduleNextPoll(
             pollWorkflowRun
+          );
+        } else {
+          console.log(
+            "[Entrust IDV] Polling completed: workflowRunId=" +
+              workflowRunId +
+              ", finalStatus=" +
+              result.status +
+              ", displayStatus=" +
+              result.displayStatus
           );
         }
       }
@@ -192,6 +232,12 @@ function onLoad() {
       elapsed >=
       MAX_POLL_DURATION_MS
     ) {
+      console.log(
+        "[Entrust IDV] Polling stopped: maximum duration of " +
+          MAX_POLL_DURATION_MS / 1000 +
+          "s reached, workflowRunId=" +
+          workflowRunId
+      );
       return;
     }
 
@@ -210,6 +256,12 @@ function onLoad() {
       consecutiveErrors >=
       MAX_CONSECUTIVE_ERRORS
     ) {
+      console.log(
+        "[Entrust IDV] Polling stopped: maximum consecutive errors (" +
+          MAX_CONSECUTIVE_ERRORS +
+          ") reached, workflowRunId=" +
+          workflowRunId
+      );
       return;
     }
 
