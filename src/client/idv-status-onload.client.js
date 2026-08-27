@@ -1,5 +1,7 @@
 /* eslint-disable */
 
+window.EntrustIdv = window.EntrustIdv || {};
+
 var IDV_STATUS_FIELD =
     'x_entru_entrustidv_verification_status';
 
@@ -7,10 +9,10 @@ var IDV_POLL_INTERVAL_MS = 5000;
 var IDV_MAX_POLL_DURATION_MS = 10 * 60 * 1000;
 var IDV_MAX_CONSECUTIVE_ERRORS = 3;
 
-var idvPollingTimer = null;
-var idvPollingStartedAt = 0;
-var idvPollingErrors = 0;
-var idvPollingWorkflowRunId = null;
+window.EntrustIdv.timer = null;
+window.EntrustIdv.startedAt = 0;
+window.EntrustIdv.errorCount = 0;
+window.EntrustIdv.workflowRunId = null;
 
 function onLoad() {
     var sourceTable = g_form.getTableName();
@@ -39,7 +41,7 @@ function loadInitialIdvStatus(
         'x_entru_entrustidv.IdvStatusAjax'
     );
 
-   ga.addParam(
+    ga.addParam(
         'sysparm_name',
         'getLatestStatus'
     );
@@ -55,9 +57,8 @@ function loadInitialIdvStatus(
     );
 
     ga.getXMLAnswer(function (answer) {
-        var result = parseIdvStatusResponse(
-            answer
-        );
+        var result =
+            parseIdvStatusResponse(answer);
 
         if (!result) {
             return;
@@ -72,50 +73,41 @@ function loadInitialIdvStatus(
             result.shouldPoll &&
             result.workflowRunId
         ) {
-            startIdvStatusPolling(
+            window.EntrustIdv.startPolling(
                 result.workflowRunId
             );
         }
     });
 }
 
-/*
- * Shared function.
- *
- * Called by:
- * 1. onLoad when an active verification already exists
- * 2. Verify Identity after a new workflow is created
- */
-function startIdvStatusPolling(
+window.EntrustIdv.startPolling = function (
     workflowRunId
 ) {
     if (!workflowRunId) {
         return;
     }
 
-    /*
-     * Stop any previous polling loop.
-     * Important when another verification attempt
-     * is started from the same form.
-     */
-    if (idvPollingTimer) {
-        clearTimeout(idvPollingTimer);
-        idvPollingTimer = null;
+    if (window.EntrustIdv.timer) {
+        clearTimeout(
+            window.EntrustIdv.timer
+        );
+
+        window.EntrustIdv.timer = null;
     }
 
-    idvPollingWorkflowRunId =
+    window.EntrustIdv.workflowRunId =
         workflowRunId;
 
-    idvPollingStartedAt =
+    window.EntrustIdv.startedAt =
         new Date().getTime();
 
-    idvPollingErrors = 0;
+    window.EntrustIdv.errorCount = 0;
 
     scheduleNextIdvPoll();
-}
+};
 
 function pollIdvWorkflowRun() {
-    if (!idvPollingWorkflowRunId) {
+    if (!window.EntrustIdv.workflowRunId) {
         return;
     }
 
@@ -130,20 +122,19 @@ function pollIdvWorkflowRun() {
 
     ga.addParam(
         'sysparm_workflow_run_id',
-        idvPollingWorkflowRunId
+        window.EntrustIdv.workflowRunId
     );
 
     ga.getXMLAnswer(function (answer) {
-        var result = parseIdvStatusResponse(
-            answer
-        );
+        var result =
+            parseIdvStatusResponse(answer);
 
         if (!result) {
             handleIdvPollingError();
             return;
         }
 
-        idvPollingErrors = 0;
+        window.EntrustIdv.errorCount = 0;
 
         applyIdvStatus(
             result.displayStatus ||
@@ -162,7 +153,7 @@ function pollIdvWorkflowRun() {
 function scheduleNextIdvPoll() {
     var elapsed =
         new Date().getTime() -
-        idvPollingStartedAt;
+        window.EntrustIdv.startedAt;
 
     if (
         elapsed >=
@@ -172,17 +163,18 @@ function scheduleNextIdvPoll() {
         return;
     }
 
-    idvPollingTimer = setTimeout(
-        pollIdvWorkflowRun,
-        IDV_POLL_INTERVAL_MS
-    );
+    window.EntrustIdv.timer =
+        setTimeout(
+            pollIdvWorkflowRun,
+            IDV_POLL_INTERVAL_MS
+        );
 }
 
 function handleIdvPollingError() {
-    idvPollingErrors++;
+    window.EntrustIdv.errorCount++;
 
     if (
-        idvPollingErrors >=
+        window.EntrustIdv.errorCount >=
         IDV_MAX_CONSECUTIVE_ERRORS
     ) {
         stopIdvStatusPolling();
@@ -193,14 +185,16 @@ function handleIdvPollingError() {
 }
 
 function stopIdvStatusPolling() {
-    if (idvPollingTimer) {
-        clearTimeout(idvPollingTimer);
+    if (window.EntrustIdv.timer) {
+        clearTimeout(
+            window.EntrustIdv.timer
+        );
     }
 
-    idvPollingTimer = null;
-    idvPollingWorkflowRunId = null;
-    idvPollingStartedAt = 0;
-    idvPollingErrors = 0;
+    window.EntrustIdv.timer = null;
+    window.EntrustIdv.workflowRunId = null;
+    window.EntrustIdv.startedAt = 0;
+    window.EntrustIdv.errorCount = 0;
 }
 
 function applyIdvStatus(displayStatus) {

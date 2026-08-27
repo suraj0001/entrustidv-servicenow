@@ -46,11 +46,19 @@ function executeVerifyIdentity() {
             );
         }
 
-        if (result.workflowRunId) {
-        startIdvStatusPolling(result.workflowRunId);}
-
         g_form.clearMessages();
         g_form.addInfoMessage('Identity verification started.');
+
+        if (
+    result.workflowRunId &&
+    window.EntrustIdv &&
+    typeof window.EntrustIdv.startPolling === 'function'
+) {
+    window.EntrustIdv.startPolling(
+        result.workflowRunId
+    );
+}
+
     });
 }
 
