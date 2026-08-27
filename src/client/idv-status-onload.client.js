@@ -1,7 +1,5 @@
 /* eslint-disable */
 
-window.EntrustIdv = window.EntrustIdv || {};
-
 var IDV_STATUS_FIELD =
     'x_entru_entrustidv_verification_status';
 
@@ -9,14 +7,157 @@ var IDV_POLL_INTERVAL_MS = 5000;
 var IDV_MAX_POLL_DURATION_MS = 10 * 60 * 1000;
 var IDV_MAX_CONSECUTIVE_ERRORS = 3;
 
-window.EntrustIdv.timer = null;
-window.EntrustIdv.startedAt = 0;
-window.EntrustIdv.errorCount = 0;
-window.EntrustIdv.workflowRunId = null;
+window.EntrustIdv =
+    window.EntrustIdv ||
+    (function () {
+        var timer = null;
+        var startedAt = 0;
+        var errorCount = 0;
+        var workflowRunId = null;
+
+        function startPolling(runId) {
+            if (!runId) {
+                return;
+            }
+
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+
+            workflowRunId = runId;
+            startedAt = new Date().getTime();
+            errorCount = 0;
+
+            scheduleNextPoll();
+        }
+
+        function pollWorkflowRun() {
+            if (!workflowRunId) {
+                return;
+            }
+
+            /*
+             * Remember which workflow this request
+             * belongs to.
+             *
+             * If another verification starts while
+             * this request is in progress, we can
+             * safely ignore this old response.
+             */
+            var requestedWorkflowRunId =
+                workflowRunId;
+
+            var ga = new GlideAjax(
+                'x_entru_entrustidv.IdvStatusAjax'
+            );
+
+            ga.addParam(
+                'sysparm_name',
+                'getStatusByWorkflowRunId'
+            );
+
+            ga.addParam(
+                'sysparm_workflow_run_id',
+                requestedWorkflowRunId
+            );
+
+            ga.getXMLAnswer(function (answer) {
+                /*
+                 * Ignore a response belonging to an
+                 * older verification attempt.
+                 */
+                if (
+                    requestedWorkflowRunId !==
+                    workflowRunId
+                ) {
+                    return;
+                }
+
+                var result =
+                    parseIdvStatusResponse(answer);
+
+                if (!result) {
+                    handlePollingError();
+                    return;
+                }
+
+                errorCount = 0;
+
+                applyIdvStatus(
+                    result.displayStatus ||
+                    formatIdvStatus(result.status)
+                );
+
+                if (!result.shouldPoll) {
+                    stopPolling();
+                    return;
+                }
+
+                scheduleNextPoll();
+            });
+        }
+
+        function scheduleNextPoll() {
+            var elapsed =
+                new Date().getTime() -
+                startedAt;
+
+            if (
+                elapsed >=
+                IDV_MAX_POLL_DURATION_MS
+            ) {
+                stopPolling();
+                return;
+            }
+
+            timer = setTimeout(
+                pollWorkflowRun,
+                IDV_POLL_INTERVAL_MS
+            );
+        }
+
+        function handlePollingError() {
+            errorCount++;
+
+            if (
+                errorCount >=
+                IDV_MAX_CONSECUTIVE_ERRORS
+            ) {
+                stopPolling();
+                return;
+            }
+
+            scheduleNextPoll();
+        }
+
+        function stopPolling() {
+            if (timer) {
+                clearTimeout(timer);
+            }
+
+            timer = null;
+            workflowRunId = null;
+            startedAt = 0;
+            errorCount = 0;
+        }
+
+        function isPolling() {
+            return !!workflowRunId;
+        }
+
+        return {
+            startPolling: startPolling,
+            isPolling: isPolling
+        };
+    })();
 
 function onLoad() {
-    var sourceTable = g_form.getTableName();
-    var sourceSysId = g_form.getUniqueValue();
+    var sourceTable =
+        g_form.getTableName();
+
+    var sourceSysId =
+        g_form.getUniqueValue();
 
     if (!sourceSysId) {
         return;
@@ -57,6 +198,19 @@ function loadInitialIdvStatus(
     );
 
     ga.getXMLAnswer(function (answer) {
+        /*
+         * Verify Identity may have been clicked while
+         * this initial request was still in progress.
+         *
+         * If polling has already started for the new
+         * workflow, ignore this old initial response.
+         */
+        if (
+            window.EntrustIdv.isPolling()
+        ) {
+            return;
+        }
+
         var result =
             parseIdvStatusResponse(answer);
 
@@ -80,124 +234,9 @@ function loadInitialIdvStatus(
     });
 }
 
-window.EntrustIdv.startPolling = function (
-    workflowRunId
+function applyIdvStatus(
+    displayStatus
 ) {
-    if (!workflowRunId) {
-        return;
-    }
-
-    if (window.EntrustIdv.timer) {
-        clearTimeout(
-            window.EntrustIdv.timer
-        );
-
-        window.EntrustIdv.timer = null;
-    }
-
-    window.EntrustIdv.workflowRunId =
-        workflowRunId;
-
-    window.EntrustIdv.startedAt =
-        new Date().getTime();
-
-    window.EntrustIdv.errorCount = 0;
-
-    scheduleNextIdvPoll();
-};
-
-function pollIdvWorkflowRun() {
-    if (!window.EntrustIdv.workflowRunId) {
-        return;
-    }
-
-    var ga = new GlideAjax(
-        'x_entru_entrustidv.IdvStatusAjax'
-    );
-
-    ga.addParam(
-        'sysparm_name',
-        'getStatusByWorkflowRunId'
-    );
-
-    ga.addParam(
-        'sysparm_workflow_run_id',
-        window.EntrustIdv.workflowRunId
-    );
-
-    ga.getXMLAnswer(function (answer) {
-        var result =
-            parseIdvStatusResponse(answer);
-
-        if (!result) {
-            handleIdvPollingError();
-            return;
-        }
-
-        window.EntrustIdv.errorCount = 0;
-
-        applyIdvStatus(
-            result.displayStatus ||
-            formatIdvStatus(result.status)
-        );
-
-        if (!result.shouldPoll) {
-            stopIdvStatusPolling();
-            return;
-        }
-
-        scheduleNextIdvPoll();
-    });
-}
-
-function scheduleNextIdvPoll() {
-    var elapsed =
-        new Date().getTime() -
-        window.EntrustIdv.startedAt;
-
-    if (
-        elapsed >=
-        IDV_MAX_POLL_DURATION_MS
-    ) {
-        stopIdvStatusPolling();
-        return;
-    }
-
-    window.EntrustIdv.timer =
-        setTimeout(
-            pollIdvWorkflowRun,
-            IDV_POLL_INTERVAL_MS
-        );
-}
-
-function handleIdvPollingError() {
-    window.EntrustIdv.errorCount++;
-
-    if (
-        window.EntrustIdv.errorCount >=
-        IDV_MAX_CONSECUTIVE_ERRORS
-    ) {
-        stopIdvStatusPolling();
-        return;
-    }
-
-    scheduleNextIdvPoll();
-}
-
-function stopIdvStatusPolling() {
-    if (window.EntrustIdv.timer) {
-        clearTimeout(
-            window.EntrustIdv.timer
-        );
-    }
-
-    window.EntrustIdv.timer = null;
-    window.EntrustIdv.workflowRunId = null;
-    window.EntrustIdv.startedAt = 0;
-    window.EntrustIdv.errorCount = 0;
-}
-
-function applyIdvStatus(displayStatus) {
     if (!displayStatus) {
         return;
     }
@@ -208,7 +247,9 @@ function applyIdvStatus(displayStatus) {
     );
 }
 
-function parseIdvStatusResponse(answer) {
+function parseIdvStatusResponse(
+    answer
+) {
     if (!answer) {
         return null;
     }
@@ -230,7 +271,9 @@ function parseIdvStatusResponse(answer) {
     }
 }
 
-function formatIdvStatus(status) {
+function formatIdvStatus(
+    status
+) {
     var normalized =
         String(status || '')
             .toLowerCase()
@@ -247,7 +290,7 @@ function formatIdvStatus(status) {
         approved: 'Approved',
         declined: 'Declined',
         abandoned: 'Abandoned',
-        error: 'Error',
+        error: 'Error'
     };
 
     return labels[normalized] || status;
