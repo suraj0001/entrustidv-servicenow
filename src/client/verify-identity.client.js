@@ -46,9 +46,6 @@ function executeVerifyIdentity() {
             );
         }
 
-        if (result.workflowRunId) {
-        startIdvStatusPolling(result.workflowRunId);}
-
         g_form.clearMessages();
         g_form.addInfoMessage('Identity verification started.');
         g_navigation.reloadWindow();
