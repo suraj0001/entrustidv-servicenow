@@ -26,4 +26,5 @@ UiAction({
     script: Now.include('../../client/verify-identity.client.js'),
     comments: 'Starts Entrust identity verification for the current record.',
     messages: [],
+    isolateScript: false,
 })

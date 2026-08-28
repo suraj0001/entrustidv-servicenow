@@ -1070,6 +1070,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_documentation'
+                        id: '338cc4981b0bc3105fdb2f05604bcbcb'
+                        key: {
+                            name: 'var__m_sys_pd_snapshot_input_238cc4981b0bc3105fdb2f05604bcb44'
+                            element: 'parent_record'
+                            language: 'en'
+                        }
+                    },
+                    {
                         table: 'sys_element_mapping'
                         id: '341e2a57473a0b1016bda144846d43cb'
                         key: {
