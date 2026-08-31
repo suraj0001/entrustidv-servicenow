@@ -8,6 +8,6 @@ ScriptInclude({
     accessibleFrom: 'package_private',
 
     script: Now.include(
-        '../../server/webhook/entrust-webhook-signature-validator.server.js'
+        '../../server/webhook/webhook-signature-validator.server.js'
     ),
 })
