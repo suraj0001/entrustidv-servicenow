@@ -1,0 +1,383 @@
+html,
+body {
+    overflow-y: auto !important;
+    height: auto !important;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.entrust-container {
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 580px;
+    margin: 4px auto;
+    padding: 0 24px 24px;
+    color: #2e3a45;
+}
+
+.entrust-section {
+    padding: 24px;
+    border: 1px solid #dfe3e8;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.api-connection-page .entrust-section {
+    margin-bottom: 18px;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #34495e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    box-sizing: border-box;
+    width: 100%;
+    height: 38px;
+    padding: 8px 11px;
+    border: 1px solid #b8c2cc;
+    border-radius: 4px;
+    outline: none;
+    background: #ffffff;
+    color: #263746;
+    font-size: 14px;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #6d2077;
+    box-shadow: 0 0 0 2px rgba(109, 32, 119, 0.12);
+}
+
+.form-group input::placeholder {
+    color: #9ba7b2;
+}
+
+.form-group input[readonly] {
+    background: #f3f5f7;
+    color: #586773;
+}
+
+.hint {
+    display: block;
+    margin-top: 7px;
+    color: #7b8792;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.req {
+    margin-left: 2px;
+    color: #c83c3c;
+}
+
+.optional {
+    margin-left: 5px;
+    color: #88949e;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.input-with-suffix {
+    display: flex;
+    width: 100%;
+}
+
+.input-with-suffix input {
+    border-radius: 4px 0 0 4px;
+}
+
+.input-suffix {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    padding: 0 13px;
+    border: 1px solid #b8c2cc;
+    border-left: 0;
+    border-radius: 0 4px 4px 0;
+    background: #f3f5f7;
+    color: #586773;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.secret-status {
+    display: none;
+    margin-top: 9px;
+    padding: 9px 11px;
+    border: 1px solid #c8e2d1;
+    border-radius: 4px;
+    background: #f1f8f4;
+    color: #3c6b4d;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.btn {
+    height: 40px;
+    padding: 0 22px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-test,
+.btn-copy {
+    border: 1px solid #8e3a9d;
+    background: #8e3a9d;
+    color: #ffffff;
+}
+
+.btn-test:hover,
+.btn-copy:hover {
+    border-color: #732e80;
+    background: #732e80;
+}
+
+.btn-save {
+    border: 1px solid #6d2077;
+    background: #6d2077;
+    color: #ffffff;
+}
+
+.btn-save:hover {
+    border-color: #561960;
+    background: #561960;
+}
+
+.btn-save:disabled {
+    border-color: #aaa;
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.btn-save-wrap {
+    display: inline-block;
+    cursor: not-allowed;
+}
+
+.btn-save-wrap button:disabled {
+    pointer-events: none;
+}
+
+.status {
+    display: none;
+    margin-top: 16px;
+    padding: 11px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.status.success {
+    border: 1px solid #bdddc9;
+    background: #edf7f1;
+    color: #326545;
+}
+
+.status.error {
+    border: 1px solid #e5bcbc;
+    background: #fdf0f0;
+    color: #9b3232;
+}
+
+.info-block {
+    margin-bottom: 0;
+}
+
+.info-title {
+    margin-bottom: 12px;
+    color: #253746;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.section-divider {
+    height: 1px;
+    margin: 22px 0;
+    background: #e5e9ed;
+}
+
+.webhook-row {
+    display: flex;
+    width: 100%;
+}
+
+.webhook-url {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 8px 11px;
+    border: 1px solid #b8c2cc;
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    background: #f3f5f7;
+    color: #586773;
+    font-size: 13px;
+}
+
+.btn-copy {
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.webhook-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 9px;
+    color: #6f7d88;
+    font-size: 12px;
+}
+
+.webhook-meta span {
+    position: relative;
+}
+
+.webhook-meta span:not(:last-child)::after {
+    position: absolute;
+    right: -11px;
+    color: #b4bcc3;
+    content: '\2022';
+}
+
+.webhook-meta strong {
+    color: #34495e;
+}
+
+.roles-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.role-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 11px 0;
+}
+
+.role-item:first-child {
+    padding-top: 0;
+}
+
+.role-item:last-child {
+    padding-bottom: 0;
+}
+
+.role-item + .role-item {
+    border-top: 1px solid #eef0f2;
+}
+
+.role-info {
+    min-width: 0;
+}
+
+.role-title {
+    margin-bottom: 2px;
+    color: #34495e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.role-description {
+    color: #7b8792;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.role-code {
+    flex-shrink: 0;
+    padding: 4px 7px;
+    border-radius: 3px;
+    background: #f3f5f7;
+    color: #586773;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 11px;
+}
+
+.email-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+}
+
+.email-icon {
+    display: flex;
+    flex: 0 0 30px;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    border-radius: 50%;
+    background: #eef4f8;
+    color: #1769aa;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.email-content {
+    min-width: 0;
+}
+
+.email-text {
+    margin-bottom: 5px;
+    color: #586773;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.email-path {
+    color: #34495e;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+    .entrust-container {
+        padding: 0 16px 24px;
+    }
+
+    .entrust-section {
+        padding: 20px;
+    }
+
+    .role-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}
