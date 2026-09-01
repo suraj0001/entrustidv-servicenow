@@ -81,8 +81,8 @@ function _idvShowStatus(type, message) {
 }
 
 function _setStoredCredentialPlaceholders() {
-  _el("idv_client_id").placeholder = "Stored — enter to update";
-  _el("idv_client_secret").placeholder = "Stored — enter to update";
+  _el("idv_client_id").placeholder =  'Configured — enter a new value to replace';
+  _el("idv_client_secret").placeholder =  'Configured — enter a new value to replace';
   _el("idv_credentials_hint").style.display = "block";
 }
 

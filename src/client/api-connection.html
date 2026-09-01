@@ -55,7 +55,7 @@
             display: block;
             font-weight: 600;
             font-size: 13px;
-            margin-bottom: 7px;
+            margin-bottom: 3px;
             color: #34495e;
         }
 
@@ -102,68 +102,6 @@
         .req {
             color: #c83c3c;
             margin-left: 2px;
-        }
-
-        .credentials-card {
-            margin-bottom: 22px;
-            padding: 18px;
-            border: 1px solid #dfe3e8;
-            border-radius: 6px;
-            background: #ffffff;
-        }
-
-        .credentials-card.configured {
-            border-color: #c9d4df;
-            background: #f6f8fa;
-        }
-
-        .credentials-card.editing {
-            border-color: #d8c3dc;
-            background: #fcf8fd;
-        }
-
-        .credentials-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .credentials-title {
-            color: #253746;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .credentials-card .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .credentials-card input:disabled {
-            border-color: #d3d9df;
-            background: #e9edf1;
-            color: #6b7782;
-            cursor: not-allowed;
-        }
-
-        button.btn-credential-action {
-            min-width: 82px;
-            height: 34px;
-            padding: 0 14px;
-            border: 1px solid #8a959f !important;
-            border-radius: 4px;
-            background: #ffffff !important;
-            background-image: none !important;
-            color: #253746 !important;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        button.btn-credential-action:hover {
-            border-color: #6d2077 !important;
-            color: #6d2077 !important;
         }
 
         .btn-row {
@@ -293,49 +231,38 @@
                     placeholder="Auto-filled from region"
                 />
             </div>
-            <div id="idv_credentials_card" class="credentials-card editing">
-                <div class="credentials-header">
-                    <div class="credentials-title">Client Credentials</div>
-                    <button
-                        id="btn_edit_credentials"
-                        type="button"
-                        class="btn-credential-action"
-                        style="display: none"
-                    >
-                        Edit
-                    </button>
-                </div>
+            <div class="form-group">
+                <label for="idv_client_id"
+                    >Client ID
+                    <span class="req">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="idv_client_id"
+                    maxlength="255"
+                    placeholder="Enter your Entrust Client ID"
+                />
+            </div>
+            <div class="form-group">
+                <label for="idv_client_secret"
+                    >Client Secret
+                    <span class="req">*</span>
+                </label>
 
-                <div class="form-group">
-                    <label for="idv_client_id"
-                        >Client ID
-                        <span class="req">*</span>
-                    </label>
-                    <div id="idv_client_id_hint" class="hint">
-                        Enter your Entrust Client ID.
-                    </div>
-                    <input
-                        type="text"
-                        id="idv_client_id"
-                        maxlength="255"
-                        placeholder="Enter your Entrust Client ID"
-                    />
-                </div>
+                <input
+                    type="password"
+                    id="idv_client_secret"
+                    maxlength="255"
+                    placeholder="Enter your Entrust Client Secret"
+                />
 
-                <div class="form-group">
-                    <label for="idv_client_secret"
-                        >Client Secret
-                        <span class="req">*</span>
-                    </label>
-                    <div id="idv_client_secret_hint" class="hint">
-                        Enter your Entrust Client Secret.
-                    </div>
-                    <input
-                        type="password"
-                        id="idv_client_secret"
-                        maxlength="255"
-                        placeholder="Enter your Entrust Client Secret"
-                    />
+                <div
+                    id="idv_credentials_hint"
+                    class="hint"
+                    style="display: none; color: #0055a5"
+                >
+                    Credentials are already configured. Leave blank to keep
+                    existing, or enter new values to update.
                 </div>
             </div>
             <div class="btn-row">
