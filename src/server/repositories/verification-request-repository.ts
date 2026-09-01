@@ -121,7 +121,7 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
     return {
       workflowRunId: gr.getValue('workflow_run_id') || '',
       status: gr.getValue('status') || '',
-      updatedAt
+      updatedAt,
     }
   }
 
