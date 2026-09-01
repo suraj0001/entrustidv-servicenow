@@ -170,3 +170,20 @@ Record({
         source: '2cdd2a9f47f20b1016bda144846d43c6',
     },
 })
+Record({
+    $id: Now.ID['5e51ed311b4703105fdb2f05604bcba0'],
+    table: 'sys_pd_snapshot',
+    data: {
+        access: 'public',
+        derivatives:
+            '{"table":"sys_pd_snapshot","id":"5e51ed311b4703105fdb2f05604bcba0","name":"derivatives","type":"com.snc.pd.model.serialization.DerivativeFetcher"}',
+        name: 'entrust_identity_verification_setup',
+        process_definition:
+            '{"table":"sys_pd_snapshot","id":"5e51ed311b4703105fdb2f05604bcba0","name":"process_definition","type":"com.snc.pd.model.ProcessDefinition"}',
+        process_dependencies:
+            '{"table":"sys_pd_snapshot","id":"5e51ed311b4703105fdb2f05604bcba0","name":"process_dependencies","type":"com.snc.pd.model.dependency.InstructionBasedProcessDependenciesCollection"}',
+        process_plan:
+            '{"table":"sys_pd_snapshot","id":"5e51ed311b4703105fdb2f05604bcba0","name":"process_plan","type":"com.snc.process_flow.engine.ProcessPlan"}',
+        source: '2cdd2a9f47f20b1016bda144846d43c6',
+    },
+})

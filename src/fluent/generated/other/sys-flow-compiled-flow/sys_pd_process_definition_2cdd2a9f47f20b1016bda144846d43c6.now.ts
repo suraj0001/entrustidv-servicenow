@@ -70,3 +70,10 @@ Record({
         snapshot_id: 'f2afe4391b07c7105fdb2f05604bcb24',
     },
 })
+Record({
+    $id: Now.ID['1a51ed316a4703104fffb8b4f5e327cc'],
+    table: 'sys_flow_compiled_flow',
+    data: {
+        snapshot_id: '5e51ed311b4703105fdb2f05604bcba0',
+    },
+})

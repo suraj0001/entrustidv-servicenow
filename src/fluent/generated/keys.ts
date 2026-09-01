@@ -1331,6 +1331,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_documentation'
+                        id: '265121711b4703105fdb2f05604bcb17'
+                        key: {
+                            name: 'var__m_sys_pd_snapshot_input_5e51ed311b4703105fdb2f05604bcba0'
+                            element: 'parent_record'
+                            language: 'en'
+                        }
+                    },
+                    {
                         table: 'sys_dictionary'
                         id: '296d5cf4a19149999d866f946136575f'
                         key: {
