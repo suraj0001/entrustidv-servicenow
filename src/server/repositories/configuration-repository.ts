@@ -5,7 +5,6 @@ export type VerificationSettingsConfig = {
   workflowId: string;
   linkExpiry: number;
   linkDeliveryChannel: string;
-  webhookSecret: string;
   redirectUrl: string;
 };
 
@@ -30,11 +29,20 @@ export function getVerificationSettings(): VerificationSettingsReadResult | null
     return null;
   }
 
-  const workflowId = ((configGr.getValue("workflow_id") as string) || "").trim();
-  const linkExpiryValue = (configGr.getValue("link_expiry_minutes") as string) || "";
-  const deliveryChannel = ((configGr.getValue("link_delivery_channel") as string) || "").trim();
-  const webhookSecret = ((configGr.getValue("webhook_signing_secret") as string) || "").trim();
-  const redirectUrl = ((configGr.getValue("redirect_url") as string) || "").trim();
+  const workflowId = (
+    (configGr.getValue("workflow_id") as string) || ""
+  ).trim();
+  const linkExpiryValue =
+    (configGr.getValue("link_expiry_minutes") as string) || "";
+  const deliveryChannel = (
+    (configGr.getValue("link_delivery_channel") as string) || ""
+  ).trim();
+  const webhookSecret = (
+    (configGr.getValue("webhook_signing_secret") as string) || ""
+  ).trim();
+  const redirectUrl = (
+    (configGr.getValue("redirect_url") as string) || ""
+  ).trim();
   const linkExpiry = parseInt(linkExpiryValue, 10);
 
   return {
@@ -53,15 +61,22 @@ export function getVerificationConfiguration(): VerificationConfiguration | null
     return null;
   }
 
-  const workflowId = ((configGr.getValue("workflow_id") as string) || "").trim();
+  const workflowId = (
+    (configGr.getValue("workflow_id") as string) || ""
+  ).trim();
 
-  const linkExpiryValue = (configGr.getValue("link_expiry_minutes") as string) || "";
+  const linkExpiryValue =
+    (configGr.getValue("link_expiry_minutes") as string) || "";
 
   const redirectUrl = (configGr.getValue("redirect_url") as string) || "";
 
   const linkExpiryMinutes = parseInt(linkExpiryValue, 10);
 
-  if (!workflowId || Number.isNaN(linkExpiryMinutes) || linkExpiryMinutes <= 0) {
+  if (
+    !workflowId ||
+    Number.isNaN(linkExpiryMinutes) ||
+    linkExpiryMinutes <= 0
+  ) {
     return null;
   }
 
@@ -72,15 +87,14 @@ export function getVerificationConfiguration(): VerificationConfiguration | null
   };
 }
 
-export function saveVerificationSettingsConfig(settings: VerificationSettingsConfig): void {
+export function saveVerificationSettingsConfig(
+  settings: VerificationSettingsConfig,
+): void {
   const configGr = getUpsertConfigurationRecord();
 
   configGr.setValue("workflow_id", settings.workflowId);
   configGr.setValue("link_expiry_minutes", settings.linkExpiry);
   configGr.setValue("link_delivery_channel", settings.linkDeliveryChannel);
-  if (settings.webhookSecret) {
-    configGr.setValue("webhook_signing_secret", settings.webhookSecret);
-  }
   configGr.setValue("redirect_url", settings.redirectUrl);
 
   if (configGr.isNewRecord()) {
@@ -97,6 +111,18 @@ export function saveVerificationSettingsConfig(settings: VerificationSettingsCon
 
   if (!sysId) {
     throw new Error("Failed to update verification configuration.");
+  }
+}
+
+export function saveWebhookSecret(webhookSecret: string): void {
+  const configGr = getUpsertConfigurationRecord();
+
+  configGr.setValue("webhook_signing_secret", webhookSecret);
+
+  const sysId = configGr.isNewRecord() ? configGr.insert() : configGr.update();
+
+  if (!sysId) {
+    throw new Error("Failed to save webhook token.");
   }
 }
 

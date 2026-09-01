@@ -2,16 +2,15 @@ export type VerificationSettingsInput = {
   workflowId: string;
   linkExpiry: string;
   deliveryChannel: string;
-  webhookSecret: string;
   redirectUrl: string;
-  hasStoredSecret?: boolean;
 };
 
-export function validateVerificationSettings(input: VerificationSettingsInput): void {
+export function validateVerificationSettings(
+  input: VerificationSettingsInput,
+): void {
   var workflowId = clean(input.workflowId);
   var linkExpiry = clean(input.linkExpiry);
   var deliveryChannel = clean(input.deliveryChannel).toLowerCase();
-  var webhookSecret = clean(input.webhookSecret);
   var redirectUrl = clean(input.redirectUrl);
 
   if (!workflowId) {
@@ -32,10 +31,6 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
 
   if (deliveryChannel !== "email") {
     throw new Error("Email is currently the only supported delivery channel.");
-  }
-
-  if (!webhookSecret && !input.hasStoredSecret) {
-    throw new Error("Webhook secret is required.");
   }
 
   if (redirectUrl && !isValidHttpUrl(redirectUrl)) {
