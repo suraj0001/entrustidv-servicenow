@@ -26,6 +26,7 @@ export interface VerificationRequest {
 export type VerificationStatusRecord = {
   workflowRunId: string
   status: string
+  updatedAt?: string
 }
 
 export function createVerificationRequest(input: CreateVerificationRequest): string {
@@ -103,17 +104,24 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
 
   if (gr.next()) {
     const status = (gr.getValue("status") as string) || "";
+    const updatedAt =
+      (gr.getValue("sys_updated_on") as string) ||
+      (gr.getValue("sys_created_on") as string) ||
+      "";
     gs.info(
       "[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=" +
         sourceTable +
         ", sourceRecordId=" +
         sourceRecordId +
         ", foundStatus=" +
-        status,
+        status +
+        ", updatedAt=" +
+        updatedAt,
     );
     return {
-      workflowRunId: gr.getValue('workflow_run_id',) || '',
+      workflowRunId: gr.getValue('workflow_run_id') || '',
       status: gr.getValue('status') || '',
+      updatedAt
     }
   }
 
@@ -128,9 +136,9 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
 
 export function findVerificationStatusByWorkflowRunId(
   workflowRunId: string,
-): string | null {
+): VerificationStatusRecord | null {
   const verificationRequest = new GlideRecord(
-    'x_entru_entrustidv_verification_request',
+    VERIFICATION_REQUEST_TABLE,
   )
 
   verificationRequest.addQuery(
@@ -144,11 +152,16 @@ export function findVerificationStatusByWorkflowRunId(
     return null
   }
 
-  return (
-    verificationRequest.getValue(
-      'status',
-    ) || null
-  )
+  const updatedAt =
+    (verificationRequest.getValue('sys_updated_on') as string) ||
+    (verificationRequest.getValue('sys_created_on') as string) ||
+    ''
+
+  return {
+    workflowRunId: verificationRequest.getValue('workflow_run_id') || '',
+    status: verificationRequest.getValue('status') || '',
+    updatedAt,
+  }
 }
 
 export function updateStatusByWorkflowRunId(

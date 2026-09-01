@@ -71,8 +71,28 @@ function onLoad() {
 
                 consecutiveErrors = 0;
 
-                scheduleNextPoll();
-            }
+                console.log(
+                    '[idv-status-onload.client.js] Polling started: workflowRunId=' +
+                        workflowRunId +
+                        ', status=' +
+                        result.status +
+                        ', displayStatus=' +
+                        (result.displayStatus ||
+                            formatStatus(result.status))
+                );
+
+                scheduleNextPoll();            
+        } else if (!result.shouldPoll && result.workflowRunId) {
+            console.log(
+                '[idv-status-onload.client.js] Initial status loaded, polling not required: workflowRunId=' +
+                    result.workflowRunId +
+                    ', status=' +
+                    result.status +
+                    ', displayStatus=' +
+                    (result.displayStatus ||
+                        formatStatus(result.status))
+            );
+                    }
         });
     }
 
@@ -122,9 +142,28 @@ function onLoad() {
             );
 
             if (!result.shouldPoll) {
+                console.log(
+                    '[idv-status-onload.client.js] Polling completed (terminal status): workflowRunId=' +
+                        requestedWorkflowRunId +
+                        ', status=' +
+                        result.status +
+                        ', displayStatus=' +
+                        (result.displayStatus ||
+                            formatStatus(result.status))
+                );
                 stopPolling();
                 return;
             }
+
+            console.log(
+                '[idv-status-onload.client.js] Polling in progress: workflowRunId=' +
+                    requestedWorkflowRunId +
+                    ', status=' +
+                    result.status +
+                    ', displayStatus=' +
+                    (result.displayStatus ||
+                        formatStatus(result.status))
+            );
 
             scheduleNextPoll();
         });
@@ -139,6 +178,12 @@ function onLoad() {
             elapsed >=
             MAX_POLL_DURATION_MS
         ) {
+            console.log(
+                '[idv-status-onload.client.js] Polling ended (max duration ' +
+                    MAX_POLL_DURATION_MS / 1000 +
+                    's reached): workflowRunId=' +
+                    workflowRunId
+            );
             stopPolling();
             return;
         }
@@ -156,6 +201,12 @@ function onLoad() {
             consecutiveErrors >=
             MAX_CONSECUTIVE_ERRORS
         ) {
+            console.log(
+                '[idv-status-onload.client.js] Polling ended (max consecutive errors ' +
+                    MAX_CONSECUTIVE_ERRORS +
+                    ' reached): workflowRunId=' +
+                    workflowRunId
+            );
             stopPolling();
             return;
         }

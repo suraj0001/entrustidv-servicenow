@@ -7,16 +7,18 @@ function executeVerifyIdentity() {
     g_form.clearMessages();
     g_form.addInfoMessage('Starting identity verification...');
 
-    var ga = new GlideAjax('VerifyIdentityAjax');
+    var ga = new GlideAjax('x_entru_entrustidv.VerifyIdentityAjax');
 
     ga.addParam('sysparm_name', 'startVerification');
     ga.addParam('sysparm_source_table', sourceTable);
     ga.addParam('sysparm_source_record_id', sourceRecordId);
 
     ga.getXMLAnswer(function (answer) {
+        g_form.clearMessages();
+
         if (!answer) {
             g_form.addErrorMessage(
-                'Unable to start identity verification.'
+                'Unable to start identity verification. No response from server.'
             );
             return;
         }
@@ -39,14 +41,18 @@ function executeVerifyIdentity() {
             return;
         }
 
-        if (result.status) {
+        if (result.displayStatus) {
+            g_form.setValue(
+                STATUS_FIELD,
+                result.displayStatus
+            );
+        } else if (result.status) {
             g_form.setValue(
                 STATUS_FIELD,
                 formatVerificationStatus(result.status)
             );
         }
 
-        g_form.clearMessages();
         g_form.addInfoMessage('Identity verification started.');
         g_navigation.reloadWindow();
     });

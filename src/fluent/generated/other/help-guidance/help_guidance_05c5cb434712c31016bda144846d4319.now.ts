@@ -6,12 +6,12 @@ Record({
     data: {
         active: 'true',
         checklist:
-            '<p>Before you begin<br />Have the following available:</p><ul><li>Entrust Identity Verification API credentials</li><li>IDV API region</li><li>IDV Workflow ID</li><li>ServiceNow administrator access</li><li>Webhook Token</li></ul>',
-        description: 'Configure the Entrust Identity Verification',
-        interaction_status: 'COMPLETE',
-        name: 'Entrust Identity Verification Setup',
+            '<p>Before you begin<br />Have the following available:</p><ul><li>Entrust Identity Verification API credentials</li><li>IDV API region</li><li>IDV Workflow ID</li><li>ServiceNow administrator access</li></ul>',
+        description: 'Set up API credentials and verification workflow parameters for identity Verification',
+        interaction_status: 'IN_PROGRESS',
+        name: 'Entrust Identity Verification',
         process_definition: '2cdd2a9f47f20b1016bda144846d43c6',
-        product_name: 'Entrust Identity Verification Setup',
+        product_name: 'Entrust Identity Verification',
         roles: 'x_entru_entrustidv.admin',
         setup_execution_type: 'single',
         setup_layout: 'vertical_focused',

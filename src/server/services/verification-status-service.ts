@@ -91,6 +91,7 @@ export function getLatestVerificationStatus(
 
   const result = buildStatusResult(
     verification.status,
+    verification.updatedAt,
   )
 
   return {
@@ -111,17 +112,20 @@ export function getLatestVerificationStatus(
 export function getVerificationStatusByWorkflowRunId(
   workflowRunId: string,
 ): VerificationStatusResult | null {
-  const storedStatus =
+  const storedRecord =
     findVerificationStatusByWorkflowRunId(
       workflowRunId,
     )
 
-  if (storedStatus === null) {
+  if (storedRecord === null) {
     return null
   }
 
   const result =
-    buildStatusResult(storedStatus)
+    buildStatusResult(
+      storedRecord.status,
+      storedRecord.updatedAt,
+    )
 
   return {
     workflowRunId,
@@ -133,6 +137,7 @@ export function getVerificationStatusByWorkflowRunId(
 
 function buildStatusResult(
   storedStatus: string | null | undefined,
+  updatedAt?: string,
 ): {
   status: string
   displayStatus: string
@@ -144,13 +149,24 @@ function buildStatusResult(
   const config =
     STATUS_CONFIG[status]
 
+    const baseDisplayStatus = config
+    ? config.displayStatus
+    : toDisplayStatus(status)
+
+  const shouldPoll = config
+    ? config.shouldPoll
+    : true
+
+  const displayStatus =
+    status !== 'not_started' && updatedAt
+      ? `${baseDisplayStatus} - ${updatedAt}`
+      : baseDisplayStatus
+
   if (config) {
     return {
       status,
-      displayStatus:
-        config.displayStatus,
-      shouldPoll:
-        config.shouldPoll,
+      displayStatus,
+      shouldPoll
     }
   }
 

@@ -14,362 +14,425 @@
             box-sizing: border-box;
         }
 
-        .entrust-container {
-            font-family: Arial, Helvetica, sans-serif;
-            max-width: 580px;
-            margin: 4px auto;
-            padding: 0 24px 24px;
-            color: #2e3a45;
-        }
-
-        .entrust-section {
+        .setup-container {
+            max-width: 900px;
+            margin: 4px auto 24px;
+            border: 1px solid #d7dce2;
+            border-radius: 8px;
             background: #ffffff;
-            border: 1px solid #dfe3e8;
-            border-radius: 6px;
-            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
         }
 
-        .info-block {
-            margin-bottom: 0;
+        .setup-content {
+            padding: 8px 42px 24px;
         }
 
-        .info-title {
-            margin-bottom: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #253746;
+        .setup-section {
+            padding: 28px 0;
+            border-top: 1px solid #dde2e7;
         }
 
-        .hint {
+        .setup-section:first-child {
+            border-top: 0;
+        }
+
+        .setup-section-title {
+            margin: 0 0 22px;
+            color: #202936;
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .setup-form-group {
+            margin-bottom: 24px;
+        }
+
+        .setup-form-label {
             display: block;
-            margin-top: 7px;
-            font-size: 12px;
-            line-height: 1.45;
-            color: #7b8792;
+            margin-bottom: 9px;
+            color: #202936;
+            font-size: 15px;
+            font-weight: 600;
         }
 
-        .section-divider {
-            height: 1px;
-            margin: 22px 0;
-            background: #e5e9ed;
-        }
-
-        /* -------------------------
-           Webhook
-        -------------------------- */
-
-        .webhook-row {
+        .setup-input-row {
             display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setup-input {
             width: 100%;
+            height: 46px;
+            padding: 0 14px;
+            border: 1px solid #b9c1cc;
+            border-radius: 5px;
+            outline: none;
+            background: #ffffff;
+            color: #303946;
+            font-size: 14px;
+        }
+
+        .setup-input:focus {
+            border-color: #4a7dbd;
+            box-shadow: 0 0 0 2px rgba(74, 125, 189, 0.12);
+        }
+
+        .setup-input[readonly] {
+            background: #f8f9fb;
+            color: #55606f;
         }
 
         .webhook-url {
             flex: 1;
             min-width: 0;
-            height: 38px;
-            padding: 8px 11px;
-            border: 1px solid #b8c2cc;
-            border-right: 0;
-            border-radius: 4px 0 0 4px;
-            background: #f3f5f7;
-            color: #586773;
-            font-size: 13px;
-            outline: none;
         }
 
-        .btn-copy {
-            height: 38px;
-            padding: 0 16px;
-            border: 1px solid #8e3a9d;
-            border-radius: 0 4px 4px 0;
-            background: #8e3a9d;
-            color: #ffffff;
-            font-size: 13px;
+        .setup-btn {
+            min-height: 42px;
+            padding: 0 18px;
+            border-radius: 5px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
         }
 
-        .btn-copy:hover {
-            background: #732e80;
-            border-color: #732e80;
+        .setup-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
         }
 
-        .webhook-meta {
+        .setup-btn-secondary {
+            border: 1px solid #9ca6b3;
+            background: #ffffff;
+            color: #202936;
+        }
+
+        .setup-btn-secondary:hover {
+            background: #f5f6f8;
+        }
+
+        .setup-btn-primary {
+            border: 1px solid #6d2077;
+            background: #6d2077;
+            color: #ffffff;
+        }
+
+        .setup-btn-primary:hover {
+            border-color: #561960;
+            background: #561960;
+        }
+
+        .webhook-metadata {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px 18px;
-            margin-top: 9px;
-            font-size: 12px;
-            color: #6f7d88;
+            align-items: center;
+            gap: 32px;
+            margin-top: 14px;
+            color: #394352;
+            font-size: 14px;
         }
 
-        .webhook-meta span {
-            position: relative;
+        .webhook-metadata strong {
+            color: #202936;
+            font-weight: 600;
         }
 
-        .webhook-meta span:not(:last-child)::after {
-            content: '•';
-            position: absolute;
-            right: -11px;
-            color: #b4bcc3;
+        .helper-text {
+            max-width: 760px;
+            margin: 13px 0 0;
+            color: #667180;
+            font-size: 14px;
+            line-height: 1.55;
         }
 
-        .webhook-meta strong {
-            color: #34495e;
+        .field-description {
+            margin: 0 0 10px;
         }
 
-        /* -------------------------
-           Roles
-        -------------------------- */
+        .status-message {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            font-size: 15px;
+        }
 
-        .roles-list {
+        .status-message.success {
+            color: #087a45;
+        }
+
+        .status-message.error {
+            color: #a12622;
+        }
+
+        .status-icon {
+            display: inline-flex;
+            flex: 0 0 28px;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .email-status {
+            display: flex;
+            margin-top: 0;
+        }
+
+        .email-status.warning {
+            color: #9a5b00;
+        }
+
+        .email-settings-path {
+            margin-top: 8px;
+            color: #394352;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .role-list {
             display: flex;
             flex-direction: column;
+            gap: 14px;
         }
 
         .role-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 11px 0;
+            gap: 20px;
+            padding: 17px 18px;
+            border: 1px solid #d8dee6;
+            border-radius: 6px;
+            background: #ffffff;
         }
 
-        .role-item:first-child {
-            padding-top: 0;
+        .role-icon {
+            display: flex;
+            flex: 0 0 52px;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            font-size: 23px;
+            font-weight: 600;
         }
 
-        .role-item:last-child {
-            padding-bottom: 0;
+        .role-icon.agent {
+            background: #e9f1ff;
+            color: #155cc4;
         }
 
-        .role-item + .role-item {
-            border-top: 1px solid #eef0f2;
+        .role-icon.admin {
+            background: #e9f7f0;
+            color: #087a45;
         }
 
         .role-info {
             min-width: 0;
         }
 
-        .role-title {
-            margin-bottom: 2px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #34495e;
+        .role-name {
+            margin: 0;
+            color: #202936;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .role-value {
+            margin: 4px 0 0;
+            color: #252e3a;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 14px;
         }
 
         .role-description {
-            font-size: 12px;
-            line-height: 1.4;
-            color: #7b8792;
-        }
-
-        .role-code {
-            flex-shrink: 0;
-            padding: 4px 7px;
-            border-radius: 3px;
-            background: #f3f5f7;
-            font-family: Consolas, 'Courier New', monospace;
-            font-size: 11px;
-            color: #586773;
-        }
-
-        /* -------------------------
-           Email
-        -------------------------- */
-
-        .email-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 11px;
-        }
-
-        .email-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #eef4f8;
-            color: #1769aa;
+            margin: 5px 0 0;
+            color: #667180;
             font-size: 14px;
-            font-weight: 600;
-        }
-
-        .email-content {
-            min-width: 0;
-        }
-
-        .email-text {
-            margin-bottom: 5px;
-            font-size: 13px;
             line-height: 1.45;
-            color: #586773;
         }
 
-        .email-path {
-            font-size: 12px;
-            line-height: 1.45;
-            font-weight: 600;
-            color: #34495e;
-        }
-
-        /* -------------------------
-           Finish
-        -------------------------- */
-
-        .btn-row {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .btn {
-            height: 40px;
-            padding: 0 22px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            background: #6d2077;
-            border: 1px solid #6d2077;
-            color: #ffffff;
-        }
-
-        .btn-save:hover {
-            background: #561960;
-            border-color: #561960;
-        }
-
-        /* -------------------------
-           Responsive
-        -------------------------- */
-
-        @media (max-width: 640px) {
-            .entrust-container {
-                padding: 0 16px 24px;
+        @media (max-width: 700px) {
+            .setup-container {
+                margin: 4px 16px 24px;
             }
 
-            .entrust-section {
-                padding: 20px;
+            .setup-content {
+                padding: 4px 22px 14px;
+            }
+
+            .setup-input-row,
+            .webhook-metadata {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .webhook-metadata {
+                gap: 6px;
             }
 
             .role-item {
-                flex-direction: column;
                 align-items: flex-start;
-                gap: 6px;
             }
         }
     </style>
 
-    <div class="entrust-container">
-        <div class="entrust-section">
+    <div class="setup-container">
+        <div class="setup-content">
+            <section class="setup-section">
+                <h2 class="setup-section-title">Webhook Configuration</h2>
 
-            <!-- Webhook -->
-
-            <div class="info-block">
-                <div class="info-title">Webhook</div>
-
-                <div class="webhook-row">
-                    <input
-                        id="webhook_url"
-                        class="webhook-url"
-                        type="text"
-                        readonly="true"
-                        value=""
-                    />
-
-                    <button
-                        id="btn_copy_webhook_url"
-                        type="button"
-                        class="btn-copy"
+                <div class="setup-form-group">
+                    <label class="setup-form-label" for="webhook_url"
+                        >Webhook URL</label
                     >
-                        Copy
-                    </button>
+                    <p class="helper-text field-description">
+                        Configure this URL as the webhook endpoint in your
+                        Entrust Identity Verification account. Entrust will
+                        generate a webhook token after the webhook is
+                        configured.
+                    </p>
+                    <div class="setup-input-row">
+                        <input
+                            id="webhook_url"
+                            class="setup-input webhook-url"
+                            type="text"
+                            readonly="true"
+                            value=""
+                        />
+                        <button
+                            id="btn_copy_webhook_url"
+                            type="button"
+                            class="setup-btn setup-btn-secondary"
+                        >
+                            Copy
+                        </button>
+                    </div>
+                    <div class="webhook-metadata">
+                        <span><strong>Method:</strong> POST</span>
+                        <span
+                            ><strong>Content-Type:</strong>
+                            application/json</span
+                        >
+                    </div>
                 </div>
 
-                <div class="webhook-meta">
-                    <span>
-                        <strong>POST</strong>
-                    </span>
-
-                    <span> application/json </span>
-
-                    <span> HMAC signature validation </span>
+                <div class="setup-form-group">
+                    <label class="setup-form-label" for="webhook_token"
+                        >Webhook Token</label
+                    >
+                    <p class="helper-text field-description">
+                        Enter the webhook token generated by Entrust.
+                        ServiceNow uses this token to verify incoming webhook
+                        events.
+                    </p>
+                    <input
+                        id="webhook_token"
+                        class="setup-input"
+                        type="password"
+                        autocomplete="new-password"
+                        maxlength="255"
+                        placeholder="Enter webhook token"
+                    />
                 </div>
 
-                <div class="hint">
-                    Configure this URL as the webhook callback URL in Entrust.
+                <button
+                    id="btn_save_webhook_token"
+                    type="button"
+                    class="setup-btn setup-btn-primary"
+                >
+                    Save Webhook Token
+                </button>
+                <div
+                    id="webhook_token_message"
+                    class="status-message"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <span class="status-icon" aria-hidden="true"></span>
+                    <span class="status-text"></span>
                 </div>
-            </div>
+            </section>
 
-            <div class="section-divider"></div>
+            <section class="setup-section">
+                <h2 class="setup-section-title">Email Delivery</h2>
+                <g:evaluate
+                    var="jvar_email_sending_enabled"
+                    expression="gs.getProperty('glide.email.smtp.active', 'false') == 'true'"
+                />
+                <j:choose>
+                    <j:when test="${jvar_email_sending_enabled}">
+                        <div class="status-message success email-status">
+                            <span class="status-icon" aria-hidden="true"
+                                >&#10003;</span
+                            >
+                            <span>Outbound email is enabled.</span>
+                        </div>
+                        <p class="helper-text">
+                            Identity verification links can be sent from this
+                            instance.
+                        </p>
+                    </j:when>
+                    <j:otherwise>
+                        <div class="status-message warning email-status">
+                            <span class="status-icon" aria-hidden="true">!</span>
+                            <span>Outbound email is not enabled.</span>
+                        </div>
+                        <p class="helper-text">
+                            Enable outbound email so identity verification links
+                            can be delivered to users.
+                        </p>
+                        <div class="email-settings-path">
+                            All &#8594; System Properties &#8594; Email Properties
+                            &#8594; Outbound Email Configuration
+                        </div>
+                    </j:otherwise>
+                </j:choose>
+            </section>
 
-            <!-- Application Roles -->
-
-            <div class="info-block">
-                <div class="info-title">Application Roles</div>
-
-                <div class="roles-list">
-                    <!-- Administrator -->
+            <section class="setup-section">
+                <h2 class="setup-section-title">Application Access</h2>
+                <div class="role-list">
+                    <div class="role-item">
+                        <div class="role-icon agent" aria-hidden="true">A</div>
+                        <div class="role-info">
+                            <p class="role-name">Agent</p>
+                            <p class="role-value">
+                                x_entru_entrustidv.agent
+                            </p>
+                            <p class="role-description">
+                                Allows users to initiate identity verification
+                                and view its status.
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="role-item">
+                        <div class="role-icon admin" aria-hidden="true">M</div>
                         <div class="role-info">
-                            <div class="role-title">Administrator</div>
-
-                            <div class="role-description">
-                                Configure and manage Identity Verification.
-                            </div>
-                        </div>
-
-                        <div class="role-code">x_entru_entrustidv.admin</div>
-                    </div>
-
-                    <!-- Agent -->
-
-                    <div class="role-item">
-                        <div class="role-info">
-                            <div class="role-title">Agent</div>
-
-                            <div class="role-description">
-                                Initiate identity verification from supported
-                                records.
-                            </div>
-                        </div>
-
-                        <div class="role-code">x_entru_entrustidv.agent</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Email Configuration -->
-
-            <div class="info-block">
-                <div class="info-title">Email Configuration</div>
-
-                <div class="email-row">
-                    <div class="email-icon">@</div>
-
-                    <div class="email-content">
-                        <div class="email-text">
-                            Enable outbound email so verification links can be
-                            delivered to users.
-                        </div>
-
-                        <div class="email-path">
-                            All → System Properties → Email Properties →
-                            Outbound Email Configuration
+                            <p class="role-name">Administrator</p>
+                            <p class="role-value">
+                                x_entru_entrustidv.admin
+                            </p>
+                            <p class="role-description">
+                                Allows users to configure Identity Verification
+                                for ServiceNow.
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
     <script src="./setup-information.client.js" type="module"></script>

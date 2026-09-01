@@ -28,20 +28,37 @@ VerifyIdentityAjax.prototype = Object.extendsObject(
                         sourceRecordId
                     );
 
+                var verificationStatusService =
+                    require("./src/server/services/verification-status-service.ts");
+
+                var statusResult =
+                    verificationStatusService.getLatestVerificationStatus(
+                        sourceTable,
+                        sourceRecordId
+                    );
+
                 return JSON.stringify({
                     success: true,
                     status: result.status,
+                    displayStatus: statusResult
+                        ? statusResult.displayStatus
+                        : result.status,
                     workflowRunId: result.workflowRunId,
                 });
             } catch (e) {
+                var errorMessage =
+                    e && e.message ? e.message : '' + e;
+
                 gs.error(
                     '[VerifyIdentityAjax] Failed to start verification: ' +
-                        e
+                        errorMessage
                 );
 
                 return JSON.stringify({
                     success: false,
-                    message: 'Failed to start identity verification.',
+                    message:
+                        errorMessage ||
+                        'Failed to start identity verification.',
                 });
             }
         },

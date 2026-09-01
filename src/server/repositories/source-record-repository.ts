@@ -46,3 +46,20 @@ export function findSourceRecordContext(sourceTable: string, sourceRecordId: str
 function isSupportedSourceTable(sourceTable: string): sourceTable is SupportedSourceTable {
   return sourceTable === "incident" || sourceTable === "sn_hr_core_case";
 }
+
+export function addWorkNote(sourceTable: string, sourceRecordId: string, note: string): boolean {
+  if (!isSupportedSourceTable(sourceTable) || !sourceRecordId || !note) {
+    return false;
+  }
+
+  const sourceRecord = new GlideRecord(sourceTable);
+  sourceRecord.get(sourceRecordId);
+
+  if (!sourceRecord.isValidRecord()) {
+    return false;
+  }
+
+  sourceRecord.setValue("work_notes", note);
+  sourceRecord.update();
+  return true;
+}

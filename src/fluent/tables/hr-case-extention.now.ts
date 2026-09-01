@@ -5,11 +5,11 @@ export const sn_hr_core_case = Table({
 
   schema: {
     x_entru_entrustidv_verification_status: StringColumn({
-      label: "Identity Verification Status",
+      label: 'IDV Status',
       mandatory: false,
-      maxLength: 40,
+      maxLength: 100,
       readOnly: true,
-      readOnlyOption: "display_read_only",
+      readOnlyOption: 'display_read_only',
     }),
   },
 });

@@ -93,9 +93,9 @@
 
         .hint {
             display: block;
+            margin: 0 0 7px;
             font-size: 12px;
             color: #7b8792;
-            margin-top: 7px;
             line-height: 1.45;
         }
 
@@ -119,31 +119,35 @@
             cursor: pointer;
         }
 
-        .btn-test {
-            background: #8e3a9d;
-            border: 1px solid #8e3a9d;
-            color: #ffffff;
+        button.btn-test {
+            border: 1px solid #8e3a9d !important;
+            background: #8e3a9d !important;
+            background-image: none !important;
+            color: #ffffff !important;
         }
 
-        .btn-test:hover {
-            background: #732e80;
-            border-color: #732e80;
+        button.btn-test:hover {
+            border-color: #732e80 !important;
+            background: #732e80 !important;
+            color: #ffffff !important;
         }
 
-        .btn-save {
-            background: #6d2077;
-            border: 1px solid #6d2077;
-            color: #ffffff;
+        button.btn-save {
+            border: 1px solid #6d2077 !important;
+            background: #6d2077 !important;
+            background-image: none !important;
+            color: #ffffff !important;
         }
 
-        .btn-save:hover {
-            background: #561960;
-            border-color: #561960;
+        button.btn-save:hover {
+            border-color: #561960 !important;
+            background: #561960 !important;
+            color: #ffffff !important;
         }
 
-        .btn-save:disabled {
-            background: #aaa;
-            border-color: #aaa;
+        button.btn-save:disabled {
+            border-color: #aaa !important;
+            background: #aaa !important;
             cursor: not-allowed;
         }
 
@@ -190,7 +194,7 @@
     <div class="entrust-container">
         <div class="entrust-section">
             <div class="form-group">
-                <label
+                <label for="idv_region"
                     >Region
                     <span class="req">*</span>
                 </label>
@@ -202,33 +206,33 @@
                 </select>
             </div>
             <div class="form-group">
-                <label
+                <label for="idv_base_url"
                     >Base URL
                     <span class="req">*</span>
                 </label>
+                <div class="hint">Auto-filled based on region</div>
                 <input
                     type="text"
                     id="idv_base_url"
                     readonly="true"
                     placeholder="Auto-filled from region"
                 />
-                <div class="hint">Auto-filled based on region</div>
             </div>
             <div class="form-group">
-                <label
+                <label for="idv_token_url"
                     >Token URL
                     <span class="req">*</span>
                 </label>
+                <div class="hint">Auto-filled based on region</div>
                 <input
                     type="text"
                     id="idv_token_url"
                     readonly="true"
                     placeholder="Auto-filled from region"
                 />
-                <div class="hint">Auto-filled based on region</div>
             </div>
             <div class="form-group">
-                <label
+                <label for="idv_client_id"
                     >Client ID
                     <span class="req">*</span>
                 </label>
@@ -240,16 +244,10 @@
                 />
             </div>
             <div class="form-group">
-                <label
+                <label for="idv_client_secret"
                     >Client Secret
                     <span class="req">*</span>
                 </label>
-                <input
-                    type="password"
-                    id="idv_client_secret"
-                    maxlength="255"
-                    placeholder="Enter your Entrust Client Secret"
-                />
                 <div
                     id="idv_credentials_hint"
                     class="hint"
@@ -258,6 +256,12 @@
                     Credentials are already configured. Leave blank to keep
                     existing, or enter new values to update.
                 </div>
+                <input
+                    type="password"
+                    id="idv_client_secret"
+                    maxlength="255"
+                    placeholder="Enter your Entrust Client Secret"
+                />
             </div>
             <div class="btn-row">
                 <button class="btn btn-test" id="btn_test" type="button">
