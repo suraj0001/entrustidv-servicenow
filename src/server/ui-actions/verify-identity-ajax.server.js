@@ -28,21 +28,10 @@ VerifyIdentityAjax.prototype = Object.extendsObject(
                         sourceRecordId
                     );
 
-                var verificationStatusService =
-                    require("./src/server/services/verification-status-service.ts");
-
-                var statusResult =
-                    verificationStatusService.getLatestVerificationStatus(
-                        sourceTable,
-                        sourceRecordId
-                    );
-
                 return JSON.stringify({
                     success: true,
                     status: result.status,
-                    displayStatus: statusResult
-                        ? statusResult.displayStatus
-                        : result.status,
+                    displayStatus: result.displayStatus,
                     workflowRunId: result.workflowRunId,
                 });
             } catch (e) {

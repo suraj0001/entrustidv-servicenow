@@ -179,8 +179,7 @@ function buildStatusResult(
    */
   return {
     status,
-    displayStatus:
-      toDisplayStatus(status),
+    displayStatus,
     shouldPoll: true,
   }
 }

@@ -19,6 +19,7 @@ export interface StartVerificationResult {
     workflowRunId: string
     smartCaptureUrl: string
     status: string
+    displayStatus: string
 }
 
 export function startVerification(
@@ -123,11 +124,15 @@ export function startVerification(
     )
     gs.info(`[VerificationService] Event queued: ${VERIFICATION_REQUEST_CREATED_EVENT}, returning status=${workflowRun.status}`)
 
+    // Timestamp the request was inserted, used to build the initial display status
+    const createdAt = verificationRequest.getValue('sys_created_on') as string
+
     return {
         verificationRequestId,
         workflowRunId: workflowRun.workflowRunId,
         smartCaptureUrl: workflowRun.smartCaptureUrl,
-        status: workflowRun.status
+        status: workflowRun.status,
+        displayStatus: `In Progress - ${createdAt}`,
     }
 }
 
