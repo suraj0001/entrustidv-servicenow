@@ -30,13 +30,15 @@ VerifyIdentityAjax.prototype = Object.extendsObject(
 
                 return JSON.stringify({
                     success: true,
+                    message: 'Identity verification started.',
                     status: result.status,
                     displayStatus: result.displayStatus,
                     workflowRunId: result.workflowRunId,
                 });
             } catch (e) {
                 var errorMessage =
-                    e && e.message ? e.message : '' + e;
+                    (e && e.message ? e.message : String(e))
+                        .replace(/^Error:\s*/i, '');
 
                 gs.error(
                     '[VerifyIdentityAjax] Failed to start verification: ' +
@@ -45,9 +47,7 @@ VerifyIdentityAjax.prototype = Object.extendsObject(
 
                 return JSON.stringify({
                     success: false,
-                    message:
-                        errorMessage ||
-                        'Failed to start identity verification.',
+                    message: errorMessage || 'Failed to start identity verification.',
                 });
             }
         },

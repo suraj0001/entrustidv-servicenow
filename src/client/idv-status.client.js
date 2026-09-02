@@ -7,11 +7,13 @@ var INITIAL_POLL_DELAY_ONLOAD_MS = 5000;
 var INITIAL_POLL_DELAY_ONCLICK_MS = 20000;
 var MAX_POLL_DURATION_MS = 30 * 60 * 1000;
 var MAX_CONSECUTIVE_ERRORS = 3;
+var MESSAGE_AUTO_DISMISS_MS = 10000;
 
 var workflowRunId = null;
 var pollingStartedAt = 0;
 var consecutiveErrors = 0;
 var pollingTimer = null;
+var messageDismissTimer = null;
 
 function onLoad() {
     var sourceTable = g_form.getTableName();
@@ -28,7 +30,6 @@ function onLoad() {
 
 function loadInitialStatus(sourceTable, sourceSysId) {
     var ga = new GlideAjax('x_entru_entrustidv.IdvStatusAjax');
-
     ga.addParam('sysparm_name', 'getLatestStatus');
     ga.addParam('sysparm_table', sourceTable);
     ga.addParam('sysparm_sys_id', sourceSysId);
@@ -36,34 +37,15 @@ function loadInitialStatus(sourceTable, sourceSysId) {
     ga.getXMLAnswer(function (answer) {
         var result = parseResponse(answer);
 
-        if (!result) {
+        if (!result.success) {
             return;
         }
 
-        applyStatus(
-            result.displayStatus || formatStatus(result.status)
-        );
+        applyStatus(result.displayStatus || formatStatus(result.status));
 
         if (result.shouldPoll && result.workflowRunId) {
-            console.log(
-                '[idv-status.client.js] Initial status loaded, polling will start in ' +
-                    INITIAL_POLL_DELAY_ONLOAD_MS / 1000 +
-                    's: workflowRunId=' +
-                    result.workflowRunId +
-                    ', status=' +
-                    result.status
-            );
-            startPolling(
-                result.workflowRunId,
-                INITIAL_POLL_DELAY_ONLOAD_MS
-            );
+            startPolling(result.workflowRunId, INITIAL_POLL_DELAY_ONLOAD_MS);
         } else if (result.workflowRunId) {
-            console.log(
-                '[idv-status.client.js] Initial status loaded, terminal state: workflowRunId=' +
-                    result.workflowRunId +
-                    ', status=' +
-                    result.status
-            );
             stopPolling();
         }
     });
@@ -77,11 +59,9 @@ function executeVerifyIdentity() {
         return;
     }
 
-    g_form.clearMessages();
-    g_form.addInfoMessage('Starting identity verification...');
+    showFormMessage('info', 'Starting identity verification...');
 
     var ga = new GlideAjax('x_entru_entrustidv.VerifyIdentityAjax');
-
     ga.addParam('sysparm_name', 'startVerification');
     ga.addParam('sysparm_source_table', sourceTable);
     ga.addParam('sysparm_source_record_id', sourceRecordId);
@@ -89,46 +69,18 @@ function executeVerifyIdentity() {
     ga.getXMLAnswer(function (answer) {
         g_form.clearMessages();
 
-        if (!answer) {
-            g_form.addErrorMessage(
-                'Unable to start identity verification. No response from server.'
-            );
-            return;
-        }
-
         var result = parseResponse(answer);
 
-        if (!result) {
-            g_form.addErrorMessage(
-                'Unable to process identity verification response.'
-            );
-            return;
-        }
-
         if (!result.success) {
-            g_form.addErrorMessage(
-                result.message || 'Unable to start identity verification.'
-            );
+            showFormMessage('error', result.message || 'Unable to start identity verification.');
             return;
         }
 
-        applyStatus(
-            result.displayStatus || formatStatus(result.status)
-        );
-
-        g_form.addInfoMessage('Identity verification started.');
+        applyStatus(result.displayStatus || formatStatus(result.status));
+        showFormMessage('info', result.message || 'Identity verification started.');
 
         if (result.workflowRunId) {
-            console.log(
-                '[idv-status.client.js] Identity verification started, polling will begin in ' +
-                    INITIAL_POLL_DELAY_ONCLICK_MS / 1000 +
-                    's: workflowRunId=' +
-                    result.workflowRunId
-            );
-            startPolling(
-                result.workflowRunId,
-                INITIAL_POLL_DELAY_ONCLICK_MS
-            );
+            startPolling(result.workflowRunId, INITIAL_POLL_DELAY_ONCLICK_MS);
         }
     });
 }
@@ -167,38 +119,19 @@ function pollWorkflowRun() {
 
         var result = parseResponse(answer);
 
-        if (!result) {
+        if (!result.success) {
             handlePollingError();
             return;
         }
 
         consecutiveErrors = 0;
 
-        applyStatus(
-            result.displayStatus || formatStatus(result.status)
-        );
+        applyStatus(result.displayStatus || formatStatus(result.status));
 
         if (!result.shouldPoll) {
-            console.log(
-                '[idv-status.client.js] Polling completed (terminal status): workflowRunId=' +
-                    requestedWorkflowRunId +
-                    ', status=' +
-                    result.status +
-                    ', displayStatus=' +
-                    (result.displayStatus || formatStatus(result.status))
-            );
             stopPolling();
             return;
         }
-
-        console.log(
-            '[idv-status.client.js] Polling in progress: workflowRunId=' +
-                requestedWorkflowRunId +
-                ', status=' +
-                result.status +
-                ', displayStatus=' +
-                (result.displayStatus || formatStatus(result.status))
-        );
 
         scheduleNextPoll();
     });
@@ -257,21 +190,47 @@ function applyStatus(displayStatus) {
     g_form.setValue(STATUS_FIELD, displayStatus);
 }
 
+function showFormMessage(type, message) {
+    clearDismissTimer();
+    if (type === 'error') {
+        g_form.addErrorMessage(message);
+    } else {
+        g_form.addInfoMessage(message);
+    }
+    scheduleMessageDismiss();
+}
+
+function clearDismissTimer() {
+    if (messageDismissTimer) {
+        clearTimeout(messageDismissTimer);
+        messageDismissTimer = null;
+    }
+}
+
+function scheduleMessageDismiss() {
+    clearDismissTimer();
+    messageDismissTimer = setTimeout(function () {
+        g_form.clearMessages();
+        messageDismissTimer = null;
+    }, MESSAGE_AUTO_DISMISS_MS);
+}
+
 function parseResponse(answer) {
     if (!answer) {
-        return null;
+        return { success: false, message: 'No response from server.' };
+    }
+
+    if (typeof answer === 'object') {
+        return answer;
     }
 
     try {
-        var result = JSON.parse(answer);
-
-        if (!result || !result.success) {
-            return null;
-        }
-
-        return result;
+        var parsed = JSON.parse(answer);
+        return typeof parsed === 'object' && parsed !== null
+            ? parsed
+            : { success: false, message: String(parsed) };
     } catch (e) {
-        return null;
+        return { success: false, message: String(answer).trim() || 'Unable to process server response.' };
     }
 }
 

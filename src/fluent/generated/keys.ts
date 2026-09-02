@@ -1049,6 +1049,10 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: 'ff0806731bbacb105fdb2f05604bcb54'
                     }
+                    hr_case_read: {
+                        table: 'sys_scope_privilege'
+                        id: 'f97e5040a3fc4a3994cc94078afca900'
+                    }
                     hr_case_write: {
                         table: 'sys_scope_privilege'
                         id: 'fc28ab8d2b654fda9e85ffb5e7d26318'
@@ -1100,6 +1104,10 @@ declare global {
                     'idv-webhook-public-route': {
                         table: 'sys_ws_operation'
                         id: '3d3e8aa375b1493a8a39cf8f6ac5725c'
+                    }
+                    incident_read: {
+                        table: 'sys_scope_privilege'
+                        id: '7230a2e589ee4d3c8b35dc8c6d8c1892'
                     }
                     incident_write: {
                         table: 'sys_scope_privilege'

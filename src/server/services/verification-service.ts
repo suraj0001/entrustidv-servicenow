@@ -6,13 +6,14 @@ import {
 } from '../entrust/entrust-verification-client.ts'
 import { getVerificationConfiguration } from '../repositories/configuration-repository.ts'
 import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts'
-import { addWorkNote, findSourceRecordContext } from '../repositories/source-record-repository.ts'
+import { findSourceRecordContext } from '../repositories/source-record-repository.ts'
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
 import {
     createVerificationRequest,
     findLatestVerificationStatus,
     findVerificationRequestById,
 } from '../repositories/verification-request-repository.ts'
+import { addWorkNote, getVerificationCreatedActivityMessage } from './activity-service.ts'
 
 export interface StartVerificationResult {
     verificationRequestId: string
@@ -127,7 +128,7 @@ export function startVerification(
     addWorkNote(
         sourceTable,
         sourceRecordId,
-        "Identity verification requested.\nVerification link sent to the user."
+        getVerificationCreatedActivityMessage()
     );
 
     return {
