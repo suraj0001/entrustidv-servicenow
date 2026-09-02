@@ -23,7 +23,7 @@ UiAction({
         isUi16Compatible: true,
         onClick: 'executeVerifyIdentity()',
     },
-    script: Now.include('../../client/verify-identity.client.js'),
+    script: Now.include('../../client/idv-status.client.js'),
     comments: 'Starts Entrust identity verification for the current record.',
     messages: [],
     isolateScript: false,

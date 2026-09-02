@@ -12,7 +12,7 @@ ClientScript({
   appliesExtended: false,
   isolateScript: false,
   script: Now.include(
-    '../../client/idv-status-onload.client.js',
+    '../../client/idv-status.client.js',
   ),
 })
 
@@ -26,6 +26,6 @@ ClientScript({
   appliesExtended: false,
   isolateScript: false,
   script: Now.include(
-    '../../client/idv-status-onload.client.js',
+    '../../client/idv-status.client.js',
   ),
 })

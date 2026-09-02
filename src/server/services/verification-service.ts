@@ -130,15 +130,12 @@ export function startVerification(
         "Identity verification requested.\nVerification link sent to the user."
     );
 
-    // Timestamp the request was inserted, used to build the initial display status
-    const createdAt = verificationRequest.getValue('sys_created_on') as string
-
     return {
         verificationRequestId,
         workflowRunId: workflowRun.workflowRunId,
         smartCaptureUrl: workflowRun.smartCaptureUrl,
         status: workflowRun.status,
-        displayStatus: `In Progress - ${createdAt}`,
+        displayStatus: 'In Progress',
     }
 }
 
