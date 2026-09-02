@@ -38,6 +38,7 @@ function getWebhookTokenStatus() {
     if (result && result.success && result.configured) {
       _el("webhook_token").placeholder =
         "Configured - enter a new token to replace";
+      _el("webhook_token_configured").style.display = "block";
     }
   });
 }
