@@ -40,7 +40,7 @@ const STATUS_CONFIG: Record<
   },
 
   awaiting_input: {
-    displayStatus: 'Awaiting Input',
+    displayStatus: 'In Progress',
     shouldPoll: true,
   },
 

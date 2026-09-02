@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
-  <style>
-    html,
+  <style>html,
     body {
       overflow-y: auto !important;
       height: auto !important;
@@ -119,21 +118,19 @@
     }
 
     button.btn-save {
-      border: 1px solid #6d2077 !important;
-      background: #6d2077 !important;
+      background: #4F52BD !important;
       background-image: none !important;
+      border: 1px solid #4F52BD !important;
       color: #ffffff !important;
     }
 
     button.btn-save:hover {
-      border-color: #561960 !important;
-      background: #561960 !important;
-      color: #ffffff !important;
+      background: #3d40a0 !important;
+      border-color: #3d40a0 !important;
     }
 
     button.btn-save:disabled {
-      border-color: #aaa !important;
-      background: #aaa !important;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
@@ -166,55 +163,35 @@
       .entrust-section {
         padding: 20px;
       }
-    }
-  </style>
+    }</style>
   <div class="entrust-container">
     <div class="entrust-section">
       <!-- Workflow ID -->
       <div class="form-group">
-        <label for="workflow_id"
-          >Workflow ID
+        <label for="workflow_id">Workflow ID
           <span class="req">*</span>
         </label>
-        <span class="hint"
-          >The Entrust workflow that will be used for identity verification
-          requests.</span
-        >
-        <input
-          id="workflow_id"
-          name="workflow_id"
-          type="text"
-          autocomplete="off"
-          placeholder="Enter Entrust workflow ID"
-        />
+        <span class="hint">The Entrust workflow that will be used for identity verification
+          requests.</span>
+        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
       </div>
       <!-- Link Expiry -->
       <div class="form-group">
-        <label for="link_expiry"
-          >Link Expiry
+        <label for="link_expiry">Link Expiry
           <span class="req">*</span>
         </label>
         <span class="hint">How long the verification link remains valid.</span>
         <div class="input-with-suffix">
-          <input
-            id="link_expiry"
-            name="link_expiry"
-            type="number"
-            min="1"
-            value="60"
-          />
+          <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
           <span class="input-suffix">minutes</span>
         </div>
       </div>
       <!-- Delivery Channel -->
       <div class="form-group">
-        <label for="delivery_channel"
-          >Delivery Channel
+        <label for="delivery_channel">Delivery Channel
           <span class="req">*</span>
         </label>
-        <span class="hint"
-          >Channel used to send the verification request to the user.</span
-        >
+        <span class="hint">Channel used to send the verification request to the user.</span>
         <select id="delivery_channel" name="delivery_channel">
           <option value="email">Email</option>
         </select>
@@ -222,17 +199,9 @@
       <!-- Redirect URL -->
       <div class="form-group">
         <label for="redirect_url">Redirect URL</label>
-        <span class="hint"
-          >Leave blank unless users should be redirected to a specific page
-          after completing verification.</span
-        >
-        <input
-          id="redirect_url"
-          name="redirect_url"
-          type="url"
-          autocomplete="off"
-          placeholder="https://example.com/verification-complete"
-        />
+        <span class="hint">Leave blank unless users should be redirected to a specific page
+          after completing verification.</span>
+        <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete"></input>
       </div>
       <!-- Actions -->
       <div class="btn-row">

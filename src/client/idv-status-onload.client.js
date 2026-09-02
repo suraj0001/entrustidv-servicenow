@@ -5,7 +5,7 @@ function onLoad() {
         'x_entru_entrustidv_verification_status';
 
     var POLL_INTERVAL_MS = 5000;
-    var MAX_POLL_DURATION_MS = 10 * 60 * 1000;
+    var MAX_POLL_DURATION_MS = 30 * 60 * 1000;
     var MAX_CONSECUTIVE_ERRORS = 3;
 
     var sourceTable = g_form.getTableName();
@@ -268,8 +268,8 @@ function onLoad() {
             not_started: 'Not Started',
             awaiting: 'Pending',
             pending: 'Pending',
-            awaiting_input: 'Awaiting Input',
-            awaiting_client_input: 'Awaiting Input',
+            awaiting_input: 'In Progress',
+            awaiting_client_input: 'In Progress',
             processing: 'In Process',
             review: 'Review Required',
             approved: 'Approved',

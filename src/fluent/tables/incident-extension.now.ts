@@ -1,6 +1,8 @@
 import { StringColumn, Table } from "@servicenow/sdk/core";
 
-export const incident = Table({
+export const incident = 
+// @fluent-disable-sync
+Table({
   augments: 'incident',
 
   schema: {

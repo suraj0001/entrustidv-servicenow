@@ -8,7 +8,7 @@ Record({
         checklist:
             '<p>Before you begin<br />Have the following available:</p><ul><li>Entrust Identity Verification API credentials</li><li>IDV API region</li><li>IDV Workflow ID</li><li>ServiceNow administrator access</li></ul>',
         description: 'Set up API credentials and workflow parameters for identity Verification',
-        interaction_status: 'NOT_STARTED',
+        interaction_status: 'IN_PROGRESS',
         name: 'Set up Entrust Identity Verification',
         process_definition: '2cdd2a9f47f20b1016bda144846d43c6',
         product_name: 'Set up Entrust Identity Verification',
@@ -17,7 +17,7 @@ Record({
         setup_layout: 'vertical_focused',
         skip_execution_page: 'false',
         snc_created: 'false',
-        status: 'draft',
+        status: 'published',
         sys_domain: 'global',
         sys_domain_path: '/',
         type: 'global_setup',

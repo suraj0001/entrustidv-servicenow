@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
-  <style>
-    html,
+  <style>html,
     body {
       overflow-y: auto !important;
       height: auto !important;
@@ -119,35 +118,22 @@
       cursor: pointer;
     }
 
-    button.btn-test {
-      border: 1px solid #8e3a9d !important;
-      background: #8e3a9d !important;
-      background-image: none !important;
-      color: #ffffff !important;
-    }
-
-    button.btn-test:hover {
-      border-color: #732e80 !important;
-      background: #732e80 !important;
-      color: #ffffff !important;
-    }
-
+    button.btn-test,
     button.btn-save {
-      border: 1px solid #6d2077 !important;
-      background: #6d2077 !important;
+      background: #4F52BD !important;
       background-image: none !important;
+      border: 1px solid #4F52BD !important;
       color: #ffffff !important;
     }
 
+    button.btn-test:hover,
     button.btn-save:hover {
-      border-color: #561960 !important;
-      background: #561960 !important;
-      color: #ffffff !important;
+      background: #3d40a0 !important;
+      border-color: #3d40a0 !important;
     }
 
     button.btn-save:disabled {
-      border-color: #aaa !important;
-      background: #aaa !important;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
@@ -189,13 +175,11 @@
       .entrust-section {
         padding: 20px;
       }
-    }
-  </style>
+    }</style>
   <div class="entrust-container">
     <div class="entrust-section">
       <div class="form-group">
-        <label for="idv_region"
-          >Region
+        <label for="idv_region">Region
           <span class="req">*</span>
         </label>
         <select id="idv_region">
@@ -206,82 +190,35 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="idv_base_url"
-          >Base URL
+        <label for="idv_base_url">Base URL
           <span class="req">*</span>
         </label>
         <div class="hint">Auto-filled based on region</div>
-        <input
-          type="text"
-          id="idv_base_url"
-          readonly="true"
-          placeholder="Auto-filled from region"
-        />
+        <input type="text" id="idv_base_url" readonly="true" placeholder="Auto-filled from region"></input>
       </div>
       <div class="form-group">
-        <label for="idv_token_url"
-          >Token URL
+        <label for="idv_token_url">Token URL
           <span class="req">*</span>
         </label>
         <div class="hint">Auto-filled based on region</div>
-        <input
-          type="text"
-          id="idv_token_url"
-          readonly="true"
-          placeholder="Auto-filled from region"
-        />
+        <input type="text" id="idv_token_url" readonly="true" placeholder="Auto-filled from region"></input>
       </div>
       <div class="form-group">
-        <label for="idv_client_id"
-          >Client ID
+        <label for="idv_client_id">Client ID
           <span class="req">*</span>
         </label>
-        <input
-          type="text"
-          id="idv_client_id"
-          maxlength="255"
-          placeholder="Enter your Entrust Client ID"
-        />
+        <input type="text" id="idv_client_id" maxlength="255" placeholder="Enter your Entrust Client ID"></input>
       </div>
       <div class="form-group">
-        <label for="idv_client_secret"
-          >Client Secret
+        <label for="idv_client_secret">Client Secret
           <span class="req">*</span>
         </label>
-
-        <input
-          type="password"
-          id="idv_client_secret"
-          maxlength="255"
-          placeholder="Enter your Entrust Client Secret"
-        />
-
-        <div
-          id="idv_credentials_hint"
-          class="hint"
-          style="display: none; color: #0055a5"
-        >
-          Credentials are already configured. Leave blank to keep existing, or
-          enter new values to update.
-        </div>
+        <input type="password" id="idv_client_secret" maxlength="255" placeholder="Enter your Entrust Client Secret"></input>
       </div>
       <div class="btn-row">
-        <button class="btn btn-test" id="btn_test" type="button">
-          Test Connection
-        </button>
-        <span
-          class="btn-save-wrap"
-          id="btn_save_wrap"
-          title="Run a successful Test Connection to enable Save"
-        >
-          <button
-            class="btn btn-save"
-            id="btn_save"
-            type="button"
-            disabled="true"
-          >
-            Save
-          </button>
+        <button class="btn btn-test" id="btn_test" type="button">Test Connection</button>
+        <span class="btn-save-wrap" id="btn_save_wrap" title="Run a successful Test Connection to enable Save">
+          <button class="btn btn-save" id="btn_save" type="button" disabled="true">Save</button>
         </span>
       </div>
       <div class="status" id="status_box"></div>

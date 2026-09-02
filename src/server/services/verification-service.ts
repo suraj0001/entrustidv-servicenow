@@ -6,7 +6,7 @@ import {
 } from '../entrust/entrust-verification-client.ts'
 import { getVerificationConfiguration } from '../repositories/configuration-repository.ts'
 import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts'
-import { findSourceRecordContext } from '../repositories/source-record-repository.ts'
+import { addWorkNote, findSourceRecordContext } from '../repositories/source-record-repository.ts'
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
 import {
     createVerificationRequest,
@@ -123,6 +123,12 @@ export function startVerification(
         sourceContext.sourceRecordNumber,
     )
     gs.info(`[VerificationService] Event queued: ${VERIFICATION_REQUEST_CREATED_EVENT}, returning status=${workflowRun.status}`)
+
+    addWorkNote(
+        sourceTable,
+        sourceRecordId,
+        "Identity verification requested.\nVerification link sent to the user."
+    );
 
     // Timestamp the request was inserted, used to build the initial display status
     const createdAt = verificationRequest.getValue('sys_created_on') as string

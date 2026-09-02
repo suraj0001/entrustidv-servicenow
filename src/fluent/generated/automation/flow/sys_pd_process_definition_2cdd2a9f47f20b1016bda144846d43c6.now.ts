@@ -330,3 +330,63 @@ Record({
         table: 'help_user_interaction',
     },
 })
+Record({
+    $id: Now.ID['57ba75711b4b03105fdb2f05604bcbb6'],
+    table: 'sys_trigger_runner_mapping',
+    data: {
+        active: 'true',
+        data: '{"trigger_on_unique_change":"false","parent_record":{"elementMapping":"{{triggerRecord}}","variableValue":"{{triggerRecord}}","elementMappingOrVariableValue":"{{triggerRecord}}"},"run_trigger":"run_once"}',
+        identifier: '60dd2a9f47f20b1016bda144846d43c7',
+        identifier_type: 'playbook',
+        runner: 'PDTriggerRunner',
+        trigger: '13ba75711b4b03105fdb2f05604bcbb5',
+    },
+})
+Record({
+    $id: Now.ID['13ba75711b4b03105fdb2f05604bcbb5'],
+    table: 'sys_flow_record_trigger',
+    data: {
+        active: 'true',
+        condition: 'guidance.process_definition=2cdd2a9f47f20b1016bda144846d43c6',
+        on_delete: 'false',
+        on_insert: 'true',
+        on_update: 'true',
+        run_flow_in: 'background',
+        run_on_extended: 'false',
+        run_when_setting: 'both',
+        run_when_user_setting: 'any',
+        sys_domain: 'global',
+        sys_domain_path: '/',
+        table: 'help_user_interaction',
+    },
+})
+Record({
+    $id: Now.ID['6ad8163d1b43031011bbc8c5604bcbce'],
+    table: 'sys_trigger_runner_mapping',
+    data: {
+        active: 'true',
+        data: '{"trigger_on_unique_change":"false","parent_record":{"elementMapping":"{{triggerRecord}}","variableValue":"{{triggerRecord}}","elementMappingOrVariableValue":"{{triggerRecord}}"},"run_trigger":"run_once"}',
+        identifier: '60dd2a9f47f20b1016bda144846d43c7',
+        identifier_type: 'playbook',
+        runner: 'PDTriggerRunner',
+        trigger: '6ed8163d1b43031011bbc8c5604bcbcd',
+    },
+})
+Record({
+    $id: Now.ID['6ed8163d1b43031011bbc8c5604bcbcd'],
+    table: 'sys_flow_record_trigger',
+    data: {
+        active: 'true',
+        condition: 'guidance.process_definition=2cdd2a9f47f20b1016bda144846d43c6',
+        on_delete: 'false',
+        on_insert: 'true',
+        on_update: 'true',
+        run_flow_in: 'background',
+        run_on_extended: 'false',
+        run_when_setting: 'both',
+        run_when_user_setting: 'any',
+        sys_domain: 'global',
+        sys_domain_path: '/',
+        table: 'help_user_interaction',
+    },
+})

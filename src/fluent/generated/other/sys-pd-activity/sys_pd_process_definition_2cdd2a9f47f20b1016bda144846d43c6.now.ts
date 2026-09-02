@@ -29,7 +29,7 @@ Record({
         ai_agent_run_as: 'playbook_user',
         description: 'Configure how Entrust identity verification requests are created and delivered.',
         enable_ai_agent: 'false',
-        label: 'Verification Settings',
+        label: 'Verification Behaviour',
         lane: 'cfa4b028cd38b92161c4f4819c5d0ed4',
         name: 'iframe_1',
         order: '2',
@@ -50,7 +50,7 @@ Record({
         description:
             'Complete the Entrust webhook configuration and verify that the ServiceNow instance is ready to send identity verification requests.',
         enable_ai_agent: 'false',
-        label: 'Webhook, delivery and access',
+        label: 'Webhook, Delivery and Access',
         lane: 'cfa4b028cd38b92161c4f4819c5d0ed4',
         name: 'iframe_2',
         order: '3',

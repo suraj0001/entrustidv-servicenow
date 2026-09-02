@@ -85,14 +85,12 @@ function _setStoredCredentialPlaceholders() {
     "Configured — enter a new value to replace";
   _el("idv_client_secret").placeholder =
     "Configured — enter a new value to replace";
-  _el("idv_credentials_hint").style.display = "block";
 }
 
 function _clearStoredCredentialPlaceholders() {
   _idvHasStoredCredentials = false;
   _el("idv_client_id").placeholder = "Enter your Entrust Client ID";
   _el("idv_client_secret").placeholder = "Enter your Entrust Client Secret";
-  _el("idv_credentials_hint").style.display = "none";
 }
 
 // --- Initialisation ---

@@ -3,8 +3,7 @@ import * as verificationRequestRepository
     from '../repositories/verification-request-repository.ts'
 import * as configurationRepository
     from '../repositories/configuration-repository.ts'
-import * as sourceRecordRepository
-    from '../repositories/source-record-repository.ts'
+    import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
 
 interface EntrustWebhookEvent {
     payload?: EntrustWebhookPayload
@@ -102,16 +101,11 @@ function processWorkflowRunCompleted(
         status
     )
 
-    const reasons =
-        payload.resource?.reasons && payload.resource.reasons.length > 0
-            ? ` Reasons: ${payload.resource.reasons.join(', ')}`
-            : ''
-
-    sourceRecordRepository.addWorkNote(
-        verificationRequest.sourceTable,
+    addWorkNote(
+        verificationRequest.sourceTable, 
         verificationRequest.sourceRecordId,
-        `Verification finished with outcome: ${status.toUpperCase()}.${reasons}`
-    )
+        getCompletionActivityMessage(status)
+    );
 }
 
 function processEvidenceFolderCreated(

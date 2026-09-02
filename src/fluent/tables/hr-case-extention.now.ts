@@ -1,6 +1,8 @@
 import { StringColumn, Table } from "@servicenow/sdk/core";
 
-export const sn_hr_core_case = Table({
+export const sn_hr_core_case = 
+// @fluent-disable-sync
+Table({
   augments: "sn_hr_core_case",
 
   schema: {
