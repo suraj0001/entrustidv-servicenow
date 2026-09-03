@@ -36,12 +36,16 @@ function getWebhookTokenStatus() {
     }
 
     if (result && result.success && result.configured) {
-      _el("webhook_token").placeholder =
-        "Configured - enter a new token to replace";
+      _el("webhook_token").placeholder = "Configured - enter a new token to replace";
       _el("webhook_token_configured").style.display = "block";
     }
   });
 }
+
+var COPY_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+var CHECK_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
 function copyWebhookUrl(webhookUrl) {
   var copyPromise;
@@ -57,10 +61,12 @@ function copyWebhookUrl(webhookUrl) {
   copyPromise.then(function () {
     var button = _el("btn_copy_webhook_url");
 
-    button.textContent = "Copied";
+    button.innerHTML = CHECK_ICON;
+    button.title = "Copied";
 
     setTimeout(function () {
-      button.textContent = "Copy";
+      button.innerHTML = COPY_ICON;
+      button.title = "Copy";
     }, 1500);
   });
 }
@@ -69,8 +75,7 @@ function showTokenMessage(type, message) {
   var box = _el("webhook_token_message");
 
   box.className = "status-message " + type;
-  box.querySelector(".status-icon").textContent =
-    type === "success" ? "\u2713" : "!";
+  box.querySelector(".status-icon").textContent = type === "success" ? "\u2713" : "!";
   box.querySelector(".status-text").textContent = message;
   box.style.display = "flex";
 }
@@ -105,16 +110,12 @@ function saveWebhookToken() {
 
     if (result && result.success) {
       _el("webhook_token").value = "";
-      _el("webhook_token").placeholder =
-        "Configured - enter a new token to replace";
+      _el("webhook_token").placeholder = "Configured - enter a new token to replace";
       _el("webhook_token_configured").style.display = "block";
       showTokenMessage("success", result.message || "Webhook token saved.");
       return;
     }
 
-    showTokenMessage(
-      "error",
-      (result && result.message) || "Unable to save webhook token.",
-    );
+    showTokenMessage("error", (result && result.message) || "Unable to save webhook token.");
   });
 }

@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (s.workflowId) _el("workflow_id").value = s.workflowId;
     if (s.linkExpiry) _el("link_expiry").value = s.linkExpiry;
-    if (s.deliveryChannel) _el("delivery_channel").value = s.deliveryChannel;
     if (s.redirectUrl) _el("redirect_url").value = s.redirectUrl;
   });
 });
@@ -128,8 +127,8 @@ function validateLinkExpiry() {
 }
 
 function validateDeliveryChannel() {
-  if (!_value("delivery_channel")) {
-    showError("Delivery channel is required.");
+  if (_value("delivery_channel").toLowerCase() !== "email") {
+    showError("Delivery channel must be Email.");
     focusField("delivery_channel");
     return false;
   }
@@ -187,7 +186,7 @@ _el("btn_save").addEventListener("click", function () {
     {
       sysparm_workflow_id: _value("workflow_id"),
       sysparm_link_expiry: _value("link_expiry"),
-      sysparm_delivery_channel: _value("delivery_channel"),
+      sysparm_delivery_channel: "email",
       sysparm_redirect_url: _value("redirect_url"),
     },
     function (result) {
@@ -195,15 +194,11 @@ _el("btn_save").addEventListener("click", function () {
       button.textContent = "Save";
 
       if (result && result.success) {
-        showSuccess(
-          result.message || "Verification settings saved successfully.",
-        );
+        showSuccess(result.message || "Verification settings saved successfully.");
         return;
       }
 
-      showError(
-        (result && result.message) || "Failed to save verification settings.",
-      );
+      showError((result && result.message) || "Failed to save verification settings.");
     },
   );
 });

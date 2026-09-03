@@ -36,7 +36,7 @@ export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
       ? {
           workflowId: settings.workflowId,
           linkExpiry: settings.linkExpiry,
-          deliveryChannel: settings.deliveryChannel,
+          deliveryChannel: "email",
           redirectUrl: settings.redirectUrl,
         }
       : undefined,
@@ -62,7 +62,7 @@ export function saveVerificationSettings(
   var settings: VerificationSettingsConfig = {
     workflowId: input.workflowId.trim(),
     linkExpiry: Number(input.linkExpiry),
-    linkDeliveryChannel: input.deliveryChannel.trim().toLowerCase(),
+    linkDeliveryChannel: "email",
     redirectUrl: input.redirectUrl ? input.redirectUrl.trim() : "",
   };
 
@@ -75,9 +75,7 @@ export function saveVerificationSettings(
   };
 }
 
-export function saveWebhookSecret(
-  webhookSecret: string,
-): SaveVerificationSettingsResult {
+export function saveWebhookSecret(webhookSecret: string): SaveVerificationSettingsResult {
   const normalizedSecret = webhookSecret ? webhookSecret.trim() : "";
 
   if (!normalizedSecret) {

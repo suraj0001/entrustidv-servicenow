@@ -54,98 +54,105 @@ export function addWorkNote(
 ): boolean {
 
   gs.info(
-      `[IDV WorkNote] Starting addWorkNote table=${sourceTable}, ` +
-      `sys_id=${sourceRecordId}, note=${note}`
+    `[IDV WorkNote] Starting addWorkNote table=${sourceTable}, ` +
+    `sys_id=${sourceRecordId}, note=${note}`
   );
 
   try {
 
-      if (!isSupportedSourceTable(sourceTable)) {
-          gs.error(
-              `[IDV WorkNote] Unsupported source table: ${sourceTable}`
-          );
-          return false;
-      }
-
-      if (!sourceRecordId) {
-          gs.error("[IDV WorkNote] sourceRecordId is empty");
-          return false;
-      }
-
-      if (!note) {
-          gs.error("[IDV WorkNote] note is empty");
-          return false;
-      }
-
-      const sourceRecord = new GlideRecord(sourceTable);
-
-      gs.info(
-          `[IDV WorkNote] Created GlideRecord for table=${sourceTable}`
+    if (!isSupportedSourceTable(sourceTable)) {
+      gs.error(
+        `[IDV WorkNote] Unsupported source table: ${sourceTable}`
       );
+      return false;
+    }
 
-      sourceRecord.get(sourceRecordId);
+    if (!sourceRecordId) {
+      gs.error("[IDV WorkNote] sourceRecordId is empty");
+      return false;
+    }
 
-      if (!sourceRecord.isValidRecord()) {
-          gs.error(
-              `[IDV WorkNote] Record not found. ` +
-              `table=${sourceTable}, sys_id=${sourceRecordId}`
-          );
-          return false;
-      }
+    if (!note) {
+      gs.error("[IDV WorkNote] note is empty");
+      return false;
+    }
 
-      gs.info(
-          `[IDV WorkNote] Record found. ` +
-          `table=${sourceTable}, sys_id=${sourceRecordId}`
+    const sourceRecord = new GlideRecord(sourceTable);
+
+    gs.info(
+      `[IDV WorkNote] Created GlideRecord for table=${sourceTable}`
+    );
+
+    sourceRecord.get(sourceRecordId);
+
+    if (!sourceRecord.isValidRecord()) {
+      gs.error(
+        `[IDV WorkNote] Record not found. ` +
+        `table=${sourceTable}, sys_id=${sourceRecordId}`
       );
+      return false;
+    }
 
-      if (!sourceRecord.isValidField("work_notes")) {
-          gs.error(
-              `[IDV WorkNote] work_notes field does not exist on ${sourceTable}`
-          );
-          return false;
-      }
+    gs.info(
+      `[IDV WorkNote] Record found. ` +
+      `table=${sourceTable}, sys_id=${sourceRecordId}`
+    );
 
-      gs.info(
-          `[IDV WorkNote] work_notes field is valid. Attempting journal update.`
+    if (!sourceRecord.isValidField("work_notes")) {
+      gs.error(
+        `[IDV WorkNote] work_notes field does not exist on ${sourceTable}`
       );
+      return false;
+    }
 
-      /*
-       * IMPORTANT:
-       * Do not use setValue() for journal fields.
-       */
-      (sourceRecord as any).work_notes = note;
+    gs.info(
+      `[IDV WorkNote] work_notes field is valid. Attempting journal update.`
+    );
 
-      const updatedId = sourceRecord.update();
+    const workNotes = sourceRecord.getElement("work_notes");
 
-      gs.info(
-          `[IDV WorkNote] Update completed. ` +
-          `table=${sourceTable}, sys_id=${sourceRecordId}, ` +
-          `updatedId=${updatedId}`
+    gs.info(
+      `[IDV WorkNote] work_notes element retrieved. ` +
+      `canWrite=${workNotes.canWrite()}`
+    );
+
+    workNotes.setJournalEntry(note);
+
+    gs.info(
+      `[IDV WorkNote] Journal entry set. Calling update().`
+    );
+
+    const updatedId = sourceRecord.update();
+
+    gs.info(
+      `[IDV WorkNote] Update completed. ` +
+      `table=${sourceTable}, sys_id=${sourceRecordId}, ` +
+      `updatedId=${updatedId}`
+    );
+
+    if (!updatedId) {
+      gs.error(
+        `[IDV WorkNote] Update returned no sys_id. ` +
+        `table=${sourceTable}, sys_id=${sourceRecordId}`
       );
+      return false;
+    }
 
-      if (!updatedId) {
-          gs.error(
-              `[IDV WorkNote] Update returned no sys_id. ` +
-              `table=${sourceTable}, sys_id=${sourceRecordId}`
-          );
-          return false;
-      }
+    gs.info(
+      `[IDV WorkNote] Work note successfully added. ` +
+      `table=${sourceTable}, sys_id=${sourceRecordId}`
+    );
 
-      gs.info(
-          `[IDV WorkNote] Work note successfully added. ` +
-          `table=${sourceTable}, sys_id=${sourceRecordId}`
-      );
-
-      return true;
+    return true;
 
   } catch (error) {
 
-      gs.error(
-          `[IDV WorkNote] Failed to add work note. ` +
-          `table=${sourceTable}, sys_id=${sourceRecordId}, ` +
-          `error=${error}`
-      );
+    gs.error(
+      `[IDV WorkNote] Failed to add work note. ` +
+      `table=${sourceTable}, sys_id=${sourceRecordId}, ` +
+      `error=${error}`
+    );
 
-      return false;
+    return false;
   }
 }
