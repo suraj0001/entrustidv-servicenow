@@ -1,4 +1,4 @@
-import { DocumentIdColumn, ReferenceColumn, StringColumn, Table, TableNameColumn } from "@servicenow/sdk/core";
+import { BooleanColumn, DocumentIdColumn, ReferenceColumn, StringColumn, Table, TableNameColumn } from "@servicenow/sdk/core";
 
 export const x_entru_entrustidv_verification_request = Table({
   name: "x_entru_entrustidv_verification_request",
@@ -58,6 +58,12 @@ export const x_entru_entrustidv_verification_request = Table({
       label: 'Evidence Folder Reference',
       mandatory: false,
       maxLength: 500,
+    }),
+
+    // Only one verification request is active per source record; reverification deactivates prior requests.
+    active: BooleanColumn({
+      label: 'Active',
+      defaultValue: true,
     }),
   },
 

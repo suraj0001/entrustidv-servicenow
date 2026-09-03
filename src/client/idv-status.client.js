@@ -14,6 +14,7 @@ var pollingStartedAt = 0;
 var consecutiveErrors = 0;
 var pollingTimer = null;
 var messageDismissTimer = null;
+var lastKnownDisplayStatus = 'Not Started';
 
 function onLoad() {
     var sourceTable = g_form.getTableName();
@@ -24,6 +25,8 @@ function onLoad() {
     }
 
     g_form.setReadOnly(STATUS_FIELD, true);
+
+    lastKnownDisplayStatus = g_form.getValue(STATUS_FIELD) || 'Not Started';
 
     loadInitialStatus(sourceTable, sourceSysId);
 }
@@ -59,6 +62,26 @@ function executeVerifyIdentity() {
         return;
     }
 
+    if (lastKnownDisplayStatus && lastKnownDisplayStatus !== 'Not Started') {
+        confirmReverification(sourceTable, sourceRecordId);
+        return;
+    }
+
+    startVerificationRequest(sourceTable, sourceRecordId);
+}
+
+function confirmReverification(sourceTable, sourceRecordId) {
+    var message =
+        'A request has already been made and its status is ' + lastKnownDisplayStatus + '. Do you want to request identity verification again?';
+
+    GlideModal.confirm('Restart Identity Verification', message, function (confirmed) {
+        if (confirmed) {
+            startVerificationRequest(sourceTable, sourceRecordId);
+        }
+    });
+}
+
+function startVerificationRequest(sourceTable, sourceRecordId) {
     showFormMessage('info', 'Starting identity verification...');
 
     var ga = new GlideAjax('x_entru_entrustidv.VerifyIdentityAjax');
@@ -187,6 +210,7 @@ function applyStatus(displayStatus) {
         return;
     }
 
+    lastKnownDisplayStatus = displayStatus;
     g_form.setValue(STATUS_FIELD, displayStatus);
 }
 

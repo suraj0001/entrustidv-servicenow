@@ -10,7 +10,7 @@ import { findSourceRecordContext } from '../repositories/source-record-repositor
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
 import {
     createVerificationRequest,
-    findLatestVerificationStatus,
+    deactivateActiveVerificationRequests,
     findVerificationRequestById,
 } from '../repositories/verification-request-repository.ts'
 import { addWorkNote, getVerificationCreatedActivityMessage } from './activity-service.ts'
@@ -35,17 +35,6 @@ export function startVerification(
         throw new Error('Unable to resolve the source record or subject user.')
     }
     gs.info(`[VerificationService] sourceContext resolved: sourceTable=${sourceContext.sourceTable}, sourceRecordId=${sourceContext.sourceRecordId}, subjectUserId=${sourceContext.subjectUserId}`)
-
-    if (
-        findLatestVerificationStatus(
-            sourceContext.sourceTable,
-            sourceContext.sourceRecordId,
-        )
-    ) {
-        throw new Error(
-            'Identity verification has already been started for this record.',
-        )
-    }
 
     // Load the ServiceNow user record
     const subjectUser = findSubjectUser(sourceContext.subjectUserId)
@@ -96,6 +85,11 @@ export function startVerification(
     gs.info(`[VerificationService] Workflow run created: workflowRunId=${workflowRun.workflowRunId}, status=${workflowRun.status}, workflowVersionId=${workflowRun.workflowVersionId}`)
 
     // Persist only after Entrust confirms the workflow run was created
+    deactivateActiveVerificationRequests(
+        sourceContext.sourceTable,
+        sourceContext.sourceRecordId,
+    )
+
     const verificationRequestId = createVerificationRequest({
         sourceTable: sourceContext.sourceTable,
         sourceRecordId: sourceContext.sourceRecordId,

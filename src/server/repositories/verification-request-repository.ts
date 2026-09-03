@@ -40,6 +40,7 @@ export function createVerificationRequest(input: CreateVerificationRequest): str
   gr.setValue("workflow_version_id", input.workflowVersionId);
   gr.setValue("workflow_run_id", input.workflowRunId);
   gr.setValue("status", input.status);
+  gr.setValue("active", true);
 
   const sysId = gr.insert();
   if (!sysId) {
@@ -47,6 +48,28 @@ export function createVerificationRequest(input: CreateVerificationRequest): str
   }
   gs.info("[VerificationRequestRepository] Verification request created: sysId=" + sysId);
   return sysId.toString();
+}
+
+export function deactivateActiveVerificationRequests(sourceTable: string, sourceRecordId: string): void {
+  if (!sourceTable || !sourceRecordId) {
+    return;
+  }
+
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  gr.addQuery("source_table", sourceTable);
+  gr.addQuery("source_record", sourceRecordId);
+  gr.addQuery("active", true);
+  gr.query();
+
+  gr.setValue("active", false);
+  gr.updateMultiple();
+
+  gs.info(
+    "[VerificationRequestRepository] Deactivated previous verification requests: sourceTable=" +
+      sourceTable +
+      ", sourceRecordId=" +
+      sourceRecordId,
+  );
 }
 
 export function findVerificationRequestById(sysId: string): GlideRecord | null {
@@ -97,6 +120,7 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
   gr.addQuery("source_table", sourceTable);
   gr.addQuery("source_record", sourceRecordId);
+  gr.addQuery("active", true);
   gr.orderByDesc('sys_created_on');
   gr.setLimit(1)
 
