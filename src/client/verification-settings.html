@@ -66,6 +66,12 @@
       color: #9ba7b2;
     }
 
+    .form-group input[readonly] {
+      background: #f8f9fb;
+      color: #55606f;
+      cursor: default;
+    }
+
     .hint {
       display: block;
       margin: 0 0 7px;
@@ -180,7 +186,7 @@
         <label for="link_expiry">Link Expiry
           <span class="req">*</span>
         </label>
-        <span class="hint">How long the verification link remains valid.</span>
+        <span class="hint">Number of minutes the identity verification link remains valid after the request is created.</span>
         <div class="input-with-suffix">
           <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
           <span class="input-suffix">minutes</span>
@@ -191,10 +197,8 @@
         <label for="delivery_channel">Delivery Channel
           <span class="req">*</span>
         </label>
-        <span class="hint">Channel used to send the verification request to the user.</span>
-        <select id="delivery_channel" name="delivery_channel">
-          <option value="email">Email</option>
-        </select>
+        <span class="hint">ServiceNow sends the identity verification link to the user's email address.</span>
+        <input id="delivery_channel" name="delivery_channel" type="text" readonly="true" value="Email"></input>
       </div>
       <!-- Redirect URL -->
       <div class="form-group">
