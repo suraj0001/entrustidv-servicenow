@@ -1,5 +1,5 @@
 import { gs } from '@servicenow/glide'
-import { VERIFICATION_REQUEST_CREATED_EVENT } from '../constants.ts'
+import { VERIFICATION_REQUEST_CREATED_EVENT, MAX_VERIFICATION_REQUESTS } from '../constants.ts'
 import {
     createApplicant,
     createWorkflowRun,
@@ -9,6 +9,7 @@ import { ApiConnectionRepository } from '../repositories/connection-credential-r
 import { findSourceRecordContext } from '../repositories/source-record-repository.ts'
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
 import {
+    countVerificationRequests,
     createVerificationRequest,
     deactivateActiveVerificationRequests,
     findVerificationRequestById,
@@ -35,6 +36,16 @@ export function startVerification(
         throw new Error('Unable to resolve the source record or subject user.')
     }
     gs.info(`[VerificationService] sourceContext resolved: sourceTable=${sourceContext.sourceTable}, sourceRecordId=${sourceContext.sourceRecordId}, subjectUserId=${sourceContext.subjectUserId}`)
+
+    const existingRequestCount = countVerificationRequests(
+        sourceContext.sourceTable,
+        sourceContext.sourceRecordId,
+    )
+    if (existingRequestCount >= MAX_VERIFICATION_REQUESTS) {
+        throw new Error(
+            `Maximum number of identity verification requests (${MAX_VERIFICATION_REQUESTS}) has been reached for this record.`,
+        )
+    }
 
     // Load the ServiceNow user record
     const subjectUser = findSubjectUser(sourceContext.subjectUserId)
@@ -122,7 +133,7 @@ export function startVerification(
     addWorkNote(
         sourceTable,
         sourceRecordId,
-        getVerificationCreatedActivityMessage()
+        getVerificationCreatedActivityMessage(existingRequestCount)
     );
 
     return {

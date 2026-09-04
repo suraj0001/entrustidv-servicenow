@@ -298,6 +298,10 @@ declare global {
                         table: 'sys_pd_snapshot_chunk'
                         id: '401416ab4772cb1016bda144846d4332'
                     }
+                    '403c65aa1b87c71011bbc8c5604bcb27': {
+                        table: 'sys_scope_privilege'
+                        id: '403c65aa1b87c71011bbc8c5604bcb27'
+                    }
                     '41c5cb434712c31016bda144846d431b': {
                         table: 'sys_pd_process_definition'
                         id: '41c5cb434712c31016bda144846d431b'
@@ -2721,6 +2725,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_documentation'
+                        id: 'c4e0c71f2d5d43b38dbff663e046bfc5'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'active'
+                            language: 'en'
+                        }
+                    },
+                    {
                         table: 'sys_element_mapping'
                         id: 'c60e6657473a0b1016bda144846d43b1'
                         key: {
@@ -2922,6 +2935,14 @@ declare global {
                         key: {
                             name: 'x_entru_entrustidv_verification_request'
                             element: 'source_table'
+                        }
+                    },
+                    {
+                        table: 'sys_dictionary'
+                        id: 'e3c1c1cfe3734b3a8c33c2c276927f8f'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'active'
                         }
                     },
                     {

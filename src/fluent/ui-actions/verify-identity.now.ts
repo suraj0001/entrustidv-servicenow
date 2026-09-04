@@ -27,4 +27,9 @@ UiAction({
     comments: 'Starts Entrust identity verification for the current record.',
     messages: [],
     isolateScript: false,
+    workspace: {
+        clientScriptV2: `function onClick(g_form) {
+
+}`,
+    },
 })

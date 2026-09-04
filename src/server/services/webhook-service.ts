@@ -138,4 +138,10 @@ function processEvidenceFolderCreated(
         workflowRunId,
         evidenceFolderHref
     )
+
+    addWorkNote(
+        verificationRequest.sourceTable,
+        verificationRequest.sourceRecordId,
+        'Identity verification evidence folder created.'
+    );
 }

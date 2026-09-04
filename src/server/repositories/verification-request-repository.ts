@@ -72,6 +72,19 @@ export function deactivateActiveVerificationRequests(sourceTable: string, source
   );
 }
 
+export function countVerificationRequests(sourceTable: string, sourceRecordId: string): number {
+  if (!sourceTable || !sourceRecordId) {
+    return 0;
+  }
+
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  gr.addQuery("source_table", sourceTable);
+  gr.addQuery("source_record", sourceRecordId);
+  gr.query();
+
+  return gr.getRowCount();
+}
+
 export function findVerificationRequestById(sysId: string): GlideRecord | null {
   if (!sysId) {
     return null;

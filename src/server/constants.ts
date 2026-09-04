@@ -24,3 +24,4 @@ export const VERIFICATION_REQUEST_CREATED_EVENT = "x_entru_entrustidv.verificati
 
 export const IDV_STATUS_FIELD = "x_entru_entrustidv_verification_status";
 export const DEFAULT_IDV_STATUS = "Not Started";
+export const MAX_VERIFICATION_REQUESTS = 3;

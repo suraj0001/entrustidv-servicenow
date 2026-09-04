@@ -74,10 +74,22 @@ function confirmReverification(sourceTable, sourceRecordId) {
     var message =
         'A request has already been made and its status is ' + lastKnownDisplayStatus + '. Do you want to request identity verification again?';
 
-    GlideModal.confirm('Restart Identity Verification', message, function (confirmed) {
-        if (confirmed) {
-            startVerificationRequest(sourceTable, sourceRecordId);
-        }
+    g_form.addFormMessage(message, 'info', {
+        buttons: [
+            {
+                label: 'Yes',
+                onClick: function () {
+                    g_form.clearMessages();
+                    startVerificationRequest(sourceTable, sourceRecordId);
+                }
+            },
+            {
+                label: 'No',
+                onClick: function () {
+                    g_form.clearMessages();
+                }
+            }
+        ]
     });
 }
 

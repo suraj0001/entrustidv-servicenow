@@ -22,9 +22,23 @@ export function addWorkNote(
   }
 }
 
-export function getVerificationCreatedActivityMessage(): string {
+export function getVerificationCreatedActivityMessage(existingRequestCount: number): string {
+  if (existingRequestCount <= 0) {
+    return (
+      "Identity verification requested.\n" +
+      "Verification link sent to the user."
+    );
+  }
+
+  if (existingRequestCount === 1) {
+    return (
+      "Identity reverification requested.\n" +
+      "Verification link sent to the user."
+    );
+  }
+
   return (
-    "Identity verification requested.\n" +
+    "Identity reverification requested again.\n" +
     "Verification link sent to the user."
   );
 }
