@@ -1830,6 +1830,40 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: '420f287a1b874b1011bbc8c5604bcb2d'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.begin_split'
+                            position: '4'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '420f287a1b874b1011bbc8c5604bcb34'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'active'
+                            position: '12'
+                        }
+                    },
+                    {
                         table: 'sys_element_mapping'
                         id: '43fd6257473a0b1016bda144846d43ad'
                         key: {
@@ -1851,6 +1885,40 @@ declare global {
                         key: {
                             name: 'x_entru_entrustidv_verification_request'
                             element: 'status'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '460f287a1b874b1011bbc8c5604bcb2b'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'workflow_run_id'
+                            position: '2'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '460f287a1b874b1011bbc8c5604bcb32'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'workflow_id'
+                            position: '10'
                         }
                     },
                     {
@@ -1915,6 +1983,23 @@ declare global {
                         key: {
                             document_key: '08b1ae947b39c2659ff0f7742a76ff78'
                             variable: '7e057a4eeb3331107626211f1a522890'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '4a0f287a1b874b1011bbc8c5604bcb30'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'source_record'
+                            position: '8'
                         }
                     },
                     {
@@ -2006,6 +2091,23 @@ declare global {
                         key: {
                             document_key: '08b1ae947b39c2659ff0f7742a76ff78'
                             variable: '87057a4eeb3331107626211f1a5228d0'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: '4e0f287a1b874b1011bbc8c5604bcb2e'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'workflow_version_id'
+                            position: '6'
                         }
                     },
                     {
@@ -2683,6 +2785,40 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: 'c20f287a1b874b1011bbc8c5604bcb2c'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'source_table'
+                            position: '3'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'c20f287a1b874b1011bbc8c5604bcb33'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'evidence_folder_href'
+                            position: '11'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: 'c27390ae13cb475ba123b6c9ef6c3121'
                         key: {
@@ -2760,6 +2896,40 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: 'c60f287a1b874b1011bbc8c5604bcb2a'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'applicant_id'
+                            position: '1'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'c60f287a1b874b1011bbc8c5604bcb31'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.end_split'
+                            position: '9'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: 'c61a64e7477e4b1016bda144846d43e0'
                         key: {
@@ -2804,6 +2974,40 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_ui_element'
+                        id: 'ca0f287a1b874b1011bbc8c5604bcb28'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'status'
+                            position: '0'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'ca0f287a1b874b1011bbc8c5604bcb2f'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: '.split'
+                            position: '7'
+                        }
+                    },
+                    {
                         table: 'sys_ux_lib_asset'
                         id: 'cdcfc1fa9f2f414a9cd95bfb0d6793bb'
                         key: {
@@ -2833,6 +3037,23 @@ declare global {
                         key: {
                             document_key: '08b1ae947b39c2659ff0f7742a76ff78'
                             variable: '7a9c34eb37f356106c62349be2924b0a'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_element'
+                        id: 'ce0f287a1b874b1011bbc8c5604bcb2d'
+                        key: {
+                            sys_ui_section: {
+                                id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                                key: {
+                                    name: 'x_entru_entrustidv_verification_request'
+                                    caption: 'NULL'
+                                    view: 'Default view'
+                                    sys_domain: 'global'
+                                }
+                            }
+                            element: 'subject_user'
+                            position: '5'
                         }
                     },
                     {
@@ -3095,6 +3316,21 @@ declare global {
                         key: {
                             document_key: 'c4693daa490f45a869ee2a4b224193c5'
                             variable: '32057a4eeb3331107626211f1a522880'
+                        }
+                    },
+                    {
+                        table: 'sys_ui_section'
+                        id: 'fd0f607a1b874b1011bbc8c5604bcb2a'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            caption: 'NULL'
+                            view: {
+                                id: 'Default view'
+                                key: {
+                                    name: 'NULL'
+                                }
+                            }
+                            sys_domain: 'global'
                         }
                     },
                     {

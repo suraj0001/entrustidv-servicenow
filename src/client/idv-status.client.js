@@ -71,26 +71,24 @@ function executeVerifyIdentity() {
 }
 
 function confirmReverification(sourceTable, sourceRecordId) {
-    var message =
-        'A request has already been made and its status is ' + lastKnownDisplayStatus + '. Do you want to request identity verification again?';
+    // "window" is nulled by the client-script sandbox, so the Yes/No links use
+    // globalThis (a separate reference to the true global object) instead.
+    globalThis.__idvConfirmYes = function () {
+        g_form.clearMessages();
+        startVerificationRequest(sourceTable, sourceRecordId);
+    };
 
-    g_form.addFormMessage(message, 'info', {
-        buttons: [
-            {
-                label: 'Yes',
-                onClick: function () {
-                    g_form.clearMessages();
-                    startVerificationRequest(sourceTable, sourceRecordId);
-                }
-            },
-            {
-                label: 'No',
-                onClick: function () {
-                    g_form.clearMessages();
-                }
-            }
-        ]
-    });
+    globalThis.__idvConfirmNo = function () {
+        g_form.clearMessages();
+    };
+
+    var message =
+        'A request has already been made and its status is ' + lastKnownDisplayStatus + '. Do you want to request identity verification again? ' +
+        '<a href="javascript:void(0);" style="text-decoration: none !important;" class="btn btn-default" onclick="globalThis.__idvConfirmYes();">Yes</a>' +
+        ' ' +
+        '<a href="javascript:void(0);" style="text-decoration: none !important;" class="btn btn-default" onclick="globalThis.__idvConfirmNo();">No</a>';
+
+    g_form.addFormMessage(message, 'info');
 }
 
 function startVerificationRequest(sourceTable, sourceRecordId) {
