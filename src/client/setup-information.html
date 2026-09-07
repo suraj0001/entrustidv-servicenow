@@ -84,6 +84,19 @@
       color: #55606f;
     }
 
+    .setup-input[aria-invalid="true"] {
+      border-color: #c83c3c;
+      box-shadow: 0 0 0 2px rgba(200, 60, 60, 0.1);
+    }
+
+    .field-error {
+      display: none;
+      margin: 6px 0 0;
+      color: #a12622;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
     .input-icon-wrap {
       position: relative;
     }
@@ -318,6 +331,7 @@
             <input id="webhook_token" class="setup-input" type="password" autocomplete="new-password" maxlength="255" placeholder="Enter webhook token"></input>
             <button id="btn_save_webhook_token" type="button" class="setup-btn btn btn-save">Save</button>
           </div>
+          <div id="webhook_token_error" class="field-error" role="alert"></div>
         </div>
         <div id="webhook_token_message" class="status-message" role="status" aria-live="polite">
           <span class="status-icon" aria-hidden="true"></span>

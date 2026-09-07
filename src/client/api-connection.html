@@ -98,6 +98,20 @@
       line-height: 1.45;
     }
 
+    .field-error {
+      display: none;
+      margin-top: 6px;
+      color: #9b3232;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .form-group input[aria-invalid="true"],
+    .form-group select[aria-invalid="true"] {
+      border-color: #c83c3c;
+      box-shadow: 0 0 0 2px rgba(200, 60, 60, 0.1);
+    }
+
     .req {
       color: #c83c3c;
       margin-left: 2px;
@@ -188,6 +202,7 @@
           <option value="eu">Europe (EU)</option>
           <option value="ca">Canada (CA)</option>
         </select>
+        <div class="field-error" id="idv_region_error" role="alert"></div>
       </div>
       <div class="form-group">
         <label for="idv_base_url">Base URL
@@ -208,12 +223,14 @@
           <span class="req">*</span>
         </label>
         <input type="text" id="idv_client_id" maxlength="255" placeholder="Enter your Entrust Client ID"></input>
+        <div class="field-error" id="idv_client_id_error" role="alert"></div>
       </div>
       <div class="form-group">
         <label for="idv_client_secret">Client Secret
           <span class="req">*</span>
         </label>
         <input type="password" id="idv_client_secret" maxlength="255" placeholder="Enter your Entrust Client Secret"></input>
+        <div class="field-error" id="idv_client_secret_error" role="alert"></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-test" id="btn_test" type="button">Test Connection</button>

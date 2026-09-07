@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
     saveWebhookToken();
   });
 
+  _el("webhook_token").addEventListener("input", function () {
+    clearTokenFieldError();
+    clearTokenMessage();
+  });
+
   getWebhookTokenStatus();
 });
 
@@ -80,12 +85,61 @@ function showTokenMessage(type, message) {
   box.style.display = "flex";
 }
 
+function clearTokenMessage() {
+  var box = _el("webhook_token_message");
+
+  box.style.display = "none";
+  box.querySelector(".status-icon").textContent = "";
+  box.querySelector(".status-text").textContent = "";
+}
+
+function showTokenFieldError(message) {
+  var input = _el("webhook_token");
+  var error = _el("webhook_token_error");
+
+  input.setAttribute("aria-invalid", "true");
+  input.setAttribute("aria-describedby", error.id);
+  error.textContent = message;
+  error.style.display = "block";
+}
+
+function clearTokenFieldError() {
+  var input = _el("webhook_token");
+  var error = _el("webhook_token_error");
+
+  input.removeAttribute("aria-invalid");
+  input.removeAttribute("aria-describedby");
+  error.textContent = "";
+  error.style.display = "none";
+}
+
+function showServerTokenValidationError(message) {
+  if (
+    message === "Webhook token is required." ||
+    message === "Webhook token must not exceed 255 characters."
+  ) {
+    showTokenFieldError(message);
+    return true;
+  }
+
+  return false;
+}
+
 function saveWebhookToken() {
   var token = _el("webhook_token").value.trim();
   var button = _el("btn_save_webhook_token");
 
+  clearTokenFieldError();
+  clearTokenMessage();
+
   if (!token) {
-    showTokenMessage("error", "Webhook token is required.");
+    showTokenFieldError("Webhook token is required.");
+    _el("webhook_token").focus();
+    return;
+  }
+
+  if (token.length > 255) {
+    showTokenFieldError("Webhook token must not exceed 255 characters.");
     _el("webhook_token").focus();
     return;
   }
@@ -116,6 +170,12 @@ function saveWebhookToken() {
       return;
     }
 
-    showTokenMessage("error", (result && result.message) || "Unable to save webhook token.");
+    var message = (result && result.message) || "Unable to save webhook token.";
+    if (showServerTokenValidationError(message)) {
+      _el("webhook_token").focus();
+      return;
+    }
+
+    showTokenMessage("error", message);
   });
 }

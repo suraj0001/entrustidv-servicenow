@@ -47,6 +47,58 @@ function showSuccess(message) {
   success.style.display = "block";
 }
 
+function showFieldError(fieldId, message) {
+  var field = _el(fieldId);
+  var error = _el(fieldId + "_error");
+
+  field.setAttribute("aria-invalid", "true");
+  field.setAttribute("aria-describedby", error.id);
+  error.textContent = message;
+  error.style.display = "block";
+}
+
+function clearFieldError(fieldId) {
+  var field = _el(fieldId);
+  var error = _el(fieldId + "_error");
+
+  field.removeAttribute("aria-invalid");
+  field.removeAttribute("aria-describedby");
+  error.textContent = "";
+  error.style.display = "none";
+}
+
+function clearFieldErrors() {
+  ["workflow_id", "link_expiry", "delivery_channel", "redirect_url"].forEach(clearFieldError);
+}
+
+function focusFirstInvalidField() {
+  var field = document.querySelector('[aria-invalid="true"]');
+
+  if (field) field.focus();
+}
+
+function showServerValidationError(message) {
+  var fieldId = null;
+
+  if (message === "Workflow ID is required.") fieldId = "workflow_id";
+  else if (
+    message === "Link expiry is required." ||
+    message === "Link expiry must be a positive whole number."
+  )
+    fieldId = "link_expiry";
+  else if (
+    message === "Delivery channel is required." ||
+    message === "Email is currently the only supported delivery channel."
+  )
+    fieldId = "delivery_channel";
+  else if (message === "Enter a valid redirect URL.") fieldId = "redirect_url";
+
+  if (!fieldId) return false;
+
+  showFieldError(fieldId, message);
+  return true;
+}
+
 function ajax(method, params, callback) {
   var ga = new GlideAjax("x_entru_entrustidv.VerificationSettingsAjax");
 
@@ -74,15 +126,14 @@ function ajax(method, params, callback) {
   });
 }
 
-function focusField(id) {
-  var element = _el(id);
-
-  if (element) {
-    element.focus();
-  }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
+  ["workflow_id", "link_expiry", "redirect_url"].forEach(function (fieldId) {
+    _el(fieldId).addEventListener("input", function () {
+      clearFieldError(fieldId);
+      clearMessages();
+    });
+  });
+
   ajax("getConfig", {}, function (result) {
     if (!result || !result.success || !result.settings) {
       return;
@@ -98,8 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function validateWorkflowId() {
   if (!_value("workflow_id")) {
-    showError("Workflow ID is required.");
-    focusField("workflow_id");
+    showFieldError("workflow_id", "Workflow ID is required.");
     return false;
   }
 
@@ -110,16 +160,14 @@ function validateLinkExpiry() {
   var value = _value("link_expiry");
 
   if (!value) {
-    showError("Link expiry is required.");
-    focusField("link_expiry");
+    showFieldError("link_expiry", "Link expiry is required.");
     return false;
   }
 
   var expiry = Number(value);
 
   if (!Number.isInteger(expiry) || expiry <= 0) {
-    showError("Link expiry must be a positive whole number.");
-    focusField("link_expiry");
+    showFieldError("link_expiry", "Link expiry must be a positive whole number.");
     return false;
   }
 
@@ -128,8 +176,7 @@ function validateLinkExpiry() {
 
 function validateDeliveryChannel() {
   if (_value("delivery_channel").toLowerCase() !== "email") {
-    showError("Delivery channel must be Email.");
-    focusField("delivery_channel");
+    showFieldError("delivery_channel", "Delivery channel must be Email.");
     return false;
   }
 
@@ -147,34 +194,34 @@ function validateRedirectUrl() {
     var url = new URL(value);
 
     if (url.protocol !== "http:" && url.protocol !== "https:") {
-      showError("Redirect URL must use http or https.");
-      focusField("redirect_url");
+      showFieldError("redirect_url", "Redirect URL must use http or https.");
       return false;
     }
 
     return true;
   } catch (e) {
-    showError("Enter a valid redirect URL.");
-    focusField("redirect_url");
+    showFieldError("redirect_url", "Enter a valid redirect URL.");
     return false;
   }
 }
 
 function validateForm() {
-  return (
-    validateWorkflowId() &&
-    validateLinkExpiry() &&
-    validateDeliveryChannel() &&
-    validateRedirectUrl()
-  );
+  var workflowIdValid = validateWorkflowId();
+  var linkExpiryValid = validateLinkExpiry();
+  var deliveryChannelValid = validateDeliveryChannel();
+  var redirectUrlValid = validateRedirectUrl();
+
+  return workflowIdValid && linkExpiryValid && deliveryChannelValid && redirectUrlValid;
 }
 
 _el("btn_save").addEventListener("click", function () {
   var button = this;
 
   clearMessages();
+  clearFieldErrors();
 
   if (!validateForm()) {
+    focusFirstInvalidField();
     return;
   }
 
@@ -198,7 +245,13 @@ _el("btn_save").addEventListener("click", function () {
         return;
       }
 
-      showError((result && result.message) || "Failed to save verification settings.");
+      var message = (result && result.message) || "Failed to save verification settings.";
+      if (showServerValidationError(message)) {
+        focusFirstInvalidField();
+        return;
+      }
+
+      showError(message);
     },
   );
 });

@@ -72,6 +72,20 @@
       cursor: default;
     }
 
+    .form-group input[aria-invalid="true"],
+    .form-group select[aria-invalid="true"] {
+      border-color: #c83c3c;
+      box-shadow: 0 0 0 2px rgba(200, 60, 60, 0.1);
+    }
+
+    .field-error {
+      display: none;
+      margin-top: 6px;
+      color: #9b3232;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
     .hint {
       display: block;
       margin: 0 0 7px;
@@ -180,6 +194,7 @@
         <span class="hint">The Entrust workflow that will be used for identity verification
           requests.</span>
         <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
+        <div id="workflow_id_error" class="field-error" role="alert"></div>
       </div>
       <!-- Link Expiry -->
       <div class="form-group">
@@ -191,6 +206,7 @@
           <input id="link_expiry" name="link_expiry" type="number" min="1" value="60"></input>
           <span class="input-suffix">minutes</span>
         </div>
+        <div id="link_expiry_error" class="field-error" role="alert"></div>
       </div>
       <!-- Delivery Channel -->
       <div class="form-group">
@@ -199,6 +215,7 @@
         </label>
         <span class="hint">ServiceNow sends the identity verification link to the user's email address.</span>
         <input id="delivery_channel" name="delivery_channel" type="text" readonly="true" value="Email"></input>
+        <div id="delivery_channel_error" class="field-error" role="alert"></div>
       </div>
       <!-- Redirect URL -->
       <div class="form-group">
@@ -206,6 +223,7 @@
         <span class="hint">Leave blank unless users should be redirected to a specific page
           after completing verification.</span>
         <input id="redirect_url" name="redirect_url" type="url" autocomplete="off" placeholder="https://example.com/verification-complete"></input>
+        <div id="redirect_url_error" class="field-error" role="alert"></div>
       </div>
       <!-- Actions -->
       <div class="btn-row">

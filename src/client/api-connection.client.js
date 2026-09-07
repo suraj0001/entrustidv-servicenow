@@ -34,25 +34,113 @@ function _ajax(method, params, callback) {
   });
 }
 
-// Returns an error message string or null if the credential fields are valid
-function _validateCredentialLength(clientId, clientSecret) {
-  if (clientId.length < MIN_LEN || clientId.length > MAX_LEN)
-    return (
-      "Client ID must be between " +
-      MIN_LEN +
-      " and " +
-      MAX_LEN +
-      " characters."
-    );
-  if (clientSecret.length < MIN_LEN || clientSecret.length > MAX_LEN)
-    return (
-      "Client Secret must be between " +
-      MIN_LEN +
-      " and " +
-      MAX_LEN +
-      " characters."
-    );
+function _validateCredentialLength(value, label) {
+  if (value.length < MIN_LEN || value.length > MAX_LEN)
+    return label + " must be between " + MIN_LEN + " and " + MAX_LEN + " characters.";
   return null;
+}
+
+function _idvShowFieldError(fieldId, message) {
+  var field = _el(fieldId);
+  var error = _el(fieldId + "_error");
+  field.setAttribute("aria-invalid", "true");
+  field.setAttribute("aria-describedby", error.id);
+  error.textContent = message;
+  error.style.display = "block";
+}
+
+function _idvClearFieldError(fieldId) {
+  var field = _el(fieldId);
+  var error = _el(fieldId + "_error");
+  field.removeAttribute("aria-invalid");
+  field.removeAttribute("aria-describedby");
+  error.textContent = "";
+  error.style.display = "none";
+}
+
+function _idvClearValidationErrors() {
+  ["idv_region", "idv_client_id", "idv_client_secret"].forEach(_idvClearFieldError);
+}
+
+function _idvValidateCredentialFields(clientId, clientSecret, required, isStoredCredentialRetest) {
+  var valid = true;
+
+  if (!clientId) {
+    if (required || clientSecret) {
+      _idvShowFieldError(
+        "idv_client_id",
+        isStoredCredentialRetest
+          ? "Enter a new Client ID to re-test, or click Save to keep the existing credentials."
+          : "Client ID is required.",
+      );
+      valid = false;
+    }
+  } else {
+    var clientIdError = _validateCredentialLength(clientId, "Client ID");
+    if (clientIdError) {
+      _idvShowFieldError("idv_client_id", clientIdError);
+      valid = false;
+    }
+  }
+
+  if (!clientSecret) {
+    if (required || clientId) {
+      _idvShowFieldError(
+        "idv_client_secret",
+        isStoredCredentialRetest
+          ? "Enter a new Client Secret to re-test, or click Save to keep the existing credentials."
+          : "Client Secret is required.",
+      );
+      valid = false;
+    }
+  } else {
+    var clientSecretError = _validateCredentialLength(clientSecret, "Client Secret");
+    if (clientSecretError) {
+      _idvShowFieldError("idv_client_secret", clientSecretError);
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
+function _idvFocusFirstInvalidField() {
+  var field = document.querySelector('[aria-invalid="true"]');
+  if (field) field.focus();
+}
+
+function _idvShowServerValidationError(message) {
+  if (/^Client ID\b/.test(message)) {
+    _idvShowFieldError("idv_client_id", message);
+    return true;
+  }
+  if (/^Client Secret\b/.test(message)) {
+    _idvShowFieldError("idv_client_secret", message);
+    return true;
+  }
+  if (/^Region is required\.|^Unsupported region:/.test(message)) {
+    _idvShowFieldError("idv_region", message);
+    return true;
+  }
+  if (message === "Provide both Client ID and Client Secret, or neither.") {
+    _idvValidateCredentialFields(
+      _el("idv_client_id").value.trim(),
+      _el("idv_client_secret").value,
+      true,
+    );
+    return true;
+  }
+  if (message === "Region, Client ID and Client Secret are all required.") {
+    var region = _el("idv_region").value.trim();
+    if (!region) _idvShowFieldError("idv_region", "Region is required.");
+    _idvValidateCredentialFields(
+      _el("idv_client_id").value.trim(),
+      _el("idv_client_secret").value,
+      true,
+    );
+    return true;
+  }
+  return false;
 }
 
 function _idvEnableSave() {
@@ -81,10 +169,8 @@ function _idvShowStatus(type, message) {
 }
 
 function _setStoredCredentialPlaceholders() {
-  _el("idv_client_id").placeholder =
-    "Configured — enter a new value to replace";
-  _el("idv_client_secret").placeholder =
-    "Configured — enter a new value to replace";
+  _el("idv_client_id").placeholder = "Configured — enter a new value to replace";
+  _el("idv_client_secret").placeholder = "Configured — enter a new value to replace";
   _el("idv_credentials_hint").style.display = "block";
 }
 
@@ -113,11 +199,10 @@ document.addEventListener("DOMContentLoaded", function () {
 // --- Region change ---
 
 _el("idv_region").addEventListener("change", function () {
+  _idvClearFieldError("idv_region");
   var base = BASE_URLS[this.value] || "";
   _el("idv_base_url").value = base;
-  _el("idv_token_url").value = base
-    ? base + "/" + API_VERSION + "/oauth/token"
-    : "";
+  _el("idv_token_url").value = base ? base + "/" + API_VERSION + "/oauth/token" : "";
   if (_idvHasStoredCredentials) _clearStoredCredentialPlaceholders();
   _idvShowStatus("", "");
   _idvDisableSave();
@@ -125,7 +210,11 @@ _el("idv_region").addEventListener("change", function () {
 
 // Credential edits invalidate the last successful test
 ["idv_client_id", "idv_client_secret"].forEach(function (id) {
-  _el(id).addEventListener("input", _idvDisableSave);
+  _el(id).addEventListener("input", function () {
+    _idvClearFieldError(id);
+    _idvShowStatus("", "");
+    _idvDisableSave();
+  });
 });
 
 // --- Test Connection ---
@@ -135,25 +224,21 @@ _el("btn_test").addEventListener("click", function () {
   var clientId = _el("idv_client_id").value.trim();
   var clientSecret = _el("idv_client_secret").value;
   var btn = _el("btn_test");
+  var valid = true;
+
+  _idvClearValidationErrors();
+  _idvShowStatus("", "");
 
   if (!region) {
-    _idvShowStatus("error", "Please select a region.");
-    return;
+    _idvShowFieldError("idv_region", "Region is required.");
+    valid = false;
   }
 
-  if (!clientId || !clientSecret) {
-    _idvShowStatus(
-      "error",
-      _idvHasStoredCredentials
-        ? "Enter a new Client ID and Client Secret to re-test, or click Save to keep the existing credentials."
-        : "Client ID and Client Secret are required to test the connection.",
-    );
-    return;
-  }
+  if (!_idvValidateCredentialFields(clientId, clientSecret, true, _idvHasStoredCredentials))
+    valid = false;
 
-  var lenError = _validateCredentialLength(clientId, clientSecret);
-  if (lenError) {
-    _idvShowStatus("error", lenError);
+  if (!valid) {
+    _idvFocusFirstInvalidField();
     return;
   }
 
@@ -175,10 +260,9 @@ _el("btn_test").addEventListener("click", function () {
         _idvShowStatus("success", "✅ " + result.message);
         _idvEnableSave();
       } else {
-        _idvShowStatus(
-          "error",
-          "❌ " + (result ? result.message : "Unknown error."),
-        );
+        var message = result ? result.message : "Unknown error.";
+        if (!_idvShowServerValidationError(message)) _idvShowStatus("error", "❌ " + message);
+        _idvFocusFirstInvalidField();
         _idvDisableSave();
       }
     },
@@ -194,23 +278,24 @@ _el("btn_save").addEventListener("click", function () {
   var clientId = _el("idv_client_id").value.trim();
   var clientSecret = _el("idv_client_secret").value;
   var btn = this;
+  var valid = true;
+
+  _idvClearValidationErrors();
+  _idvShowStatus("", "");
 
   if (!region || !baseUrl || !tokenUrl) {
-    _idvShowStatus("error", "Please select a region.");
-    return;
+    _idvShowFieldError("idv_region", "Region is required.");
+    valid = false;
   }
 
   var hasNew = clientId.length > 0 || clientSecret.length > 0;
-  if (!_idvHasStoredCredentials && !hasNew) {
-    _idvShowStatus("error", "Client ID and Client Secret are required.");
-    return;
+  if (!_idvValidateCredentialFields(clientId, clientSecret, !_idvHasStoredCredentials || hasNew)) {
+    valid = false;
   }
-  if (hasNew) {
-    var lenError = _validateCredentialLength(clientId, clientSecret);
-    if (lenError) {
-      _idvShowStatus("error", lenError);
-      return;
-    }
+
+  if (!valid) {
+    _idvFocusFirstInvalidField();
+    return;
   }
 
   btn.disabled = true;
@@ -256,14 +341,7 @@ _el("btn_save").addEventListener("click", function () {
   });
 });
 
-function _idvFinishSave(
-  region,
-  baseUrl,
-  tokenUrl,
-  clientId,
-  clientSecret,
-  btn,
-) {
+function _idvFinishSave(region, baseUrl, tokenUrl, clientId, clientSecret, btn) {
   _ajax(
     "saveConfig",
     {
@@ -279,10 +357,9 @@ function _idvFinishSave(
       if (result && result.success) {
         _idvShowStatus("success", "✅ " + result.message);
       } else {
-        _idvShowStatus(
-          "error",
-          "❌ " + (result ? result.message : "Unknown error."),
-        );
+        var message = result ? result.message : "Unknown error.";
+        if (!_idvShowServerValidationError(message)) _idvShowStatus("error", "❌ " + message);
+        _idvFocusFirstInvalidField();
       }
     },
   );
