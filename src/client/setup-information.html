@@ -28,13 +28,13 @@
     }
 
     .setup-section {
-      padding: 28px 0;
+      padding: 18px 0;
       border-top: 1px solid #dde2e7;
     }
 
     .setup-section:first-child {
-      border-top: 0;
-    }
+      border-top: 0;      
+    }    
 
     .setup-section-title {
       margin: 0 0 22px;
@@ -156,16 +156,12 @@
       background: #f5f6f8;
     }
 
-    button.btn-save {
-      background: #4F52BD !important;
-      background-image: none !important;
-      border: 1px solid #4F52BD !important;
-      color: #ffffff !important;
-    }
-
+    button.btn-save,
     button.btn-save:hover {
-      background: #3d40a0 !important;
-      border-color: #3d40a0 !important;
+      background: transparent !important;
+      background-image: none !important;
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
     }
 
     button.btn-save:disabled {
@@ -201,16 +197,29 @@
       color: #a12622;
     }
 
+    #webhook_token_message {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    #webhook_token_message.success {
+      background: #edf7f1;
+      border: 1px solid #bdddc9;
+      color: #326545;
+    }
+
     .status-icon {
       display: inline-flex;
-      flex: 0 0 28px;
+      flex: 0 0 20px;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
-      border: 2px solid currentColor;
+      width: 20px;
+      height: 20px;
+      border: 1px solid currentColor;
       border-radius: 50%;
-      font-size: 17px;
+      font-size: 12px;
       font-weight: 700;
       line-height: 1;
     }
@@ -319,22 +328,23 @@
           <div class="input-icon-wrap">
             <input id="webhook_url" class="setup-input" type="text" readonly="true" value=""></input>
             <button id="btn_copy_webhook_url" type="button" class="input-icon-btn" title="Copy" aria-label="Copy webhook URL">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
             </button>
           </div>
         </div>
         <div class="setup-form-group">
           <label class="setup-form-label" for="webhook_token">Webhook Token</label>
-          <p class="helper-text field-description">Entrust generates this token once the webhook above is configured.
-            Enter it here so ServiceNow can verify incoming webhook events.</p>
+          <p class="helper-text field-description">After configuring the webhook, enter the token provided by Entrust. ServiceNow uses it to verify incoming webhook events.</p>
           <div class="setup-input-row">
-            <input id="webhook_token" class="setup-input" type="password" autocomplete="new-password" maxlength="255" placeholder="Enter webhook token"></input>
-            <button id="btn_save_webhook_token" type="button" class="setup-btn btn btn-save">Save</button>
+            <input id="webhook_token" class="setup-input" type="password" autocomplete="new-password" minlength="5" maxlength="100" placeholder="Enter webhook token"></input>
+            <button id="btn_save_webhook_token" type="button" class="setup-btn btn btn-save" disabled="true">Save</button>
           </div>
           <div id="webhook_token_error" class="field-error" role="alert"></div>
         </div>
         <div id="webhook_token_message" class="status-message" role="status" aria-live="polite">
-          <span class="status-icon" aria-hidden="true"></span>
           <span class="status-text"></span>
         </div>
       </section>

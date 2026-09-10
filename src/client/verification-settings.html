@@ -13,43 +13,42 @@
     }
 
     .entrust-container {
+      max-width: 900px;
+      margin: 4px auto 24px;
+      border: 1px solid #d7dce2;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #1f2937;
       font-family: Arial, Helvetica, sans-serif;
-      max-width: 580px;
-      margin: 4px auto;
-      padding: 0 24px 24px;
-      color: #2e3a45;
+      overflow: hidden;
     }
 
     .entrust-section {
-      background: #ffffff;
-      border: 1px solid #dfe3e8;
-      border-radius: 6px;
-      padding: 24px;
+      padding: 26px 42px 24px;
     }
 
     .form-group {
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .form-group label {
       display: block;
-      font-weight: 600;
-      font-size: 13px;
       margin-bottom: 3px;
-      color: #34495e;
+      color: #202936;
+      font-size: 15px;
+      font-weight: 600;
     }
 
     .form-group input,
     .form-group select {
       width: 100%;
-      height: 38px;
-      padding: 8px 11px;
-      border: 1px solid #b8c2cc;
-      border-radius: 4px;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid #b9c1cc;
+      border-radius: 5px;
       background: #ffffff;
-      color: #263746;
+      color: #303946;
       font-size: 14px;
-      box-sizing: border-box;
       outline: none;
       transition:
         border-color 0.15s ease,
@@ -58,8 +57,8 @@
 
     .form-group input:focus,
     .form-group select:focus {
-      border-color: #6d2077;
-      box-shadow: 0 0 0 2px rgba(109, 32, 119, 0.12);
+      border-color: #4a7dbd;
+      box-shadow: 0 0 0 2px rgba(74, 125, 189, 0.12);
     }
 
     .form-group input::placeholder {
@@ -80,18 +79,18 @@
 
     .field-error {
       display: none;
-      margin-top: 6px;
-      color: #9b3232;
-      font-size: 12px;
+      margin: 6px 0 0;
+      color: #a12622;
+      font-size: 13px;
       line-height: 1.4;
     }
 
     .hint {
       display: block;
-      margin: 0 0 7px;
-      font-size: 12px;
-      color: #7b8792;
-      line-height: 1.45;
+      margin: 0 0 10px;
+      color: #667180;
+      font-size: 14px;
+      line-height: 1.55;
     }
 
     .req {
@@ -105,48 +104,45 @@
     }
 
     .input-with-suffix input {
-      border-radius: 4px 0 0 4px;
+      border-radius: 5px 0 0 5px;
     }
 
     .input-suffix {
       display: flex;
       align-items: center;
-      height: 38px;
-      padding: 0 13px;
-      border: 1px solid #b8c2cc;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid #b9c1cc;
       border-left: 0;
-      border-radius: 0 4px 4px 0;
-      background: #f3f5f7;
-      color: #586773;
+      border-radius: 0 5px 5px 0;
+      background: #f8f9fb;
+      color: #55606f;
       font-size: 13px;
       white-space: nowrap;
     }
 
     .btn-row {
       display: flex;
-      gap: 10px;
-      margin-top: 22px;
+      gap: 12px;
+      margin-top: 4px;
     }
 
     .btn {
-      height: 40px;
-      padding: 0 22px;
-      border-radius: 4px;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 5px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
     }
 
-    button.btn-save {
-      background: #4F52BD !important;
-      background-image: none !important;
-      border: 1px solid #4F52BD !important;
-      color: #ffffff !important;
-    }
-
+    button.btn-save,
     button.btn-save:hover {
-      background: #3d40a0 !important;
-      border-color: #3d40a0 !important;
+      background: transparent !important;
+      background-image: none !important;
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
     }
 
     button.btn-save:disabled {
@@ -156,8 +152,8 @@
 
     .status {
       display: none;
-      margin-top: 16px;
-      padding: 11px 14px;
+      margin-top: 8px;
+      padding: 8px 10px;
       border-radius: 4px;
       font-size: 13px;
       line-height: 1.4;
@@ -175,13 +171,13 @@
       border: 1px solid #e5bcbc;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       .entrust-container {
-        padding: 0 16px 24px;
+        margin: 4px 16px 24px;
       }
 
       .entrust-section {
-        padding: 20px;
+        padding: 22px 22px 14px;
       }
     }</style>
   <div class="entrust-container">

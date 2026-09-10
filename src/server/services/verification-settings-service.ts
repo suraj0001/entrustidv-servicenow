@@ -82,14 +82,14 @@ export function saveWebhookSecret(webhookSecret: string): SaveVerificationSettin
     throw new Error("Webhook token is required.");
   }
 
-  if (normalizedSecret.length > 255) {
-    throw new Error("Webhook token must not exceed 255 characters.");
+  if (normalizedSecret.length < 5 || normalizedSecret.length > 100) {
+    throw new Error("Webhook token must be between 5 and 100 characters.");
   }
 
   saveWebhookSecretValue(normalizedSecret);
 
   return {
     success: true,
-    message: "Webhook token saved.",
+    message: "Webhook token saved successfully.",
   };
 }
