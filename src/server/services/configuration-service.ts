@@ -1,6 +1,6 @@
-import { getVerificationSettings } from "../repositories/configuration-repository.ts";
+import { getConfigSettings } from "../repositories/configuration-repository.ts";
 
 export function getWebhookSecret(): string | null {
-  const settings = getVerificationSettings();
+  const settings = getConfigSettings();
   return settings ? settings.webhookSecret : null;
 }

@@ -1,5 +1,6 @@
 import { gs } from "@servicenow/glide";
 import { addWorkNote as addSourceWorkNote } from "../repositories/source-record-repository.ts";
+import { ACTIVITY_MESSAGES } from "../constants.ts";
 
 export function addWorkNote(
   tableName: string,
@@ -22,45 +23,38 @@ export function addWorkNote(
   }
 }
 
-export function getVerificationCreatedActivityMessage(existingRequestCount: number): string {
+export function getVerificationCreatedActivityMessage(existingRequestCount: number, workflowRunId: string): string {
+  let baseMessage: string;
+
   if (existingRequestCount <= 0) {
-    return (
-      "Identity verification requested.\n" +
-      "Verification link sent to the user."
-    );
+    baseMessage = ACTIVITY_MESSAGES.VERIFICATION_REQUESTED;
+  } else if (existingRequestCount === 1) {
+    baseMessage = ACTIVITY_MESSAGES.REVERIFICATION_REQUESTED;
+  } else {
+    baseMessage = ACTIVITY_MESSAGES.REVERIFICATION_REQUESTED_AGAIN;
   }
 
-  if (existingRequestCount === 1) {
-    return (
-      "Identity reverification requested.\n" +
-      "Verification link sent to the user."
-    );
-  }
-
-  return (
-    "Identity reverification requested again.\n" +
-    "Verification link sent to the user."
-  );
+  return `${baseMessage}\nWorkflow Run ID: ${workflowRunId}`;
 }
 
 export function getCompletionActivityMessage(status: string): string {
   switch (status.trim().toLowerCase()) {
     case "approved":
-      return "Identity verification completed.\nOutcome: Approved";
+      return ACTIVITY_MESSAGES.OUTCOME_APPROVED;
 
     case "review":
-      return "Identity verification completed.\nOutcome: Manual review required";
+      return ACTIVITY_MESSAGES.OUTCOME_REVIEW;
 
     case "declined":
-      return "Identity verification completed.\nOutcome: Declined";
+      return ACTIVITY_MESSAGES.OUTCOME_DECLINED;
 
     case "abandoned":
-      return "Identity verification ended.\nOutcome: Abandoned";
+      return ACTIVITY_MESSAGES.OUTCOME_ABANDONED;
 
     case "error":
-      return "Identity verification could not be completed.\nOutcome: Error";
+      return ACTIVITY_MESSAGES.OUTCOME_ERROR;
 
     default:
-      return "Identity verification completed.";
+      return ACTIVITY_MESSAGES.OUTCOME_DEFAULT;
   }
 }

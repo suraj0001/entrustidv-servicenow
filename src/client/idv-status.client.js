@@ -2,10 +2,12 @@
 
 var STATUS_FIELD = 'x_entru_entrustidv_verification_status';
 
-var POLL_INTERVAL_MS = 5000;
-var INITIAL_POLL_DELAY_ONLOAD_MS = 5000;
-var INITIAL_POLL_DELAY_ONCLICK_MS = 20000;
-var MAX_POLL_DURATION_MS = 30 * 60 * 1000;
+var INITIAL_POLL_DELAY_ONLOAD_MS = 60 * 1000;        // 1 minute on page load
+var INITIAL_POLL_DELAY_ONCLICK_MS = 5 * 60 * 1000;   // 5 minutes on button click
+var MAX_POLL_DURATION_MS = 60 * 60 * 1000;           // 60 minutes total duration
+var SHORT_TIER_LIMIT_MS = 10 * 60 * 1000;            // First 10 minutes
+var SHORT_TIER_INTERVAL_MS = 60 * 1000;              // Poll every 1 minute (up to 10 mins)
+var LONG_TIER_INTERVAL_MS = 5 * 60 * 1000;           // Poll every 5 minutes (10 to 60 mins)
 var MAX_CONSECUTIVE_ERRORS = 3;
 var MESSAGE_AUTO_DISMISS_MS = 10000;
 
@@ -128,7 +130,7 @@ function startPolling(newWorkflowRunId, initialDelayMs) {
     var delay =
         typeof initialDelayMs === 'number'
             ? initialDelayMs
-            : POLL_INTERVAL_MS;
+            : SHORT_TIER_INTERVAL_MS;
 
     pollingTimer = setTimeout(pollWorkflowRun, delay);
 }
@@ -184,7 +186,12 @@ function scheduleNextPoll() {
         return;
     }
 
-    pollingTimer = setTimeout(pollWorkflowRun, POLL_INTERVAL_MS);
+    var nextInterval =
+        elapsed < SHORT_TIER_LIMIT_MS
+            ? SHORT_TIER_INTERVAL_MS
+            : LONG_TIER_INTERVAL_MS;
+
+    pollingTimer = setTimeout(pollWorkflowRun, nextInterval);
 }
 
 function handlePollingError() {

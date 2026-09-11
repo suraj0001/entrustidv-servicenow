@@ -1506,6 +1506,14 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_dictionary'
+                        id: '076e281c1c4542b1a8a7a3246f89c5e6'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'last_status_sync'
+                        }
+                    },
+                    {
                         table: 'sys_variable_value'
                         id: '07fd6257473a0b1016bda144846d43ad'
                         key: {
@@ -2105,6 +2113,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_dictionary'
+                        id: '46f3a1434bfb4060bdc0c88c4e0f3b47'
+                        deleted: true
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'last_polled_at'
+                        }
+                    },
+                    {
                         table: 'sys_element_mapping'
                         id: '47fd6257473a0b1016bda144846d43bc'
                         key: {
@@ -2583,6 +2600,25 @@ declare global {
                         id: '89800af48ad44707af971f2f4c051595'
                         key: {
                             name: 'x_entru_entrustidv/api-connection.client.js.map'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
+                        id: '89d6db5f479f48c0b617f5679d8bb460'
+                        deleted: true
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'last_polled_at'
+                            language: 'en'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
+                        id: '89d725bc30b34da7ba138d0e66f2a334'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'last_status_sync'
+                            language: 'en'
                         }
                     },
                     {
