@@ -21,11 +21,17 @@ export interface VerificationRequest {
   sourceTable: string
   sourceRecordId: string
   evidenceFolderHref: string
+  sysCreatedOn?: string
+  sysUpdatedOn?: string
 }
 
 export type VerificationStatusRecord = {
   workflowRunId: string
   status: string
+  sourceTable?: string
+  sourceRecordId?: string
+  sysCreatedOn?: string
+  sysUpdatedOn?: string
   updatedAt?: string
 }
 
@@ -122,6 +128,8 @@ export function findVerificationRequestByWorkflowRunId(
     sourceTable: gr.getValue('source_table') ?? '',
     sourceRecordId: gr.getValue('source_record') ?? '',
     evidenceFolderHref: gr.getValue('evidence_folder_href') ?? '',
+    sysCreatedOn: (gr.getValue('sys_created_on') as string) || '',
+    sysUpdatedOn: (gr.getValue('sys_updated_on') as string) || '',
   }
 }
 
@@ -141,10 +149,9 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
 
   if (gr.next()) {
     const status = (gr.getValue("status") as string) || "";
-    const updatedAt =
-      (gr.getValue("sys_updated_on") as string) ||
-      (gr.getValue("sys_created_on") as string) ||
-      "";
+    const sysCreatedOn = (gr.getValue("sys_created_on") as string) || "";
+    const sysUpdatedOn = (gr.getValue("sys_updated_on") as string) || "";
+    const updatedAt = sysUpdatedOn || sysCreatedOn;
     gs.info(
       "[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=" +
         sourceTable +
@@ -158,6 +165,10 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
     return {
       workflowRunId: gr.getValue('workflow_run_id') || '',
       status: gr.getValue('status') || '',
+      sourceTable: gr.getValue('source_table') || '',
+      sourceRecordId: gr.getValue('source_record') || '',
+      sysCreatedOn,
+      sysUpdatedOn,
       updatedAt,
     }
   }
@@ -189,14 +200,19 @@ export function findVerificationStatusByWorkflowRunId(
     return null
   }
 
-  const updatedAt =
-    (verificationRequest.getValue('sys_updated_on') as string) ||
-    (verificationRequest.getValue('sys_created_on') as string) ||
-    ''
+  const sysCreatedOn =
+    (verificationRequest.getValue('sys_created_on') as string) || ''
+  const sysUpdatedOn =
+    (verificationRequest.getValue('sys_updated_on') as string) || ''
+  const updatedAt = sysUpdatedOn || sysCreatedOn
 
   return {
     workflowRunId: verificationRequest.getValue('workflow_run_id') || '',
     status: verificationRequest.getValue('status') || '',
+    sourceTable: verificationRequest.getValue('source_table') || '',
+    sourceRecordId: verificationRequest.getValue('source_record') || '',
+    sysCreatedOn,
+    sysUpdatedOn,
     updatedAt,
   }
 }
