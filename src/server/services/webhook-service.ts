@@ -3,7 +3,7 @@ import * as verificationRequestRepository
     from '../repositories/verification-request-repository.ts'
 import * as configurationRepository
     from '../repositories/configuration-repository.ts'
-    import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
+    import { addWorkNote } from './activity-service.ts'
 
 interface EntrustWebhookEvent {
     payload?: EntrustWebhookPayload
@@ -101,11 +101,11 @@ function processWorkflowRunCompleted(
         status
     )
 
-    addWorkNote(
-        verificationRequest.sourceTable, 
-        verificationRequest.sourceRecordId,
-        getCompletionActivityMessage(status)
-    );
+    verificationRequestRepository.markCompletionNotePending(workflowRunId)
+
+    // Completion work note is posted asynchronously by the "Entrust IDV"
+    // scheduled job (see completion-worknote-service.ts), not here, so it's
+    // authored by that user instead of the webhook's Guest session.
 }
 
 function processEvidenceFolderCreated(

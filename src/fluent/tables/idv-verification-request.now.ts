@@ -65,6 +65,12 @@ export const x_entru_entrustidv_verification_request = Table({
       label: 'Active',
       defaultValue: true,
     }),
+
+    // Defaults true (not pending) so existing/unrelated requests aren't retroactively picked up; the webhook explicitly clears it to false only for the request that just completed.
+    completion_note_posted: BooleanColumn({
+      label: 'Completion Note Posted',
+      defaultValue: true,
+    }),
   },
 
   audit: true,

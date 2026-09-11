@@ -274,3 +274,67 @@ export function updateEvidenceFolderHrefByWorkflowRunId(
             `workflow_run_id=${workflowRunId}`
     )
 }
+
+export interface PendingCompletionNotification {
+  sysId: string
+  sourceTable: string
+  sourceRecordId: string
+  status: string
+}
+
+const TERMINAL_STATUSES = ['approved', 'declined', 'review', 'abandoned', 'error']
+
+export function findPendingCompletionNotifications(): PendingCompletionNotification[] {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+
+  gr.addQuery('completion_note_posted', false)
+  gr.addQuery('status', 'IN', TERMINAL_STATUSES.join(','))
+  gr.query()
+
+  const results: PendingCompletionNotification[] = []
+
+  while (gr.next()) {
+    results.push({
+      sysId: gr.getUniqueValue(),
+      sourceTable: gr.getValue('source_table') || '',
+      sourceRecordId: gr.getValue('source_record') || '',
+      status: gr.getValue('status') || '',
+    })
+  }
+
+  return results
+}
+
+export function markCompletionNotePosted(sysId: string): void {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+
+  gr.get(sysId)
+
+  if (!gr.isValidRecord()) {
+    gs.warn(`[VerificationRequestRepository] Cannot mark completion note posted, record not found: sysId=${sysId}`)
+    return
+  }
+
+  gr.setValue('completion_note_posted', true)
+  gr.update()
+
+  gs.info(`[VerificationRequestRepository] Completion note posted flag set. sysId=${sysId}`)
+}
+
+export function markCompletionNotePending(workflowRunId: string): void {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+
+  gr.addQuery('workflow_run_id', workflowRunId)
+  gr.setLimit(1)
+  gr.query()
+
+  if (!gr.next()) {
+    gs.warn(`[VerificationRequestRepository] Cannot mark completion note pending, not found: workflow_run_id=${workflowRunId}`)
+    return
+  }
+
+  gr.setValue('completion_note_posted', false)
+  gr.update()
+
+  gs.info(`[VerificationRequestRepository] Completion note pending flag set. workflow_run_id=${workflowRunId}`)
+}
