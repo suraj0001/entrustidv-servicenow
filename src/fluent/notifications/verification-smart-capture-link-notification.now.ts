@@ -8,8 +8,7 @@ export const VerificationRequestCreatedEvent = Record({
   data: {
     event_name: VERIFICATION_REQUEST_CREATED_EVENT,
     table: "x_entru_entrustidv_verification_request",
-    description:
-      "Triggered after an Entrust identity verification workflow has been created.",
+    description: "Triggered after an Entrust identity verification workflow has been created.",
   },
 });
 
@@ -30,8 +29,7 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
   },
   emailContent: {
     contentType: "multipart/mixed",
-        subject:
-            "Action required: complete identity verification for ${event.parm2}",
+    subject: "Action required: complete identity verification for ${event.parm2}",
     messageHtml: `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:#f3f5f7; margin:0; padding:0;">
             <tr>
                 <td align="center" style="padding:32px 16px;">
@@ -47,7 +45,7 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
                                 <p style="margin:0 0 20px;">Please complete the identity verification requested for the case <strong>\${event.parm2}</strong></p>
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:28px 0;">
                                     <tr>
-                                        <td style="background-color:#176b5b; border-radius:4px;">
+                                        <td style="background-color:#6D2077; border-radius:4px;">
                                             <a href="\${event.parm1}" style="display:inline-block; padding:13px 22px; color:#ffffff; font-family:Verdana, sans-serif; font-size:15px; font-weight:bold; text-decoration:none;">Start identity verification</a>
                                         </td>
                                     </tr>

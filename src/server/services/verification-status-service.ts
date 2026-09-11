@@ -1,7 +1,19 @@
+import { gs, GlideDateTime } from '@servicenow/glide'
 import {
   findVerificationStatusByWorkflowRunId,
   findLatestVerificationStatus,
+  updateStatusByWorkflowRunId,
+  type VerificationStatusRecord,
 } from '../repositories/verification-request-repository.ts'
+import { getVerificationSettings } from '../repositories/configuration-repository.ts'
+import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts'
+import { getWorkflowRun } from '../entrust/entrust-verification-client.ts'
+import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
+
+// Minimum grace period (in minutes) before fallback polling starts doubting the webhook.
+const GRACE_PERIOD_MINUTES = 20
+// Throttle period (in minutes) to prevent redundant outbound calls on repeated checks.
+const THROTTLE_MINUTES = 5
 
 type StatusConfig = {
   displayStatus: string
@@ -40,6 +52,11 @@ const STATUS_CONFIG: Record<
   },
 
   awaiting_input: {
+    displayStatus: 'In Progress',
+    shouldPoll: true,
+  },
+
+  awaiting_client_input: {
     displayStatus: 'In Progress',
     shouldPoll: true,
   },
@@ -89,8 +106,11 @@ export function getLatestVerificationStatus(
     }
   }
 
+  // Check if fallback reconciliation with Entrust is warranted
+  const currentStatus = syncWithEntrustIfDoubtful(verification)
+
   const result = buildStatusResult(
-    verification.status,
+    currentStatus,
   )
 
   return {
@@ -120,9 +140,12 @@ export function getVerificationStatusByWorkflowRunId(
     return null
   }
 
+  // Check if fallback reconciliation with Entrust is warranted
+  const currentStatus = syncWithEntrustIfDoubtful(storedRecord)
+
   const result =
     buildStatusResult(
-      storedRecord.status,
+      currentStatus,
     )
 
   return {
@@ -131,6 +154,104 @@ export function getVerificationStatusByWorkflowRunId(
     displayStatus: result.displayStatus,
     shouldPoll: result.shouldPoll,
   }
+}
+
+/**
+ * Smart Fallback Check:
+ * If the record is still in a non-terminal state and past the grace period (or link expiry),
+ * queries Entrust directly via outbound REST to reconcile status in case webhooks were blocked/missed.
+ */
+function syncWithEntrustIfDoubtful(
+  record: VerificationStatusRecord,
+): string {
+  if (!record.workflowRunId) {
+    return record.status
+  }
+
+  const normalized = normalizeStatus(record.status)
+  const config = STATUS_CONFIG[normalized]
+
+  // If local record is already terminal, no fallback check is needed.
+  if (config && !config.shouldPoll) {
+    return record.status
+  }
+
+  if (!shouldTriggerFallbackSync(record)) {
+    return record.status
+  }
+
+  try {
+    gs.info(
+      `[VerificationStatusService] Fallback polling triggered for workflowRunId=${record.workflowRunId}`
+    )
+
+    const connection = new ApiConnectionRepository().getRuntimeConnection()
+    if (!connection) {
+      gs.warn('[VerificationStatusService] Runtime connection not configured for fallback polling.')
+      return record.status
+    }
+
+    const remoteRun = getWorkflowRun(connection, record.workflowRunId)
+    if (!remoteRun || !remoteRun.status) {
+      return record.status
+    }
+
+    const remoteNormalized = normalizeStatus(remoteRun.status)
+
+    // If status changed in Entrust, update the database and write work notes
+    if (remoteNormalized !== normalized) {
+      updateStatusByWorkflowRunId(record.workflowRunId, remoteRun.status)
+
+      if (record.sourceTable && record.sourceRecordId) {
+        addWorkNote(
+          record.sourceTable,
+          record.sourceRecordId,
+          getCompletionActivityMessage(remoteRun.status)
+        )
+      }
+    } else {
+      // Even if status didn't change, touch the status field to refresh sys_updated_on for throttling
+      updateStatusByWorkflowRunId(record.workflowRunId, record.status)
+    }
+
+    return remoteRun.status
+  } catch (error: any) {
+    gs.error(
+      `[VerificationStatusService] Fallback polling error for workflowRunId=${record.workflowRunId}: ${error?.message || error}`
+    )
+    return record.status
+  }
+}
+
+function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
+  const createdGdt = record.sysCreatedOn ? new GlideDateTime(record.sysCreatedOn) : null
+  const updatedGdt = record.sysUpdatedOn ? new GlideDateTime(record.sysUpdatedOn) : null
+
+  if (!createdGdt) {
+    return false
+  }
+
+  const nowGdt = new GlideDateTime()
+  const minutesSinceCreated = (nowGdt.getNumericValue() - createdGdt.getNumericValue()) / (60 * 1000)
+  const minutesSinceUpdated = updatedGdt
+    ? (nowGdt.getNumericValue() - updatedGdt.getNumericValue()) / (60 * 1000)
+    : minutesSinceCreated
+
+  const settings = getVerificationSettings()
+  const linkExpiryMinutes = settings?.linkExpiry || 0
+
+  // 1. If link has expired, doubt is absolute -> synchronize immediately (unless throttled)
+  if (linkExpiryMinutes > 0 && minutesSinceCreated >= linkExpiryMinutes) {
+    return minutesSinceUpdated >= THROTTLE_MINUTES
+  }
+
+  // 2. If within the 20-minute user grace period, trust the webhook -> do not call Entrust
+  if (minutesSinceCreated < GRACE_PERIOD_MINUTES) {
+    return false
+  }
+
+  // 3. Past 20 minutes: webhook is doubted -> check Entrust if not checked within the last 5 minutes
+  return minutesSinceUpdated >= THROTTLE_MINUTES
 }
 
 function buildStatusResult(

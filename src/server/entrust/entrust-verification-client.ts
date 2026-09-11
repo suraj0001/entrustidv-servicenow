@@ -31,6 +31,17 @@ export interface CreateWorkflowRunResult {
   smartCaptureUrl: string;
 }
 
+export interface GetWorkflowRunResult {
+  workflowRunId: string;
+  applicantId?: string;
+  workflowId?: string;
+  workflowVersionId?: number;
+  status: string;
+  dashboardUrl?: string;
+  output?: Record<string, any>;
+  reasons?: string[];
+}
+
 export function createApplicant(connection: EntrustConnection, input: CreateApplicantRequest): CreateApplicantResult {
   const request = createRequest(connection, "/applicants/");
 
@@ -105,6 +116,38 @@ export function createWorkflowRun(
     workflowVersionId: body.workflow_version_id,
     status: body.status,
     smartCaptureUrl: body.link.url,
+  };
+}
+
+export function getWorkflowRun(
+  connection: EntrustConnection,
+  workflowRunId: string,
+): GetWorkflowRunResult {
+  const request = createRequest(connection, "/workflow_runs/" + workflowRunId);
+  request.setHttpMethod("get");
+
+  const response = request.execute();
+  const statusCode = response.getStatusCode();
+
+  if (statusCode < 200 || statusCode >= 300) {
+    throw new Error("Entrust workflow run fetch failed. HTTP status: " + statusCode);
+  }
+
+  const body = JSON.parse(response.getBody());
+
+  if (!body.id || !body.status) {
+    throw new Error("Entrust workflow run response is incomplete.");
+  }
+
+  return {
+    workflowRunId: body.id,
+    applicantId: body.applicant_id,
+    workflowId: body.workflow_id,
+    workflowVersionId: body.workflow_version_id,
+    status: body.status,
+    dashboardUrl: body.dashboard_url,
+    output: body.output,
+    reasons: body.reasons,
   };
 }
 
