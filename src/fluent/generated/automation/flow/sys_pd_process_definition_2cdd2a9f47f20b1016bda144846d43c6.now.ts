@@ -390,3 +390,15 @@ Record({
         table: 'help_user_interaction',
     },
 })
+Record({
+    $id: Now.ID['4b7e53d81b9fc71011bbc8c5604bcb1a'],
+    table: 'sys_trigger_runner_mapping',
+    data: {
+        active: 'true',
+        data: '{"trigger_on_unique_change":"false","parent_record":{"elementMapping":"{{triggerRecord}}","variableValue":"{{triggerRecord}}","elementMappingOrVariableValue":"{{triggerRecord}}"},"run_trigger":"run_once"}',
+        identifier: '60dd2a9f47f20b1016bda144846d43c7',
+        identifier_type: 'playbook',
+        runner: 'PDTriggerRunner',
+        trigger: '077e53d81b9fc71011bbc8c5604bcb19',
+    },
+})

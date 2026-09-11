@@ -2,6 +2,7 @@
 /* eslint-disable */
 
 var WEBHOOK_PATH = "/api/x_entru_entrustidv/entrustidv/webhook/events";
+var tokenMessageTimer = null;
 
 function _el(id) {
   return document.getElementById(id);
@@ -18,6 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   _el("btn_save_webhook_token").addEventListener("click", function () {
     saveWebhookToken();
+  });
+
+  _el("webhook_token").addEventListener("input", function () {
+    clearTokenFieldError();
+    clearTokenMessage();
+    updateSaveButtonState();
   });
 
   getWebhookTokenStatus();
@@ -37,9 +44,14 @@ function getWebhookTokenStatus() {
 
     if (result && result.success && result.configured) {
       _el("webhook_token").placeholder = "Configured - enter a new token to replace";
-      _el("webhook_token_configured").style.display = "block";
     }
+
+    updateSaveButtonState();
   });
+}
+
+function updateSaveButtonState() {
+  _el("btn_save_webhook_token").disabled = !_el("webhook_token").value.trim();
 }
 
 var COPY_ICON =
@@ -74,18 +86,79 @@ function copyWebhookUrl(webhookUrl) {
 function showTokenMessage(type, message) {
   var box = _el("webhook_token_message");
 
+  if (tokenMessageTimer) {
+    clearTimeout(tokenMessageTimer);
+    tokenMessageTimer = null;
+  }
+
   box.className = "status-message " + type;
-  box.querySelector(".status-icon").textContent = type === "success" ? "\u2713" : "!";
   box.querySelector(".status-text").textContent = message;
   box.style.display = "flex";
+
+  if (type === "success") {
+    tokenMessageTimer = setTimeout(clearTokenMessage, 5000);
+  }
+}
+
+function clearTokenMessage() {
+  var box = _el("webhook_token_message");
+
+  if (tokenMessageTimer) {
+    clearTimeout(tokenMessageTimer);
+    tokenMessageTimer = null;
+  }
+
+  box.style.display = "none";
+  box.querySelector(".status-text").textContent = "";
+}
+
+function showTokenFieldError(message) {
+  var input = _el("webhook_token");
+  var error = _el("webhook_token_error");
+
+  input.setAttribute("aria-invalid", "true");
+  input.setAttribute("aria-describedby", error.id);
+  error.textContent = message;
+  error.style.display = "block";
+}
+
+function clearTokenFieldError() {
+  var input = _el("webhook_token");
+  var error = _el("webhook_token_error");
+
+  input.removeAttribute("aria-invalid");
+  input.removeAttribute("aria-describedby");
+  error.textContent = "";
+  error.style.display = "none";
+}
+
+function showServerTokenValidationError(message) {
+  if (
+    message === "Webhook token is required." ||
+    message === "Webhook token must be between 5 and 100 characters."
+  ) {
+    showTokenFieldError(message);
+    return true;
+  }
+
+  return false;
 }
 
 function saveWebhookToken() {
   var token = _el("webhook_token").value.trim();
   var button = _el("btn_save_webhook_token");
 
+  clearTokenFieldError();
+  clearTokenMessage();
+
   if (!token) {
-    showTokenMessage("error", "Webhook token is required.");
+    showTokenFieldError("Webhook token is required.");
+    _el("webhook_token").focus();
+    return;
+  }
+
+  if (token.length < 5 || token.length > 100) {
+    showTokenFieldError("Webhook token must be between 5 and 100 characters.");
     _el("webhook_token").focus();
     return;
   }
@@ -105,17 +178,24 @@ function saveWebhookToken() {
       result = null;
     }
 
-    button.disabled = false;
-    button.textContent = "Save Webhook Token";
+    button.textContent = "Save";
 
     if (result && result.success) {
       _el("webhook_token").value = "";
       _el("webhook_token").placeholder = "Configured - enter a new token to replace";
-      _el("webhook_token_configured").style.display = "block";
-      showTokenMessage("success", result.message || "Webhook token saved.");
+      updateSaveButtonState();
+      showTokenMessage("success", result.message || "Webhook token saved successfully.");
       return;
     }
 
-    showTokenMessage("error", (result && result.message) || "Unable to save webhook token.");
+    updateSaveButtonState();
+
+    var message = (result && result.message) || "Unable to save webhook token.";
+    if (showServerTokenValidationError(message)) {
+      _el("webhook_token").focus();
+      return;
+    }
+
+    showTokenMessage("error", message);
   });
 }

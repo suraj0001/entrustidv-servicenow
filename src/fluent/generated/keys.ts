@@ -17,6 +17,11 @@ declare global {
                         table: 'help_guidance'
                         id: '05c5cb434712c31016bda144846d4319'
                     }
+                    '069641441bdbc31011bbc8c5604bcbfb': {
+                        table: 'm2m_theme_style'
+                        id: '069641441bdbc31011bbc8c5604bcbfb'
+                        deleted: true
+                    }
                     '081416ab4772cb1016bda144846d432b': {
                         table: 'sys_trigger_runner_mapping'
                         id: '081416ab4772cb1016bda144846d432b'
@@ -24,6 +29,11 @@ declare global {
                     '08b1ae947b39c2659ff0f7742a76ff78': {
                         table: 'sys_pd_activity'
                         id: '08b1ae947b39c2659ff0f7742a76ff78'
+                    }
+                    '0a9681441bdbc31011bbc8c5604bcb93': {
+                        table: 'sys_ux_style'
+                        id: '0a9681441bdbc31011bbc8c5604bcb93'
+                        deleted: true
                     }
                     '0c1416ab4772cb1016bda144846d4335': {
                         table: 'sys_flow_compiled_flow_chunk'
@@ -57,6 +67,11 @@ declare global {
                         table: 'sys_pd_snapshot'
                         id: '123184ad4787471016bda144846d4355'
                     }
+                    '129681441bdbc31011bbc8c5604bcbc3': {
+                        table: 'm2m_style_asset'
+                        id: '129681441bdbc31011bbc8c5604bcbc3'
+                        deleted: true
+                    }
                     '13ba75711b4b03105fdb2f05604bcbb5': {
                         table: 'sys_flow_record_trigger'
                         id: '13ba75711b4b03105fdb2f05604bcbb5'
@@ -80,6 +95,11 @@ declare global {
                     '163184ad4787471016bda144846d4358': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '163184ad4787471016bda144846d4358'
+                    }
+                    '169681441bdbc31011bbc8c5604bcbb9': {
+                        table: 'm2m_style_asset'
+                        id: '169681441bdbc31011bbc8c5604bcbb9'
+                        deleted: true
                     }
                     '17ba75711b4b03105fdb2f05604bcbba': {
                         table: 'sys_pd_snapshot_chunk'
@@ -117,6 +137,11 @@ declare global {
                         table: 'sys_flow_compiled_flow'
                         id: '1a51ed316a4703104fffb8b4f5e327cc'
                     }
+                    '1a96c1441bdbc31011bbc8c5604bcb39': {
+                        table: 'm2m_style_asset'
+                        id: '1a96c1441bdbc31011bbc8c5604bcb39'
+                        deleted: true
+                    }
                     '1cedc8e1474b471016bda144846d439b': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '1cedc8e1474b471016bda144846d439b'
@@ -144,6 +169,11 @@ declare global {
                     '1e592067477e4b1016bda144846d4383': {
                         table: 'sys_scope_privilege'
                         id: '1e592067477e4b1016bda144846d4383'
+                    }
+                    '1e9681441bdbc31011bbc8c5604bcbcc': {
+                        table: 'm2m_style_asset'
+                        id: '1e9681441bdbc31011bbc8c5604bcbcc'
+                        deleted: true
                     }
                     '1fba75711c4b0310a7c8b0b19c4490bd': {
                         table: 'sys_flow_compiled_flow'
@@ -254,6 +284,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '33fcd1e747f68b1016bda144846d43f4'
                     }
+                    '359641441bdbc31011bbc8c5604bcb91': {
+                        table: 'sys_ux_theme'
+                        id: '359641441bdbc31011bbc8c5604bcb91'
+                        deleted: true
+                    }
                     '36afe4391b07c7105fdb2f05604bcb2b': {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: '36afe4391b07c7105fdb2f05604bcb2b'
@@ -281,6 +316,11 @@ declare global {
                     '3d68b7f547b6cf1016bda144846d437c': {
                         table: 'sys_flow_record_trigger'
                         id: '3d68b7f547b6cf1016bda144846d437c'
+                    }
+                    '3d9641441bdbc31011bbc8c5604bcb98': {
+                        table: 'sys_ux_style'
+                        id: '3d9641441bdbc31011bbc8c5604bcb98'
+                        deleted: true
                     }
                     '3de942f04726075016bda144846d4312': {
                         table: 'sys_flow_record_trigger'
@@ -363,6 +403,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '52592067477e4b1016bda144846d436f'
                     }
+                    '529681441bdbc31011bbc8c5604bcba3': {
+                        table: 'm2m_style_asset'
+                        id: '529681441bdbc31011bbc8c5604bcba3'
+                        deleted: true
+                    }
                     '536feed7473a0b1016bda144846d4343': {
                         table: 'sys_scope_privilege'
                         id: '536feed7473a0b1016bda144846d4343'
@@ -374,6 +419,16 @@ declare global {
                     '5645a76947ba0f1016bda144846d4328': {
                         table: 'oauth_entity_profile'
                         id: '5645a76947ba0f1016bda144846d4328'
+                    }
+                    '569681441bdbc31011bbc8c5604bcb98': {
+                        table: 'm2m_theme_style'
+                        id: '569681441bdbc31011bbc8c5604bcb98'
+                        deleted: true
+                    }
+                    '5696c1441bdbc31011bbc8c5604bcb23': {
+                        table: 'm2m_style_asset'
+                        id: '5696c1441bdbc31011bbc8c5604bcb23'
+                        deleted: true
                     }
                     '57ba75711b4b03105fdb2f05604bcbb6': {
                         table: 'sys_trigger_runner_mapping'
@@ -391,6 +446,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '598149e347b28b1016bda144846d43cf'
                     }
+                    '5a96c1441bdbc31011bbc8c5604bcb68': {
+                        table: 'm2m_style_asset'
+                        id: '5a96c1441bdbc31011bbc8c5604bcb68'
+                        deleted: true
+                    }
                     '5db414a9478b471016bda144846d43a6': {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: '5db414a9478b471016bda144846d43a6'
@@ -402,6 +462,16 @@ declare global {
                     '5e51ed311b4703105fdb2f05604bcba0': {
                         table: 'sys_pd_snapshot'
                         id: '5e51ed311b4703105fdb2f05604bcba0'
+                    }
+                    '5e9681441bdbc31011bbc8c5604bcbfb': {
+                        table: 'm2m_style_asset'
+                        id: '5e9681441bdbc31011bbc8c5604bcbfb'
+                        deleted: true
+                    }
+                    '5e96c1441bdbc31011bbc8c5604bcb6d': {
+                        table: 'sys_ux_theme_customization'
+                        id: '5e96c1441bdbc31011bbc8c5604bcb6d'
+                        deleted: true
                     }
                     '60dd2a9f47f20b1016bda144846d43c7': {
                         table: 'sys_pd_trigger_instance'
@@ -451,6 +521,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '70a13c2347fe4b1016bda144846d43b4'
                     }
+                    '719641441bdbc31011bbc8c5604bcbe7': {
+                        table: 'm2m_theme_style'
+                        id: '719641441bdbc31011bbc8c5604bcbe7'
+                        deleted: true
+                    }
                     '71e942f04726075016bda144846d4314': {
                         table: 'sys_trigger_runner_mapping'
                         id: '71e942f04726075016bda144846d4314'
@@ -495,6 +570,16 @@ declare global {
                         id: '7968b7f547b6cf1016bda144846d4384'
                         deleted: true
                     }
+                    '799641441bdbc31011bbc8c5604bcbaa': {
+                        table: 'm2m_theme_style'
+                        id: '799641441bdbc31011bbc8c5604bcbaa'
+                        deleted: true
+                    }
+                    '799641441bdbc31011bbc8c5604bcbb0': {
+                        table: 'sys_ux_style'
+                        id: '799641441bdbc31011bbc8c5604bcbb0'
+                        deleted: true
+                    }
                     '7a6727154783471016bda144846d4316': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '7a6727154783471016bda144846d4316'
@@ -535,6 +620,11 @@ declare global {
                         table: 'sys_trigger_runner_mapping'
                         id: '842ae4e7477e4b1016bda144846d43a4'
                     }
+                    '869681441bdbc31011bbc8c5604bcb89': {
+                        table: 'sys_ux_style'
+                        id: '869681441bdbc31011bbc8c5604bcb89'
+                        deleted: true
+                    }
                     '881416ab4772cb1016bda144846d4334': {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: '881416ab4772cb1016bda144846d4334'
@@ -567,6 +657,11 @@ declare global {
                         table: 'sys_pd_snapshot_chunk'
                         id: '9251ed311b4703105fdb2f05604bcbcb'
                     }
+                    '929681441bdbc31011bbc8c5604bcbbe': {
+                        table: 'm2m_style_asset'
+                        id: '929681441bdbc31011bbc8c5604bcbbe'
+                        deleted: true
+                    }
                     '93ba75711b4b03105fdb2f05604bcbbb': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '93ba75711b4b03105fdb2f05604bcbbb'
@@ -596,6 +691,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: '9659eca3477e4b1016bda144846d43dd'
                     }
+                    '9696c1441bdbc31011bbc8c5604bcb3e': {
+                        table: 'm2m_style_asset'
+                        id: '9696c1441bdbc31011bbc8c5604bcb3e'
+                        deleted: true
+                    }
                     '97ba75711b4b03105fdb2f05604bcbb8': {
                         table: 'sys_pd_snapshot'
                         id: '97ba75711b4b03105fdb2f05604bcbb8'
@@ -603,6 +703,11 @@ declare global {
                     '97ba75711b4b03105fdb2f05604bcbbc': {
                         table: 'sys_pd_snapshot_chunk'
                         id: '97ba75711b4b03105fdb2f05604bcbbc'
+                    }
+                    '99024d441b9bc31011bbc8c5604bcb7b': {
+                        table: 'm2m_app_theme'
+                        id: '99024d441b9bc31011bbc8c5604bcb7b'
+                        deleted: true
                     }
                     '99b414a9478b471016bda144846d43a1': {
                         table: 'sys_pd_snapshot_chunk'
@@ -628,6 +733,16 @@ declare global {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: '9a51ed311b4703105fdb2f05604bcbcf'
                     }
+                    '9a9681441bdbc31011bbc8c5604bcb9d': {
+                        table: 'm2m_style_asset'
+                        id: '9a9681441bdbc31011bbc8c5604bcb9d'
+                        deleted: true
+                    }
+                    '9a9681441bdbc31011bbc8c5604bcbd1': {
+                        table: 'm2m_style_asset'
+                        id: '9a9681441bdbc31011bbc8c5604bcbd1'
+                        deleted: true
+                    }
                     '9b6f269b473a0b1016bda144846d4344': {
                         table: 'sys_scope_privilege'
                         id: '9b6f269b473a0b1016bda144846d4344'
@@ -635,6 +750,11 @@ declare global {
                     '9e3184ad1d874710888cf5914c3d9d5a': {
                         table: 'sys_flow_compiled_flow'
                         id: '9e3184ad1d874710888cf5914c3d9d5a'
+                    }
+                    '9e9681441bdbc31011bbc8c5604bcbc7': {
+                        table: 'm2m_style_asset'
+                        id: '9e9681441bdbc31011bbc8c5604bcbc7'
+                        deleted: true
                     }
                     '9fba75711b4b03105fdb2f05604bcbbe': {
                         table: 'sys_flow_compiled_flow_chunk'
@@ -698,9 +818,19 @@ declare global {
                         id: 'b168b7f547b6cf1016bda144846d4385'
                         deleted: true
                     }
+                    b19641441bdbc31011bbc8c5604bcbf1: {
+                        table: 'm2m_theme_style'
+                        id: 'b19641441bdbc31011bbc8c5604bcbf1'
+                        deleted: true
+                    }
                     b2afe4391b07c7105fdb2f05604bcb22: {
                         table: 'sys_trigger_runner_mapping'
                         id: 'b2afe4391b07c7105fdb2f05604bcb22'
+                    }
+                    b59641441bdbc31011bbc8c5604bcbec: {
+                        table: 'sys_ux_style'
+                        id: 'b59641441bdbc31011bbc8c5604bcbec'
+                        deleted: true
                     }
                     b6afe4391b07c7105fdb2f05604bcb2c: {
                         table: 'sys_flow_compiled_flow_chunk'
@@ -779,6 +909,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: 'c090c12347b28b1016bda144846d43f3'
                     }
+                    c29681441bdbc31011bbc8c5604bcb8e: {
+                        table: 'm2m_theme_style'
+                        id: 'c29681441bdbc31011bbc8c5604bcb8e'
+                        deleted: true
+                    }
                     c2c8e4ef473e4b1016bda144846d43d8: {
                         table: 'sys_scope_privilege'
                         id: 'c2c8e4ef473e4b1016bda144846d43d8'
@@ -836,6 +971,11 @@ declare global {
                         table: 'sys_pd_snapshot_chunk'
                         id: 'd251ed311b4703105fdb2f05604bcbc9'
                     }
+                    d296c1441bdbc31011bbc8c5604bcb28: {
+                        table: 'm2m_style_asset'
+                        id: 'd296c1441bdbc31011bbc8c5604bcb28'
+                        deleted: true
+                    }
                     d4edc8e1474b471016bda144846d438e: {
                         table: 'sys_pd_snapshot_chunk'
                         id: 'd4edc8e1474b471016bda144846d438e'
@@ -851,6 +991,11 @@ declare global {
                     d645a76947ba0f1016bda144846d4327: {
                         table: 'oauth_entity'
                         id: 'd645a76947ba0f1016bda144846d4327'
+                    }
+                    d696c1441bdbc31011bbc8c5604bcb1e: {
+                        table: 'm2m_style_asset'
+                        id: 'd696c1441bdbc31011bbc8c5604bcb1e'
+                        deleted: true
                     }
                     d7ba75711b4b03105fdb2f05604bcbbf: {
                         table: 'sys_flow_compiled_flow_chunk'
@@ -876,6 +1021,11 @@ declare global {
                         table: 'sys_scope_privilege'
                         id: 'da592067477e4b1016bda144846d4373'
                     }
+                    da96c1441bdbc31011bbc8c5604bcb00: {
+                        table: 'm2m_style_asset'
+                        id: 'da96c1441bdbc31011bbc8c5604bcb00'
+                        deleted: true
+                    }
                     db6f269b473a0b1016bda144846d433f: {
                         table: 'sys_scope_privilege'
                         id: 'db6f269b473a0b1016bda144846d433f'
@@ -896,6 +1046,11 @@ declare global {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: 'de51ed311b4703105fdb2f05604bcbcd'
                     }
+                    de9681441bdbc31011bbc8c5604bcba7: {
+                        table: 'm2m_style_asset'
+                        id: 'de9681441bdbc31011bbc8c5604bcba7'
+                        deleted: true
+                    }
                     display_verification_status_hr_case: {
                         table: 'sys_script'
                         id: 'fb5f204b08ef459e9f0d9a512130ebe9'
@@ -913,6 +1068,11 @@ declare global {
                     e2d8163d1b43031011bbc8c5604bcbd6: {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: 'e2d8163d1b43031011bbc8c5604bcbd6'
+                    }
+                    e6d6cd441bdbc31011bbc8c5604bcb24: {
+                        table: 'm2m_app_theme'
+                        id: 'e6d6cd441bdbc31011bbc8c5604bcb24'
+                        deleted: true
                     }
                     e90faa1b473a0b1016bda144846d43c0: {
                         table: 'sys_trigger_runner_mapping'
@@ -993,6 +1153,11 @@ declare global {
                     f30806731bbacb105fdb2f05604bcb5f: {
                         table: 'sys_flow_compiled_flow_chunk'
                         id: 'f30806731bbacb105fdb2f05604bcb5f'
+                    }
+                    f59641441bdbc31011bbc8c5604bcbf6: {
+                        table: 'sys_ux_style'
+                        id: 'f59641441bdbc31011bbc8c5604bcbf6'
+                        deleted: true
                     }
                     f6afe4391b07c7105fdb2f05604bcb27: {
                         table: 'sys_pd_snapshot_chunk'
@@ -1765,6 +1930,15 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_documentation'
+                        id: '3737979047d30f5016bda144846d43be'
+                        key: {
+                            name: 'var__m_sys_pd_snapshot_input_fb37979047d30f5016bda144846d438d'
+                            element: 'parent_record'
+                            language: 'en'
+                        }
+                    },
+                    {
                         table: 'sys_element_mapping'
                         id: '381e2a57473a0b1016bda144846d43cc'
                         key: {
@@ -2000,6 +2174,15 @@ declare global {
                             }
                             element: 'source_record'
                             position: '8'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
+                        id: '4b7e53d81b9fc71011bbc8c5604bcb49'
+                        key: {
+                            name: 'var__m_sys_pd_snapshot_input_8b7e53d81b9fc71011bbc8c5604bcb1c'
+                            element: 'parent_record'
+                            language: 'en'
                         }
                     },
                     {
