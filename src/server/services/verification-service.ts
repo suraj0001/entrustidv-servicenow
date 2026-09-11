@@ -1,5 +1,9 @@
 import { gs } from '@servicenow/glide'
-import { VERIFICATION_REQUEST_CREATED_EVENT, MAX_VERIFICATION_REQUESTS } from '../constants.ts'
+import {
+    VERIFICATION_REQUEST_CREATED_EVENT,
+    MAX_VERIFICATION_REQUESTS,
+    RESPONSE_MESSAGES,
+} from '../constants.ts'
 import {
     createApplicant,
     createWorkflowRun,
@@ -12,6 +16,7 @@ import {
     countVerificationRequests,
     createVerificationRequest,
     deactivateActiveVerificationRequests,
+    findApplicantIdBySubjectUser,
     findVerificationRequestById,
 } from '../repositories/verification-request-repository.ts'
 import { addWorkNote, getVerificationCreatedActivityMessage } from './activity-service.ts'
@@ -43,7 +48,7 @@ export function startVerification(
     )
     if (existingRequestCount >= MAX_VERIFICATION_REQUESTS) {
         throw new Error(
-            `Maximum number of identity verification requests (${MAX_VERIFICATION_REQUESTS}) has been reached for this record.`,
+            RESPONSE_MESSAGES.MAX_REQUESTS_REACHED(MAX_VERIFICATION_REQUESTS),
         )
     }
 
@@ -67,23 +72,28 @@ export function startVerification(
     // Load IDV configuration (workflow ID, link expiry, redirect URL)
     const configuration = getIdvConfiguration()
     if (!configuration) {
-        throw new Error(
-            'Verification configuration is not complete. Please contact your administrator.',
-        )
+        throw new Error(RESPONSE_MESSAGES.CONFIG_INCOMPLETE)
     }
 
     // Resolve the Entrust API connection and OAuth credentials
     const connection = new ApiConnectionRepository().getRuntimeConnection()
     if (!connection) {
-        throw new Error('Entrust API connection is not configured.')
+        throw new Error(RESPONSE_MESSAGES.CONNECTION_NOT_CONFIGURED)
     }
 
-    const applicant = createApplicant(connection, {
-        firstName: subjectUser.firstName,
-        lastName: subjectUser.lastName,
-    })
-    const applicantId = applicant.applicantId
-    gs.info(`[VerificationService] Entrust applicant created: applicantId=${applicantId}`)
+    // Reuse existing applicantId for this subject user if one already exists
+    let applicantId = findApplicantIdBySubjectUser(sourceContext.subjectUserId)
+
+    if (applicantId) {
+        gs.info(`[VerificationService] Reusing existing applicantId=${applicantId} for subjectUserId=${sourceContext.subjectUserId}`)
+    } else {
+        const applicant = createApplicant(connection, {
+            firstName: subjectUser.firstName,
+            lastName: subjectUser.lastName,
+        })
+        applicantId = applicant.applicantId
+        gs.info(`[VerificationService] New Entrust applicant created: applicantId=${applicantId} for subjectUserId=${sourceContext.subjectUserId}`)
+    }
 
     // create a fresh workflow run
     const workflowRun = createWorkflowRun(connection, {
@@ -133,7 +143,7 @@ export function startVerification(
     addWorkNote(
         sourceTable,
         sourceRecordId,
-        getVerificationCreatedActivityMessage(existingRequestCount)
+        getVerificationCreatedActivityMessage(existingRequestCount, workflowRun.workflowRunId)
     );
 
     return {

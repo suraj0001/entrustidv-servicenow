@@ -3,7 +3,8 @@ import * as verificationRequestRepository
     from '../repositories/verification-request-repository.ts'
 import * as configurationRepository
     from '../repositories/configuration-repository.ts'
-    import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
+import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
+import { ACTIVITY_MESSAGES } from '../constants.ts'
 
 interface EntrustWebhookEvent {
     payload?: EntrustWebhookPayload
@@ -173,7 +174,7 @@ function processEvidenceFolderCreated(
     addWorkNote(
         verificationRequest.sourceTable,
         verificationRequest.sourceRecordId,
-        'Identity verification evidence folder created.'
+        ACTIVITY_MESSAGES.EVIDENCE_FOLDER_CREATED
     );
 
     gs.info(

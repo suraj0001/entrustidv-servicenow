@@ -94,6 +94,26 @@ export function countVerificationRequests(sourceTable: string, sourceRecordId: s
   return gr.getRowCount();
 }
 
+export function findApplicantIdBySubjectUser(subjectUserId: string): string | null {
+  if (!subjectUserId) {
+    return null;
+  }
+
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  gr.addQuery("subject_user", subjectUserId);
+  gr.addNotNullQuery("applicant_id");
+  gr.orderByDesc("sys_created_on");
+  gr.setLimit(1);
+  gr.query();
+
+  if (gr.next()) {
+    const applicantId = (gr.getValue("applicant_id") as string) || "";
+    return applicantId.trim() || null;
+  }
+
+  return null;
+}
+
 export function findVerificationRequestById(sysId: string): GlideRecord | null {
   if (!sysId) {
     return null;
