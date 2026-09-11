@@ -80,7 +80,7 @@ function processWorkflowRunCompleted(
     )
 
     // Reject events from other workflows if workflow_id is configured
-    const config = configurationRepository.getVerificationSettings()
+    const config = configurationRepository.getConfigSettings()
     if (
         eventWorkflowId &&
         config?.workflowId &&

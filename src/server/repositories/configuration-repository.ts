@@ -1,20 +1,20 @@
 import { GlideRecord } from "@servicenow/glide";
 import { CONFIG_TABLE } from "../constants.ts";
 
-export type VerificationSettingsConfig = {
+export type ConfigSettings = {
   workflowId: string;
   linkExpiry: number;
   linkDeliveryChannel: string;
   redirectUrl: string;
 };
 
-export type VerificationConfiguration = {
+export type IdvConfiguration = {
   workflowId: string;
   linkExpiryMinutes: number;
   redirectUrl: string;
 };
 
-export type VerificationSettingsReadResult = {
+export type ConfigSettingsRecord = {
   workflowId: string;
   linkExpiry: number;
   deliveryChannel: string;
@@ -22,7 +22,7 @@ export type VerificationSettingsReadResult = {
   redirectUrl: string;
 };
 
-export function getVerificationSettings(): VerificationSettingsReadResult | null {
+export function getConfigSettings(): ConfigSettingsRecord | null {
   const configGr = getExistingConfigurationRecord();
 
   if (!configGr) {
@@ -54,7 +54,7 @@ export function getVerificationSettings(): VerificationSettingsReadResult | null
   };
 }
 
-export function getVerificationConfiguration(): VerificationConfiguration | null {
+export function getIdvConfiguration(): IdvConfiguration | null {
   const configGr = getExistingConfigurationRecord();
 
   if (!configGr) {
@@ -87,8 +87,8 @@ export function getVerificationConfiguration(): VerificationConfiguration | null
   };
 }
 
-export function saveVerificationSettingsConfig(
-  settings: VerificationSettingsConfig,
+export function saveConfigSettings(
+  settings: ConfigSettings,
 ): void {
   const configGr = getUpsertConfigurationRecord();
 
@@ -101,7 +101,7 @@ export function saveVerificationSettingsConfig(
     const sysId = configGr.insert();
 
     if (!sysId) {
-      throw new Error("Failed to create verification configuration.");
+      throw new Error("Failed to create configuration settings.");
     }
 
     return;
@@ -110,7 +110,7 @@ export function saveVerificationSettingsConfig(
   const sysId = configGr.update();
 
   if (!sysId) {
-    throw new Error("Failed to update verification configuration.");
+    throw new Error("Failed to update configuration settings.");
   }
 }
 
@@ -145,8 +145,6 @@ function getUpsertConfigurationRecord(): GlideRecord {
   }
 
   const configGr = new GlideRecord(CONFIG_TABLE);
-
   configGr.initialize();
-
   return configGr;
 }

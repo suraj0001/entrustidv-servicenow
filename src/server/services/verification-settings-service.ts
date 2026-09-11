@@ -4,17 +4,17 @@ import {
 } from "../admin-setup-pages/verification-settings-validator.ts";
 
 import {
-  getVerificationSettings,
+  getConfigSettings,
   saveWebhookSecret as saveWebhookSecretValue,
-  saveVerificationSettingsConfig,
-  type VerificationSettingsConfig,
-  type VerificationSettingsReadResult,
+  saveConfigSettings,
+  type ConfigSettings,
+  type ConfigSettingsRecord,
 } from "../repositories/configuration-repository.ts";
 
 export type GetVerificationSettingsResult = {
   success: boolean;
   message?: string;
-  settings?: Omit<VerificationSettingsReadResult, "webhookSecret">;
+  settings?: Omit<ConfigSettingsRecord, "webhookSecret">;
 };
 
 export type SaveVerificationSettingsResult = {
@@ -28,7 +28,7 @@ export type WebhookSecretStatusResult = {
 };
 
 export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
-  const settings = getVerificationSettings();
+  const settings = getConfigSettings();
 
   return {
     success: true,
@@ -44,7 +44,7 @@ export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
 }
 
 export function getWebhookSecretStatus(): WebhookSecretStatusResult {
-  const settings = getVerificationSettings();
+  const settings = getConfigSettings();
 
   return {
     success: true,
@@ -59,7 +59,7 @@ export function saveVerificationSettings(
   validateVerificationSettings(input);
 
   // 2. Business logic / normalization
-  var settings: VerificationSettingsConfig = {
+  var settings: ConfigSettings = {
     workflowId: input.workflowId.trim(),
     linkExpiry: Number(input.linkExpiry),
     linkDeliveryChannel: "email",
@@ -67,7 +67,7 @@ export function saveVerificationSettings(
   };
 
   // 3. Persistence
-  saveVerificationSettingsConfig(settings);
+  saveConfigSettings(settings);
 
   return {
     success: true,

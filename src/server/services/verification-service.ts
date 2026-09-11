@@ -4,7 +4,7 @@ import {
     createApplicant,
     createWorkflowRun,
 } from '../entrust/entrust-verification-client.ts'
-import { getVerificationConfiguration } from '../repositories/configuration-repository.ts'
+import { getIdvConfiguration } from '../repositories/configuration-repository.ts'
 import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts'
 import { findSourceRecordContext } from '../repositories/source-record-repository.ts'
 import { findSubjectUser } from '../repositories/subject-user-repository.ts'
@@ -64,8 +64,8 @@ export function startVerification(
         throw new Error('The subject user must have an email address.')
     }
 
-    // Load verification configuration (workflow ID, link expiry, redirect URL)
-    const configuration = getVerificationConfiguration()
+    // Load IDV configuration (workflow ID, link expiry, redirect URL)
+    const configuration = getIdvConfiguration()
     if (!configuration) {
         throw new Error(
             'Verification configuration is not complete. Please contact your administrator.',

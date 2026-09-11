@@ -6,7 +6,7 @@ import {
   updateLastStatusSyncByWorkflowRunId,
   type VerificationStatusRecord,
 } from '../repositories/verification-request-repository.ts'
-import { getVerificationSettings } from '../repositories/configuration-repository.ts'
+import { getConfigSettings } from '../repositories/configuration-repository.ts'
 import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts'
 import { getWorkflowRun } from '../entrust/entrust-verification-client.ts'
 import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
@@ -272,7 +272,7 @@ function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
     ? (nowGdt.getNumericValue() - lastSyncGdt.getNumericValue()) / (60 * 1000)
     : minutesSinceCreated
 
-  const settings = getVerificationSettings()
+  const settings = getConfigSettings()
   const linkExpiryMinutes = settings?.linkExpiry || 0
 
   // 1. If link has expired, doubt is absolute -> synchronize immediately (unless throttled)
