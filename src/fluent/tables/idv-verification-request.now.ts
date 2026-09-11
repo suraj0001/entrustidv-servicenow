@@ -60,6 +60,12 @@ export const x_entru_entrustidv_verification_request = Table({
       maxLength: 500,
     }),
 
+    last_status_sync: StringColumn({
+      label: 'Last Status Sync',
+      mandatory: false,
+      maxLength: 40,
+    }),
+
     // Only one verification request is active per source record; reverification deactivates prior requests.
     active: BooleanColumn({
       label: 'Active',

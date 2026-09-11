@@ -71,8 +71,13 @@ function processWorkflowRunCompleted(
         payload.object?.workflow_id
 
     if (!workflowRunId || !status) {
+        gs.warn('[EntrustWebhook] Missing workflowRunId or status in workflow_run.completed payload.')
         return
     }
+
+    gs.info(
+        `[EntrustWebhook] Received workflow_run.completed: workflowRunId=${workflowRunId}, status=${status}`
+    )
 
     // Reject events from other workflows if workflow_id is configured
     const config = configurationRepository.getVerificationSettings()
@@ -93,6 +98,21 @@ function processWorkflowRunCompleted(
         )
 
     if (!verificationRequest) {
+        gs.warn(
+            `[EntrustWebhook] No verification request found for workflowRunId=${workflowRunId}`
+        )
+        return
+    }
+
+    const currentNormalized = (verificationRequest.status || '').trim().toLowerCase()
+    const newNormalized = status.trim().toLowerCase()
+    const isAlreadyTerminal = ['approved', 'declined', 'review', 'abandoned', 'error'].includes(currentNormalized)
+
+    // If already updated to a terminal status (e.g. by fallback polling or previous webhook), skip redundant update
+    if (isAlreadyTerminal || currentNormalized === newNormalized) {
+        gs.info(
+            `[EntrustWebhook] Verification request for workflowRunId=${workflowRunId} is already in state '${verificationRequest.status}' (likely resolved by fallback polling). Skipping redundant update and work note.`
+        )
         return
     }
 
@@ -106,6 +126,10 @@ function processWorkflowRunCompleted(
         verificationRequest.sourceRecordId,
         getCompletionActivityMessage(status)
     );
+
+    gs.info(
+        `[EntrustWebhook] Successfully updated status to '${status}' via webhook for workflowRunId=${workflowRunId}`
+    )
 }
 
 function processEvidenceFolderCreated(
@@ -134,6 +158,13 @@ function processEvidenceFolderCreated(
         return
     }
 
+    if (verificationRequest.evidenceFolderHref === evidenceFolderHref) {
+        gs.info(
+            `[EntrustWebhook] Evidence folder already recorded for workflowRunId=${workflowRunId}. Skipping.`
+        )
+        return
+    }
+
     verificationRequestRepository.updateEvidenceFolderHrefByWorkflowRunId(
         workflowRunId,
         evidenceFolderHref
@@ -144,4 +175,8 @@ function processEvidenceFolderCreated(
         verificationRequest.sourceRecordId,
         'Identity verification evidence folder created.'
     );
+
+    gs.info(
+        `[EntrustWebhook] Evidence folder recorded for workflowRunId=${workflowRunId}`
+    )
 }

@@ -21,6 +21,7 @@ export interface VerificationRequest {
   sourceTable: string
   sourceRecordId: string
   evidenceFolderHref: string
+  active?: boolean
   sysCreatedOn?: string
   sysUpdatedOn?: string
 }
@@ -30,6 +31,8 @@ export type VerificationStatusRecord = {
   status: string
   sourceTable?: string
   sourceRecordId?: string
+  active?: boolean
+  lastSyncFromEntrust?: string
   sysCreatedOn?: string
   sysUpdatedOn?: string
   updatedAt?: string
@@ -112,12 +115,14 @@ export function findVerificationRequestByWorkflowRunId(
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
   gr.addQuery('workflow_run_id', workflowRunId)
-  gr.setLimit(1)
   gr.query()
 
   if (!gr.next()) {
     return null
   }
+
+  const rawActive = gr.getValue('active')
+  const active = rawActive === '1' || rawActive === 'true'
 
   return {
     sysId: gr.getUniqueValue(),
@@ -128,6 +133,7 @@ export function findVerificationRequestByWorkflowRunId(
     sourceTable: gr.getValue('source_table') ?? '',
     sourceRecordId: gr.getValue('source_record') ?? '',
     evidenceFolderHref: gr.getValue('evidence_folder_href') ?? '',
+    active,
     sysCreatedOn: (gr.getValue('sys_created_on') as string) || '',
     sysUpdatedOn: (gr.getValue('sys_updated_on') as string) || '',
   }
@@ -142,8 +148,6 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
   gr.addQuery("source_table", sourceTable);
   gr.addQuery("source_record", sourceRecordId);
   gr.addQuery("active", true);
-  gr.orderByDesc('sys_created_on');
-  gr.setLimit(1)
 
   gr.query();
 
@@ -167,6 +171,8 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
       status: gr.getValue('status') || '',
       sourceTable: gr.getValue('source_table') || '',
       sourceRecordId: gr.getValue('source_record') || '',
+      active: true,
+      lastSyncFromEntrust: (gr.getValue('last_status_sync') as string) || '',
       sysCreatedOn,
       sysUpdatedOn,
       updatedAt,
@@ -200,6 +206,9 @@ export function findVerificationStatusByWorkflowRunId(
     return null
   }
 
+  const rawActive = verificationRequest.getValue('active')
+  const active = rawActive === '1' || rawActive === 'true'
+
   const sysCreatedOn =
     (verificationRequest.getValue('sys_created_on') as string) || ''
   const sysUpdatedOn =
@@ -211,10 +220,29 @@ export function findVerificationStatusByWorkflowRunId(
     status: verificationRequest.getValue('status') || '',
     sourceTable: verificationRequest.getValue('source_table') || '',
     sourceRecordId: verificationRequest.getValue('source_record') || '',
+    active,
+    lastSyncFromEntrust: (verificationRequest.getValue('last_status_sync') as string) || '',
     sysCreatedOn,
     sysUpdatedOn,
     updatedAt,
   }
+}
+
+export function updateLastStatusSyncByWorkflowRunId(
+  workflowRunId: string,
+  lastStatusSync: string,
+): void {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+
+  gr.addQuery('workflow_run_id', workflowRunId)
+  gr.query()
+
+  if (!gr.next()) {
+    return
+  }
+
+  gr.setValue('last_status_sync', lastStatusSync)
+  gr.update()
 }
 
 export function updateStatusByWorkflowRunId(
@@ -224,7 +252,6 @@ export function updateStatusByWorkflowRunId(
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
 
     gr.addQuery('workflow_run_id', workflowRunId)
-    gr.setLimit(1)
     gr.query()
 
     if (!gr.next()) {
@@ -251,7 +278,6 @@ export function updateEvidenceFolderHrefByWorkflowRunId(
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
 
     gr.addQuery('workflow_run_id', workflowRunId)
-    gr.setLimit(1)
     gr.query()
 
     if (!gr.next()) {

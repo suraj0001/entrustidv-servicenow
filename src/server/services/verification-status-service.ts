@@ -3,6 +3,7 @@ import {
   findVerificationStatusByWorkflowRunId,
   findLatestVerificationStatus,
   updateStatusByWorkflowRunId,
+  updateLastStatusSyncByWorkflowRunId,
   type VerificationStatusRecord,
 } from '../repositories/verification-request-repository.ts'
 import { getVerificationSettings } from '../repositories/configuration-repository.ts'
@@ -11,7 +12,7 @@ import { getWorkflowRun } from '../entrust/entrust-verification-client.ts'
 import { addWorkNote, getCompletionActivityMessage } from './activity-service.ts'
 
 // Minimum grace period (in minutes) before fallback polling starts doubting the webhook.
-const GRACE_PERIOD_MINUTES = 20
+const GRACE_PERIOD_MINUTES = 60
 // Throttle period (in minutes) to prevent redundant outbound calls on repeated checks.
 const THROTTLE_MINUTES = 5
 
@@ -140,6 +141,17 @@ export function getVerificationStatusByWorkflowRunId(
     return null
   }
 
+  // If the record was deactivated (e.g. by reverification), stop polling immediately
+  if (storedRecord.active === false) {
+    const result = buildStatusResult(storedRecord.status)
+    return {
+      workflowRunId,
+      status: result.status,
+      displayStatus: result.displayStatus,
+      shouldPoll: false,
+    }
+  }
+
   // Check if fallback reconciliation with Entrust is warranted
   const currentStatus = syncWithEntrustIfDoubtful(storedRecord)
 
@@ -160,11 +172,13 @@ export function getVerificationStatusByWorkflowRunId(
  * Smart Fallback Check:
  * If the record is still in a non-terminal state and past the grace period (or link expiry),
  * queries Entrust directly via outbound REST to reconcile status in case webhooks were blocked/missed.
+ *
+ * NOTE: Status update and completion work notes are applied ONLY when Entrust returns a terminal status.
  */
 function syncWithEntrustIfDoubtful(
   record: VerificationStatusRecord,
 ): string {
-  if (!record.workflowRunId) {
+  if (!record.workflowRunId || record.active === false) {
     return record.status
   }
 
@@ -181,25 +195,39 @@ function syncWithEntrustIfDoubtful(
   }
 
   try {
-    gs.info(
-      `[VerificationStatusService] Fallback polling triggered for workflowRunId=${record.workflowRunId}`
-    )
-
     const connection = new ApiConnectionRepository().getRuntimeConnection()
     if (!connection) {
-      gs.warn('[VerificationStatusService] Runtime connection not configured for fallback polling.')
+      gs.warn(
+        `[VerificationStatusService] Fallback polling skipped: runtime connection not configured for workflowRunId=${record.workflowRunId}`
+      )
       return record.status
     }
 
+    gs.info(
+      `[VerificationStatusService] Calling Entrust API (GET /workflow_runs/${record.workflowRunId}) to fetch latest status`
+    )
+
     const remoteRun = getWorkflowRun(connection, record.workflowRunId)
     if (!remoteRun || !remoteRun.status) {
+      gs.warn(
+        `[VerificationStatusService] Fallback polling received empty response for workflowRunId=${record.workflowRunId}`
+      )
       return record.status
     }
 
     const remoteNormalized = normalizeStatus(remoteRun.status)
+    const remoteConfig = STATUS_CONFIG[remoteNormalized]
+    const isRemoteTerminal = remoteConfig ? !remoteConfig.shouldPoll : false
 
-    // If status changed in Entrust, update the database and write work notes
-    if (remoteNormalized !== normalized) {
+    gs.info(
+      `[VerificationStatusService] Entrust API returned status='${remoteRun.status}' (isTerminal=${isRemoteTerminal}) for workflowRunId=${record.workflowRunId}`
+    )
+
+    // Always update last_status_sync to current timestamp to guarantee throttle window
+    updateLastStatusSyncByWorkflowRunId(record.workflowRunId, new GlideDateTime().getValue())
+
+    // Update database and log completion activity work notes ONLY when status is terminal
+    if (isRemoteTerminal) {
       updateStatusByWorkflowRunId(record.workflowRunId, remoteRun.status)
 
       if (record.sourceTable && record.sourceRecordId) {
@@ -209,9 +237,14 @@ function syncWithEntrustIfDoubtful(
           getCompletionActivityMessage(remoteRun.status)
         )
       }
+
+      gs.info(
+        `[VerificationStatusService] Fallback polling updated record to terminal status='${remoteRun.status}' and added work note for workflowRunId=${record.workflowRunId}`
+      )
     } else {
-      // Even if status didn't change, touch the status field to refresh sys_updated_on for throttling
-      updateStatusByWorkflowRunId(record.workflowRunId, record.status)
+      gs.info(
+        `[VerificationStatusService] Workflow run is still in-progress ('${remoteRun.status}') in Entrust. Throttling next check for ${THROTTLE_MINUTES} minutes for workflowRunId=${record.workflowRunId}`
+      )
     }
 
     return remoteRun.status
@@ -225,7 +258,9 @@ function syncWithEntrustIfDoubtful(
 
 function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
   const createdGdt = record.sysCreatedOn ? new GlideDateTime(record.sysCreatedOn) : null
-  const updatedGdt = record.sysUpdatedOn ? new GlideDateTime(record.sysUpdatedOn) : null
+  const lastSyncGdt = record.lastSyncFromEntrust
+    ? new GlideDateTime(record.lastSyncFromEntrust)
+    : (record.sysUpdatedOn ? new GlideDateTime(record.sysUpdatedOn) : createdGdt)
 
   if (!createdGdt) {
     return false
@@ -233,8 +268,8 @@ function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
 
   const nowGdt = new GlideDateTime()
   const minutesSinceCreated = (nowGdt.getNumericValue() - createdGdt.getNumericValue()) / (60 * 1000)
-  const minutesSinceUpdated = updatedGdt
-    ? (nowGdt.getNumericValue() - updatedGdt.getNumericValue()) / (60 * 1000)
+  const minutesSinceLastSync = lastSyncGdt
+    ? (nowGdt.getNumericValue() - lastSyncGdt.getNumericValue()) / (60 * 1000)
     : minutesSinceCreated
 
   const settings = getVerificationSettings()
@@ -242,16 +277,39 @@ function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
 
   // 1. If link has expired, doubt is absolute -> synchronize immediately (unless throttled)
   if (linkExpiryMinutes > 0 && minutesSinceCreated >= linkExpiryMinutes) {
-    return minutesSinceUpdated >= THROTTLE_MINUTES
+    if (record.lastSyncFromEntrust && minutesSinceLastSync < THROTTLE_MINUTES) {
+      gs.info(
+        `[VerificationStatusService] Link expired (${minutesSinceCreated.toFixed(1)} mins >= ${linkExpiryMinutes} mins) for workflowRunId=${record.workflowRunId}, but throttled (${minutesSinceLastSync.toFixed(1)} mins < ${THROTTLE_MINUTES} mins since last check).`
+      )
+      return false
+    }
+
+    gs.info(
+      `[VerificationStatusService] Fallback polling triggered due to Link Expiry: workflowRunId=${record.workflowRunId}, minutesSinceCreated=${minutesSinceCreated.toFixed(1)}, linkExpiryMinutes=${linkExpiryMinutes}`
+    )
+    return true
   }
 
   // 2. If within the 20-minute user grace period, trust the webhook -> do not call Entrust
   if (minutesSinceCreated < GRACE_PERIOD_MINUTES) {
+    gs.info(
+      `[VerificationStatusService] Within grace period (${minutesSinceCreated.toFixed(1)} mins < ${GRACE_PERIOD_MINUTES} mins) for workflowRunId=${record.workflowRunId}. Relying on webhook.`
+    )
     return false
   }
 
-  // 3. Past 20 minutes: webhook is doubted -> check Entrust if not checked within the last 5 minutes
-  return minutesSinceUpdated >= THROTTLE_MINUTES
+  // 3. Past 20 minutes: webhook is doubted -> check Entrust if not synced within the last 5 minutes
+  if (record.lastSyncFromEntrust && minutesSinceLastSync < THROTTLE_MINUTES) {
+    gs.info(
+      `[VerificationStatusService] Past grace period (${minutesSinceCreated.toFixed(1)} mins) for workflowRunId=${record.workflowRunId}, but throttled (${minutesSinceLastSync.toFixed(1)} mins < ${THROTTLE_MINUTES} mins since last check).`
+    )
+    return false
+  }
+
+  gs.info(
+    `[VerificationStatusService] Fallback polling triggered after grace period: workflowRunId=${record.workflowRunId}, minutesSinceCreated=${minutesSinceCreated.toFixed(1)}, minutesSinceLastCheck=${minutesSinceLastSync.toFixed(1)}`
+  )
+  return true
 }
 
 function buildStatusResult(
