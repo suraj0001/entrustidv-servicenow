@@ -36,7 +36,9 @@ export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
     settings: settings
       ? {
           workflowId: settings.workflowId,
-          linkExpiry: settings.linkExpiry,
+          linkExpiry:
+            settings.linkExpiryUnit === "hours" ? settings.linkExpiry / 60 : settings.linkExpiry,
+          linkExpiryUnit: settings.linkExpiryUnit,
           deliveryChannel: "email",
           redirectUrl: settings.redirectUrl,
         }
@@ -60,9 +62,14 @@ export function saveVerificationSettings(
   validateVerificationSettings(input);
 
   // 2. Business logic / normalization
+  var linkExpiryMinutes =
+    Number(input.linkExpiry) * (input.linkExpiryUnit.trim().toLowerCase() === "hours" ? 60 : 1);
+  var linkExpiryUnit: "minutes" | "hours" =
+    input.linkExpiryUnit.trim().toLowerCase() === "hours" ? "hours" : "minutes";
   var settings: ConfigSettings = {
     workflowId: input.workflowId.trim(),
-    linkExpiry: Number(input.linkExpiry),
+    linkExpiry: linkExpiryMinutes,
+    linkExpiryUnit,
     linkDeliveryChannel: "email",
     redirectUrl: input.redirectUrl ? input.redirectUrl.trim() : "",
   };

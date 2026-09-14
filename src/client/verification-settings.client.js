@@ -83,7 +83,11 @@ function showServerValidationError(message) {
   if (message === "Workflow ID is required." || message === "Workflow ID must be 100 characters or fewer.") fieldId = "workflow_id";
   else if (
     message === "Link expiry is required." ||
-    message === "Link expiry must be a positive whole number."
+    message === "Link expiry must be a positive whole number." ||
+    message === "Link expiry unit is required." ||
+    message === "Link expiry unit must be minutes or hours." ||
+    message === "Link expiry cannot exceed 2880 minutes." ||
+    message === "Link expiry cannot exceed 48 hours."
   )
     fieldId = "link_expiry";
   else if (
@@ -134,14 +138,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  _el("link_expiry_unit").addEventListener("change", function () {
+    _el("link_expiry").max = this.value === "hours" ? "48" : "2880";
+    clearFieldError("link_expiry");
+    clearMessages();
+  });
+
   ajax("getConfig", {}, function (result) {
     if (!result || !result.success || !result.settings) {
       return;
     }
 
     var s = result.settings;
+    var linkExpiryUnit = s.linkExpiryUnit === "hours" ? "hours" : "minutes";
 
     if (s.workflowId) _el("workflow_id").value = s.workflowId;
+    _el("link_expiry_unit").value = linkExpiryUnit;
+    _el("link_expiry").max = linkExpiryUnit === "hours" ? "48" : "2880";
     if (s.linkExpiry) _el("link_expiry").value = s.linkExpiry;
     if (s.redirectUrl) _el("redirect_url").value = s.redirectUrl;
   });
@@ -168,6 +181,7 @@ function validateWorkflowId() {
 
 function validateLinkExpiry() {
   var value = _value("link_expiry");
+  var unit = _value("link_expiry_unit");
 
   if (!value) {
     showFieldError("link_expiry", "Link expiry is required.");
@@ -178,6 +192,23 @@ function validateLinkExpiry() {
 
   if (!Number.isInteger(expiry) || expiry <= 0) {
     showFieldError("link_expiry", "Link expiry must be a positive whole number.");
+    return false;
+  }
+
+  if (unit !== "minutes" && unit !== "hours") {
+    showFieldError("link_expiry", "Select minutes or hours for link expiry.");
+    return false;
+  }
+
+  var maximum = unit === "hours" ? 48 : 2880;
+
+  if (expiry > maximum) {
+    showFieldError(
+      "link_expiry",
+      unit === "hours"
+        ? "Link expiry cannot exceed 48 hours."
+        : "Link expiry cannot exceed 2880 minutes.",
+    );
     return false;
   }
 
@@ -243,6 +274,7 @@ _el("btn_save").addEventListener("click", function () {
     {
       sysparm_workflow_id: _value("workflow_id"),
       sysparm_link_expiry: _value("link_expiry"),
+      sysparm_link_expiry_unit: _value("link_expiry_unit"),
       sysparm_delivery_channel: "email",
       sysparm_redirect_url: _value("redirect_url"),
     },

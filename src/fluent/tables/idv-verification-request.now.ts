@@ -1,4 +1,12 @@
-import { BooleanColumn, DocumentIdColumn, ReferenceColumn, StringColumn, Table, TableNameColumn } from "@servicenow/sdk/core";
+import {
+  BooleanColumn,
+  DateTimeColumn,
+  DocumentIdColumn,
+  ReferenceColumn,
+  StringColumn,
+  Table,
+  TableNameColumn,
+} from "@servicenow/sdk/core";
 
 export const x_entru_entrustidv_verification_request = Table({
   name: "x_entru_entrustidv_verification_request",
@@ -54,21 +62,26 @@ export const x_entru_entrustidv_verification_request = Table({
       maxLength: 50,
     }),
 
+    expires_at: DateTimeColumn({
+      label: "Link Expires At",
+      mandatory: true,
+    }),
+
     evidence_folder_href: StringColumn({
-      label: 'Evidence Folder Reference',
+      label: "Evidence Folder Reference",
       mandatory: false,
       maxLength: 500,
     }),
 
     last_status_sync: StringColumn({
-      label: 'Last Status Sync',
+      label: "Last Status Sync",
       mandatory: false,
       maxLength: 40,
     }),
 
     // Only one verification request is active per source record; reverification deactivates prior requests.
     active: BooleanColumn({
-      label: 'Active',
+      label: "Active",
       defaultValue: true,
     }),
   },

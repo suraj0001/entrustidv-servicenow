@@ -20,7 +20,7 @@ export interface CreateApplicantResult {
 export interface CreateWorkflowRunRequest {
   applicantId: string;
   workflowId: string;
-  expiresAt?: string;
+  expiresAt: string;
   redirectUrl?: string;
 }
 
@@ -42,7 +42,10 @@ export interface GetWorkflowRunResult {
   reasons?: string[];
 }
 
-export function createApplicant(connection: EntrustConnection, input: CreateApplicantRequest): CreateApplicantResult {
+export function createApplicant(
+  connection: EntrustConnection,
+  input: CreateApplicantRequest,
+): CreateApplicantResult {
   const request = createRequest(connection, "/applicants/");
 
   request.setRequestBody(
@@ -81,19 +84,13 @@ export function createWorkflowRun(
     applicant_id: input.applicantId,
   };
 
-  /*
-   * Link configuration is optional.
-   * Add it only when we actually have values to send.
-   */
-  if (input.expiresAt || input.redirectUrl) {
-    payload.link = {};
-    if (input.expiresAt) {
-      payload.link.expires_at = input.expiresAt;
-    }
-    if (input.redirectUrl) {
-      payload.link.completed_redirect_url = input.redirectUrl;
-      payload.link.expired_redirect_url = input.redirectUrl;
-    }
+  payload.link = {
+    expires_at: input.expiresAt,
+  };
+
+  if (input.redirectUrl) {
+    payload.link.completed_redirect_url = input.redirectUrl;
+    payload.link.expired_redirect_url = input.redirectUrl;
   }
 
   request.setRequestBody(JSON.stringify(payload));

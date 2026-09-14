@@ -1,5 +1,11 @@
 import "@servicenow/sdk/global";
-import { IntegerColumn, Password2Column, StringColumn, Table, UrlColumn } from "@servicenow/sdk/core";
+import {
+  IntegerColumn,
+  Password2Column,
+  StringColumn,
+  Table,
+  UrlColumn,
+} from "@servicenow/sdk/core";
 
 export const x_entru_entrustidv_configuration = Table({
   name: "x_entru_entrustidv_configuration",
@@ -21,6 +27,12 @@ export const x_entru_entrustidv_configuration = Table({
     link_expiry_minutes: IntegerColumn({
       label: "Smart Link Expiry Minutes",
       mandatory: true,
+    }),
+
+    link_expiry_unit: StringColumn({
+      label: "Smart Link Expiry Unit",
+      mandatory: true,
+      maxLength: 10,
     }),
 
     link_delivery_channel: StringColumn({
