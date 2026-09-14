@@ -105,6 +105,22 @@ function processWorkflowRunCompleted(
         return
     }
 
+    // The workflow run is no longer active, meaning a newer verification request
+    // has since superseded it. This webhook is for a stale/previous verification link.
+    if (!verificationRequest.active) {
+        gs.warn(
+            `[EntrustWebhook] Ignoring workflow_run.completed for inactive workflowRunId=${workflowRunId}. A newer verification request likely superseded it.`
+        )
+
+        addWorkNote(
+            verificationRequest.sourceTable,
+            verificationRequest.sourceRecordId,
+            ACTIVITY_MESSAGES.STALE_WORKFLOW_RUN
+        );
+
+        return
+    }
+
     const currentNormalized = (verificationRequest.status || '').trim().toLowerCase()
     const newNormalized = status.trim().toLowerCase()
     const isAlreadyTerminal = ['approved', 'declined', 'review', 'abandoned', 'error'].includes(currentNormalized)

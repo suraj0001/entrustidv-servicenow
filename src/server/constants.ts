@@ -38,6 +38,7 @@ export const ACTIVITY_MESSAGES = {
   OUTCOME_ABANDONED: "Identity verification ended.\nOutcome: Abandoned",
   OUTCOME_ERROR: "Identity verification could not be completed.\nOutcome: Error",
   OUTCOME_DEFAULT: "Identity verification completed.",
+  STALE_WORKFLOW_RUN: "⚠ A previous verification link was used. Please ask the user to use the latest verification link.",
 } as const;
 
 // Common User Facing / Response Messages
