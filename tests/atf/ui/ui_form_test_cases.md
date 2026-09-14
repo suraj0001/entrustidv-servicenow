@@ -23,7 +23,7 @@ Verify that an Incident agent can open an Incident form, click the **Verify Iden
 | **5** | **Form** | Open an Existing Record | **Table**: `Incident`<br>**Record**: Step 4 $\rightarrow$ Record |
 | **6** | **Form** | Click a Form Button | **Button**: `Verify Identity` |
 | **7** | **Form** | Field Values Validation | **Table**: `Incident`<br>**Work notes**: Contains `Identity verification request initiated` |
-| **8** | **Server** | Record Validation | **Table**: `x_1350849_entrust_idv_verification_request`<br>**Conditions**: `Source Record = Step 4 Record` AND `Active = true` AND `Status = Pending` (or `In Progress`) |
+| **8** | **Server** | Record Validation | **Table**: `x_entru_entrustidv_verification_request`<br>**Conditions**: `Source Record = Step 4 Record` AND `Active = true` AND `Status = Pending` (or `In Progress`) |
 
 ---
 
@@ -45,7 +45,7 @@ Verify that an HR Case agent can trigger identity verification for a Subject Per
 | **4** | **Form** | Submit Form | Submits the HR Case record. |
 | **5** | **Form** | Open an Existing Record | **Table**: `sn_hr_core_case`<br>**Record**: Step 4 $\rightarrow$ Record |
 | **6** | **Form** | Click a Form Button | **Button**: `Verify Identity` |
-| **7** | **Server** | Record Validation | **Table**: `x_1350849_entrust_idv_verification_request`<br>**Conditions**: `Source Record = Step 4 Record` AND `Active = true` |
+| **7** | **Server** | Record Validation | **Table**: `x_entru_entrustidv_verification_request`<br>**Conditions**: `Source Record = Step 4 Record` AND `Active = true` |
 
 ---
 

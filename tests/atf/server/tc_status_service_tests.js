@@ -1,3 +1,11 @@
+/**
+ * ATF Test Suite: Verification Status Service Mappings Tests
+ * 
+ * Test Scenarios:
+ *   - Default status lookup when no request exists (not_started)
+ *   - Active polling status mappings (awaiting, pending, processing, awaiting_input -> shouldPoll: true)
+ *   - Terminal status mappings (review, approved, declined, abandoned, error -> shouldPoll: false)
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Verification Status Service Mappings Tests...");
 
@@ -10,7 +18,7 @@
     }
 
     var statusSvc = require("./src/server/services/verification-status-service.ts");
-    var TABLE_NAME = "x_1350849_entrust_idv_verification_request";
+    var TABLE_NAME = "x_entru_entrustidv_verification_request";
 
     // -------------------------------------------------------------------------
     // Test Case 7.1: No Verification Request Exists (Default Response)

@@ -1,3 +1,12 @@
+/**
+ * ATF Test Suite: Agent - Start Verification Server Tests
+ * 
+ * Test Scenarios:
+ *   - Invalid/non-existent source record error handling
+ *   - Subject user missing email address validation
+ *   - Subject user missing first/last name validation
+ *   - Maximum verification requests limit check (MAX = 10 requests)
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Agent - Start Verification Server Tests...");
 
@@ -84,7 +93,7 @@
     var incSysIdMax = incGrMax.insert();
 
     // Create 10 existing mock requests for this incident
-    var TABLE_NAME = "x_1350849_entrust_idv_verification_request";
+    var TABLE_NAME = "x_entru_entrustidv_verification_request";
     for (var i = 0; i < 10; i++) {
         var reqGr = new GlideRecord(TABLE_NAME);
         reqGr.initialize();

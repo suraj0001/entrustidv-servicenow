@@ -1,3 +1,12 @@
+/**
+ * ATF Test Suite: Webhook Signature Validator Tests
+ * 
+ * Test Scenarios:
+ *   - Missing payload, signature header, or secret handling
+ *   - Malformed / non-hex signature format rejection
+ *   - Valid HMAC-SHA256 signature generation & verification
+ *   - Tampered payload signature failure
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Webhook Signature Validator Tests...");
 
@@ -9,7 +18,9 @@
         });
     }
 
-    var validator = new x_1350849_entrust.EntrustWebhookSignatureValidator();
+    var validator = typeof EntrustWebhookSignatureValidator !== "undefined" ? 
+        new EntrustWebhookSignatureValidator() : 
+        new x_entru_entrustidv.EntrustWebhookSignatureValidator();
 
     var sampleSecret = "my_secret_webhook_token_123";
     var samplePayload = '{"event":"workflow_run.completed","workflow_run_id":"wfr_test_123","status":"Approved"}';

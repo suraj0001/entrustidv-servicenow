@@ -1,3 +1,13 @@
+/**
+ * ATF Test Suite: Admin - Verification Settings Server Tests
+ * 
+ * Test Scenarios:
+ *   - Missing Workflow ID validation
+ *   - Invalid (negative) Link Expiry validation
+ *   - Malformed Redirect URL validation
+ *   - Save & retrieve valid verification settings
+ *   - Webhook token secret length validation (5-100 chars) & status check
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Admin - Verification Settings Server Tests...");
 

@@ -1,3 +1,12 @@
+/**
+ * ATF Test Suite: Verification Workflow & Applicant Reuse Tests
+ * 
+ * Test Scenarios:
+ *   - Initial active verification request record creation
+ *   - Applicant ID reuse for existing subject user (findApplicantIdBySubjectUser)
+ *   - Active verification request status resolution (findLatestVerificationStatus)
+ *   - Deactivation of superseded requests (deactivateActiveVerificationRequests)
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Verification Workflow & Applicant Reuse Tests...");
 
@@ -10,7 +19,7 @@
     }
 
     var repo = require("./src/server/repositories/verification-request-repository.ts");
-    var TABLE_NAME = "x_1350849_entrust_idv_verification_request";
+    var TABLE_NAME = "x_entru_entrustidv_verification_request";
 
     // -------------------------------------------------------------------------
     // Test Setup: Insert mock records in database

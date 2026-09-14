@@ -1,3 +1,13 @@
+/**
+ * ATF Test Suite: Admin - API Connection Server Tests
+ * 
+ * Test Scenarios:
+ *   - Missing required inputs validation (region, client_id, client_secret)
+ *   - Unsupported region error handling
+ *   - Invalid credentials connection test against Entrust API
+ *   - Configuration load via getConfig()
+ *   - Save configuration input validation
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Admin - API Connection Server Tests...");
     

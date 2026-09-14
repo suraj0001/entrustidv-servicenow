@@ -1,3 +1,12 @@
+/**
+ * ATF Test Suite: Admin - Security, Roles & ACL Tests
+ * 
+ * Test Scenarios:
+ *   - Application roles existence check (x_entru_entrustidv.admin, x_entru_entrustidv.agent)
+ *   - Table ACL operation restrictions (manual create, write, delete blocked on requests)
+ *   - Configuration table ACL delete restriction
+ *   - Scoped UI Page ACL rules existence check
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Admin - Security, Roles & ACL Tests...");
 
@@ -9,8 +18,8 @@
         });
     }
 
-    var CONFIG_TABLE = "x_1350849_entrust_idv_configuration";
-    var REQ_TABLE = "x_1350849_entrust_idv_verification_request";
+    var CONFIG_TABLE = "x_entru_entrustidv_configuration";
+    var REQ_TABLE = "x_entru_entrustidv_verification_request";
 
     // -------------------------------------------------------------------------
     // Test Case 8.1: Verify Application Role Existence

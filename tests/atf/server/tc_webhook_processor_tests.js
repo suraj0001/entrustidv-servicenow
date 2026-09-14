@@ -1,3 +1,12 @@
+/**
+ * ATF Test Suite: Webhook Processor Tests
+ * 
+ * Test Scenarios:
+ *   - Null and empty payload event handling
+ *   - Stale/superseded link event handling (status update ignored, stale work note logged)
+ *   - Active link completion status update (workflow_run.completed)
+ *   - Evidence folder URL recording (workflow_run_evidence_folder.created)
+ */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Webhook Processor Tests...");
 
@@ -11,7 +20,7 @@
 
     var webhookSvc = require("./src/server/services/webhook-service.ts");
     var reqRepo = require("./src/server/repositories/verification-request-repository.ts");
-    var TABLE_NAME = "x_1350849_entrust_idv_verification_request";
+    var TABLE_NAME = "x_entru_entrustidv_verification_request";
 
     // -------------------------------------------------------------------------
     // Test Case 6.1: Null or Empty Payload Event Handling

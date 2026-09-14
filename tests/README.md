@@ -1,6 +1,6 @@
 # ServiceNow App Store Certification Test Suite & Execution Guide
 
-This repository folder contains the complete, automated test suite required for **ServiceNow App Store Certification** for the **Entrust Identity Verification** scoped application (`x_1350849_entrust`).
+This repository folder contains the complete, automated test suite required for **ServiceNow App Store Certification** for the **Entrust Identity Verification** scoped application (`x_entru_entrustidv`).
 
 ---
 
