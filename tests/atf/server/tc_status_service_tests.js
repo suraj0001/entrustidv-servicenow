@@ -51,6 +51,7 @@
         gr.setValue("workflow_run_id", "wfr_" + gs.generateGUID());
         gr.setValue("status", rawStatus);
         gr.setValue("active", true);
+        gr.setValue("expires_at", new GlideDateTime().getValue());
         gr.insert();
 
         var res = statusSvc.getLatestVerificationStatus("incident", mockSourceSysId);
