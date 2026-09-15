@@ -46,6 +46,7 @@ VerificationSettingsAjax.prototype = Object.extendsObject(global.AbstractAjaxPro
       input = {
         workflowId: this.getParameter("sysparm_workflow_id"),
         linkExpiry: this.getParameter("sysparm_link_expiry"),
+        linkExpiryUnit: this.getParameter("sysparm_link_expiry_unit"),
         deliveryChannel: "email",
         redirectUrl: this.getParameter("sysparm_redirect_url"),
       };
