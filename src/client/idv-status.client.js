@@ -1,6 +1,8 @@
 /* eslint-disable */
 
 var STATUS_FIELD = 'x_entru_entrustidv_verification_status';
+var LOADING_STATUS_TEXT = 'Fetching status...';
+var LOADING_SPINNER_ID = 'idv-status-loading-spinner';
 
 var INITIAL_POLL_DELAY_ONLOAD_MS = 60 * 1000;        // 1 minute on page load
 var INITIAL_POLL_DELAY_ONCLICK_MS = 5 * 60 * 1000;   // 5 minutes on button click
@@ -16,7 +18,20 @@ var pollingStartedAt = 0;
 var consecutiveErrors = 0;
 var pollingTimer = null;
 var messageDismissTimer = null;
-var lastKnownDisplayStatus = 'Not Started';
+
+// onLoad and the Verify Identity UI Action each Now.include() this file into a
+// SEPARATE, isolated script scope, so a plain module-level var doesn't survive
+// between them. Persist on g_form instead, since it's the one object shared
+// across both contexts.
+function getLastKnownDisplayStatus() {
+    return (g_form && g_form.__idvLastKnownDisplayStatus) || 'Not Started';
+}
+
+function setLastKnownDisplayStatus(status) {
+    if (g_form) {
+        g_form.__idvLastKnownDisplayStatus = status;
+    }
+}
 
 function onLoad() {
     var sourceTable = g_form.getTableName();
@@ -28,8 +43,9 @@ function onLoad() {
 
     g_form.setReadOnly(STATUS_FIELD, true);
 
-    lastKnownDisplayStatus = g_form.getValue(STATUS_FIELD) || 'Not Started';
+    setLastKnownDisplayStatus(g_form.getValue(STATUS_FIELD) || 'Not Started');
 
+    beginInitialStatusLoad();
     loadInitialStatus(sourceTable, sourceSysId);
 }
 
@@ -42,7 +58,11 @@ function loadInitialStatus(sourceTable, sourceSysId) {
     ga.getXMLAnswer(function (answer) {
         var result = parseResponse(answer);
 
+        hideLoadingSpinner();
+
         if (!result.success) {
+            applyStatus(getLastKnownDisplayStatus());
+            showFormMessage('error', result.message || 'Unable to retrieve identity verification status.');
             return;
         }
 
@@ -56,6 +76,99 @@ function loadInitialStatus(sourceTable, sourceSysId) {
     });
 }
 
+function beginInitialStatusLoad() {
+    g_form.setValue(STATUS_FIELD, LOADING_STATUS_TEXT);
+    showLoadingSpinner();
+}
+
+function showLoadingSpinner() {
+    try {
+        var control = g_form.getControl(STATUS_FIELD);
+        if (!control || !control.parentNode) {
+            return;
+        }
+        removeLoadingSpinner();
+        insertSpinnerInsideField(control);
+    } catch (e) {
+        // Spinner is a visual enhancement only; ignore on platforms without a real field control (e.g. Service Portal).
+    }
+}
+
+function hideLoadingSpinner() {
+    try {
+        removeLoadingSpinner();
+    } catch (e) {
+        // no-op
+    }
+}
+
+function removeLoadingSpinner() {
+    var control = g_form.getControl(STATUS_FIELD);
+    var container = control && control.parentNode;
+    if (!container || typeof container.querySelector !== 'function') {
+        return;
+    }
+    var existing = container.querySelector('#' + LOADING_SPINNER_ID);
+    if (existing && existing.parentNode) {
+        existing.parentNode.removeChild(existing);
+    }
+}
+
+// Overlays the spinner directly on top of the (readonly) field, just after the
+// "Fetching status..." text, since a native input/label can't host HTML children.
+function insertSpinnerInsideField(control) {
+    var doc = control.ownerDocument;
+    var container = control.parentNode;
+    if (!doc || !container) {
+        return;
+    }
+
+    var win = doc.defaultView;
+    if (win && win.getComputedStyle(container).position === 'static') {
+        container.style.position = 'relative';
+    }
+
+    var wrapper = doc.createElement('span');
+    wrapper.id = LOADING_SPINNER_ID;
+    wrapper.setAttribute(
+        'style',
+        'position:absolute; top:50%; left:' + getSpinnerLeftOffset(control) + 'px; ' +
+            'transform:translateY(-50%); pointer-events:none;'
+    );
+    wrapper.innerHTML = getSpinnerMarkup();
+
+    container.appendChild(wrapper);
+}
+
+// Measures the rendered width of the loading text (via a scratch canvas using
+// the field's own font) so the spinner lands right beside it rather than a
+// fixed/guessed distance away.
+function getSpinnerLeftOffset(control) {
+    var fallbackOffset = 118;
+
+    try {
+        var doc = control.ownerDocument;
+        var win = doc.defaultView;
+        var computed = win.getComputedStyle(control);
+        var canvas = doc.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.font = computed.fontWeight + ' ' + computed.fontSize + ' ' + computed.fontFamily;
+
+        var textWidth = ctx.measureText(LOADING_STATUS_TEXT).width;
+        var leftPadding = parseFloat(computed.paddingLeft) || 6;
+
+        return Math.round(leftPadding + textWidth + 8);
+    } catch (e) {
+        return fallbackOffset;
+    }
+}
+
+// Reuses ServiceNow's own "now-icon icon-loading" spinner classes for visual
+// consistency with the rest of the platform.
+function getSpinnerMarkup() {
+    return '<span class="now-icon icon-loading" style="color: #4F52BD; margin-left: 8px; margin-top: 2px;"></span>';
+}
+
 function executeVerifyIdentity() {
     var sourceTable = g_form.getTableName();
     var sourceRecordId = g_form.getUniqueValue();
@@ -64,7 +177,8 @@ function executeVerifyIdentity() {
         return;
     }
 
-    if (lastKnownDisplayStatus && lastKnownDisplayStatus !== 'Not Started') {
+    var currentDisplayStatus = getLastKnownDisplayStatus();
+    if (currentDisplayStatus && currentDisplayStatus !== 'Not Started') {
         confirmReverification(sourceTable, sourceRecordId);
         return;
     }
@@ -85,7 +199,7 @@ function confirmReverification(sourceTable, sourceRecordId) {
     };
 
     var message =
-        'A request has already been made and its status is ' + lastKnownDisplayStatus + '. Do you want to request identity verification again? ' +
+        'A request has already been made and its status is ' + getLastKnownDisplayStatus() + '. Do you want to request identity verification again? ' +
         '<a href="javascript:void(0);" style="text-decoration: none !important;" class="btn btn-default" onclick="globalThis.__idvConfirmYes();">Yes</a>' +
         ' ' +
         '<a href="javascript:void(0);" style="text-decoration: none !important;" class="btn btn-default" onclick="globalThis.__idvConfirmNo();">No</a>';
@@ -227,7 +341,7 @@ function applyStatus(displayStatus) {
         return;
     }
 
-    lastKnownDisplayStatus = displayStatus;
+    setLastKnownDisplayStatus(displayStatus);
     g_form.setValue(STATUS_FIELD, displayStatus);
 }
 
