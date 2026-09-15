@@ -9,6 +9,7 @@
  *   - Verification request creation, lookup, and status-sync bookkeeping
  *     (createVerificationRequest, findVerificationRequestById, countVerificationRequests,
  *     findVerificationStatusByWorkflowRunId, updateLastStatusSyncByWorkflowRunId)
+ *   - createVerificationRequest() rejects an invalid expiresAt value
  *
  * COVERS: verification-request-repository.ts's GlideRecord read/write functions used above.
  * No real Entrust API call is made anywhere in this flow — the repository is a pure
@@ -50,6 +51,7 @@
     gr1.setValue("workflow_run_id", "wfr_initial_" + gs.generateGUID());
     gr1.setValue("status", "In Progress");
     gr1.setValue("active", true);
+    gr1.setValue("expires_at", new GlideDateTime().getValue());
     var req1SysId = gr1.insert();
     
     check("First mock verification request should be created successfully", !req1SysId, false);
@@ -94,6 +96,7 @@
     // -------------------------------------------------------------------------
     gs.info("[ATF TEST 3.5] Testing createVerificationRequest() and findVerificationRequestById()...");
     var createdWorkflowRunId = "wfr_repo_created_" + gs.generateGUID();
+    var createdExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
     var createdSysId = repo.createVerificationRequest({
         sourceTable: mockSourceTable,
         sourceRecordId: mockSourceSysId,
@@ -102,7 +105,8 @@
         workflowId: "wf_repo_test",
         workflowVersionId: "1",
         workflowRunId: createdWorkflowRunId,
-        status: "awaiting"
+        status: "awaiting",
+        expiresAt: createdExpiresAt
     });
     check("createVerificationRequest should return a sys_id", !!createdSysId, true);
 
@@ -113,6 +117,27 @@
     }
 
     check("findVerificationRequestById should return null for a non-existent sys_id", repo.findVerificationRequestById("non_existent_sys_id_9999"), null);
+
+    // -------------------------------------------------------------------------
+    // Test Case 3.5b: createVerificationRequest() rejects an invalid expiresAt
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 3.5b] Testing createVerificationRequest() with an invalid expiresAt...");
+    try {
+        repo.createVerificationRequest({
+            sourceTable: mockSourceTable,
+            sourceRecordId: mockSourceSysId,
+            subjectUserId: mockSubjectUserSysId,
+            applicantId: mockApplicantId,
+            workflowId: "wf_repo_test",
+            workflowVersionId: "1",
+            workflowRunId: "wfr_repo_invalid_expiry_" + gs.generateGUID(),
+            status: "awaiting",
+            expiresAt: "not_a_valid_date"
+        });
+        check("Should have thrown error for invalid expiresAt", false, true);
+    } catch (e) {
+        check("Expected invalid expiry message", e.message, "Unable to persist an invalid verification link expiry.");
+    }
 
     // -------------------------------------------------------------------------
     // Test Case 3.6: countVerificationRequests()
