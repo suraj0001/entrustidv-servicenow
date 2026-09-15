@@ -5,6 +5,14 @@
  *   - Default status lookup when no request exists (not_started)
  *   - Active polling status mappings (awaiting, pending, processing, awaiting_input -> shouldPoll: true)
  *   - Terminal status mappings (review, approved, declined, abandoned, error -> shouldPoll: false)
+ *
+ * COVERS: getLatestVerificationStatus()'s STATUS_CONFIG mapping only, using freshly-inserted
+ * records (so the Entrust fallback-sync branch never fires — records aren't old enough to
+ * cross the configured link expiry/grace period).
+ *
+ * DOES NOT COVER: getVerificationStatusByWorkflowRunId(), the active=false early-return path,
+ * the Entrust fallback-sync/reconciliation logic (syncWithEntrustIfDoubtful), or unmapped/unknown
+ * raw status values.
  */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Verification Status Service Mappings Tests...");
