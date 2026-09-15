@@ -171,14 +171,16 @@ function _idvShowStatus(type, message) {
 function _setStoredCredentialPlaceholders() {
   _el("idv_client_id").placeholder = "Configured — enter a new value to replace";
   _el("idv_client_secret").placeholder = "Configured — enter a new value to replace";
-  _el("idv_credentials_hint").style.display = "block";
+  _el("idv_client_id_hint").textContent = "Leave blank to keep the configured Client ID";
+  _el("idv_client_secret_hint").textContent = "Leave blank to keep the configured Client Secret";
 }
 
 function _clearStoredCredentialPlaceholders() {
   _idvHasStoredCredentials = false;
   _el("idv_client_id").placeholder = "Enter your Entrust Client ID";
   _el("idv_client_secret").placeholder = "Enter your Entrust Client Secret";
-  _el("idv_credentials_hint").style.display = "none";
+  _el("idv_client_id_hint").textContent = "Enter the Client ID provided by Entrust";
+  _el("idv_client_secret_hint").textContent = "Enter the Client Secret provided by Entrust";
 }
 
 // --- Initialisation ---

@@ -118,7 +118,18 @@
       white-space: nowrap;
     }
 
-    button.btn-test,
+    button.btn-test {
+      background: #f0f2f3 !important;
+      background-image: none !important;
+      border: 1px solid #aeb7bb !important;
+      color: #29353B !important;
+    }
+
+    button.btn-test:hover {
+      background: #e3e7e9 !important;
+      border-color: #879399 !important;
+    }
+
     button.btn-save {
       background: #4F52BD !important;
       background-image: none !important;
@@ -126,7 +137,6 @@
       color: #ffffff !important;
     }
 
-    button.btn-test:hover,
     button.btn-save:hover {
       background: #3d40a0 !important;
       border-color: #3d40a0 !important;
@@ -212,7 +222,7 @@
         <label for="idv_client_id">Client ID
           <span class="req">*</span>
         </label>
-        <div class="hint">Leave blank to keep the configured Client ID</div>
+        <div class="hint" id="idv_client_id_hint">Enter the Client ID provided by Entrust</div>
         <input type="text" id="idv_client_id" maxlength="255" placeholder="Enter your Entrust Client ID"></input>
         <div class="field-error" id="idv_client_id_error" role="alert"></div>
       </div>
@@ -220,7 +230,7 @@
         <label for="idv_client_secret">Client Secret
           <span class="req">*</span>
         </label>
-        <div class="hint">Leave blank to keep the configured Client Secret</div>
+        <div class="hint" id="idv_client_secret_hint">Enter the Client Secret provided by Entrust</div>
         <input type="password" id="idv_client_secret" maxlength="255" placeholder="Enter your Entrust Client Secret"></input>
         <div class="field-error" id="idv_client_secret_error" role="alert"></div>
       </div>

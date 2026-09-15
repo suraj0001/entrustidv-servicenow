@@ -69,12 +69,12 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
                 <td align="center" style="padding:32px 16px;">
                     <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:100%; max-width:600px; background-color:#ffffff; border:1px solid #d9dee3; border-radius:6px;">
                         <tr>
-                            <td style="padding:18px 32px; background-color:#17324d;">
+                            <td style="padding:18px 32px; background-color:#293E40;">
                                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;">
                                     <tr>
-                                        <td style="color:#ffffff; font-family:Verdana, sans-serif; font-size:20px; font-weight:bold; white-space:nowrap;">
-                                            <span style="display:inline-block; margin-right:10px; padding:6px; border:1px solid #ffffff; font-size:12px; line-height:1; vertical-align:middle;">SN</span>
-                                            <span style="vertical-align:middle;">ServiceNow</span>
+                                        <td style="color:#ffffff; font-family:Verdana, sans-serif; font-size:20px; font-weight:500; white-space:nowrap; vertical-align:middle;">
+                                            <span style="display:inline-block; width:36px; height:36px; margin-right:10px; border:1px solid #ffffff; border-radius:4px; background-color:#ffffff; color:#293E40; font-size:13px; font-weight:bold; line-height:36px; text-align:center; vertical-align:middle;">SN</span>
+                                            <span style="display:inline-block; line-height:36px; vertical-align:middle;">ServiceNow</span>
                                         </td>
                                         <td align="right" style="padding-left:16px;">
                                             <img src="\${mail_script:Entrust IDV Notification Icon URL}" width="166" height="30" alt="Powered by Entrust" style="display:block; width:166px; height:30px; border:0;" />
@@ -85,9 +85,9 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
                         </tr>
                         <tr>
                             <td style="padding:32px; color:#263746; font-family:Verdana, sans-serif; font-size:15px; line-height:1.6;">
-                                <h1 style="margin:0 0 28px; color:#202936; font-family:Verdana, sans-serif; font-size:24px; line-height:1.3;">Verify your identity</h1>
+                                <h1 style="margin:0 0 28px; color:#202936; font-family:Verdana, sans-serif; font-size:22px; font-weight:600; line-height:1.3;">Verify your identity</h1>
                                 <p style="margin:0 0 8px;">Hello \${subject_user.first_name},</p>
-                                <p style="margin:0 0 24px;">ServiceNow asked you to verify your identity for case <strong>\${event.parm2}</strong>.</p>
+                                <p style="margin:0 0 24px;">ServiceNow asked you to verify your identity for case \${event.parm2}.</p>
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 28px;">
                                     <tr>
                                         <td style="background-color:#4F52BD; border-radius:4px;">
@@ -100,8 +100,8 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
                                         <td style="padding:20px; color:#263746; font-family:Verdana, sans-serif; font-size:13px; line-height:1.6;">
                                             <p style="margin:0 0 8px;"><strong>Keep this link private</strong></p>
                                             <p style="margin:0 0 8px;">This link is unique to you and expires on \${mail_script:Entrust IDV Link Expiry}. Don't forward this email or share the link.</p>
-                                            <p style="margin:20px 0 0;"><strong>Didn't expect this request?</strong> Don't use the link.</p>
-                                            <p style="margin:20px 0 0;"><strong>Need help?</strong> Contact customer support.</p>
+                                            <p style="margin:20px 0 0;">Didn't expect this request? Don't use the link.</p>
+                                            <p style="margin:20px 0 0;">Need help? Contact customer support.</p>
                                         </td>
                                     </tr>
                                 </table>
