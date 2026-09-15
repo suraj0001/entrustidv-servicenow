@@ -15,6 +15,7 @@ tests/
       │   ├── tc_verification_settings_tests.js <-- Admin - Verification Settings Tests
       │   ├── tc_verification_workflow_tests.js <-- Verification Workflow & Applicant Reuse Tests
       │   ├── tc_start_verification_tests.js   <-- Agent - Start Verification Server Tests
+      │   ├── tc_start_verification_live_integration_test.js <-- OPT-IN: Live Entrust Integration Test
       │   ├── tc_webhook_signature_tests.js   <-- Webhook Signature Validator Tests
       │   ├── tc_webhook_processor_tests.js   <-- Webhook Processor Tests
       │   ├── tc_status_service_tests.js     <-- Verification Status Mappings Tests
@@ -33,10 +34,11 @@ tests/
 | :--- | :--- | :--- |
 | `tc_api_connection_tests.js` | **Admin - API Connection Tests** | - Missing parameter validation<br>- Unsupported region rejection (`invalid_region`)<br>- Invalid credential auth failure against Entrust API<br>- `getConfig()` retrieval<br>- `saveConfig()` validation (empty/asymmetric fields, length bounds)<br>- `saveConfig()` success with valid region/credentials (incl. mixed-case region)<br>- `getAliasInfo()` structural lookup |
 | `tc_verification_settings_tests.js` | **Admin - Verification Settings Tests** | - Missing Workflow ID error<br>- Workflow ID max length rejection (100 chars)<br>- Positive integer Link Expiry validation<br>- Valid HTTP/HTTPS Redirect URL check (optional field)<br>- Save & retrieve valid verification settings<br>- Webhook Token secret length validation (5-100 chars, used by `setup-information.html`) |
-| `tc_verification_workflow_tests.js` | **Verification Workflow & Applicant Reuse Tests** | - Record creation & database query resolution<br>- `findApplicantIdBySubjectUser` applicant ID reuse<br>- Active status resolution<br>- Previous request deactivation (`active=false`) |
-| `tc_start_verification_tests.js` | **Agent - Start Verification Server Tests** | - Unresolved source record/user validation<br>- Missing user email validation<br>- Missing user first/last name validation<br>- Max verification requests boundary check (`MAX = 10`) |
-| `tc_webhook_signature_tests.js` | **Webhook Signature Validator Tests** | - Null/missing header validation<br>- Non-hex / malformed signature header rejection<br>- HMAC-SHA256 signature calculation & pass verification<br>- Tampered payload detection |
-| `tc_webhook_processor_tests.js` | **Webhook Processor Tests** | - Empty/null payload handling<br>- Inactive/stale link event handling (status update ignored, stale work note created)<br>- Active link status updates (`workflow_run.completed`)<br>- Evidence folder URL recording (`workflow_run_evidence_folder.created`) |
+| `tc_verification_workflow_tests.js` | **Verification Workflow & Applicant Reuse Tests** | - Record creation & database query resolution<br>- `findApplicantIdBySubjectUser` applicant ID reuse<br>- Active status resolution<br>- Previous request deactivation (`active=false`)<br>- `createVerificationRequest()`/`findVerificationRequestById()`/`countVerificationRequests()`<br>- `findVerificationStatusByWorkflowRunId()`/`updateLastStatusSyncByWorkflowRunId()` |
+| `tc_start_verification_tests.js` | **Agent - Start Verification Server Tests** | - Unresolved source record/user validation<br>- Missing user email validation<br>- Missing user first/last name validation<br>- Max verification requests boundary check (`MAX_VERIFICATION_REQUESTS`)<br>- Incomplete IDV configuration (missing workflow ID) error<br>- Entrust connection not configured (missing region) error |
+| `tc_start_verification_live_integration_test.js` | **Agent - Start Verification LIVE Entrust Integration Test** | ⚠ **Opt-in, real API test — no mocking.** Calls `startVerification()` against whatever API Connection + Verification Settings are actually saved on the instance. Automatically skips (does not fail) if a tested connection or workflow ID isn't configured. On success, makes a real Entrust applicant + workflow run call and verifies the persisted request record, then cleans up the ServiceNow-side records it created. Only run in a sandbox/dev environment with Entrust sandbox credentials — never against production. |
+| `tc_webhook_signature_tests.js` | **Webhook Signature Validator Tests** | - Null/missing header validation<br>- Non-hex / malformed signature header rejection<br>- HMAC-SHA256 signature calculation & pass verification (incl. uppercase-hex signatures)<br>- Tampered payload detection<br>- Wrong secret rejection |
+| `tc_webhook_processor_tests.js` | **Webhook Processor Tests** | - Empty/null/missing-action payload handling<br>- Unsupported action ignored<br>- Inactive/stale link event handling (status update ignored, stale work note created)<br>- Active link status updates (`workflow_run.completed`), incl. `object.*` payload shape<br>- Missing fields / unknown workflow run ID handling<br>- `workflow_id` mismatch rejection<br>- Idempotent skip once status is terminal<br>- Evidence folder URL recording (`workflow_run_evidence_folder.created`), incl. `resource.*` shape, missing fields, unknown workflow run ID, and idempotent re-delivery |
 | `tc_status_service_tests.js` | **Verification Status Mappings Tests** | - Default `not_started` status when no request exists<br>- Active polling status mappings (`awaiting` $\rightarrow$ `Pending`, `processing` $\rightarrow$ `In Process`, etc. with `shouldPoll: true`)<br>- Terminal status mappings (`approved`, `declined`, `review`, `error`, `abandoned` with `shouldPoll: false`) |
 | `tc_security_acls_tests.js` | **Admin - Security, Roles & ACL Tests** | - Application roles verification (`x_entru_entrustidv.admin`, `x_entru_entrustidv.agent`)<br>- Table ACL operation restrictions (manual create, write, delete blocked on verification requests & config)<br>- UI Page ACL rules existence for setup pages |
 
@@ -71,6 +73,8 @@ For each component test script in `tests/atf/server/`:
 5. Select Category **Server** $\rightarrow$ Step **Run Server-Side Script** $\rightarrow$ Click **Next**.
 6. Copy the corresponding JavaScript code from the file in `tests/atf/server/` and paste it into the **Script** field.
 7. Click **Submit**.
+
+> ⚠ **`tc_start_verification_live_integration_test.js` is opt-in.** Do not add it to the certification Test Suite (or run it) until you've configured a real, tested Entrust sandbox API connection and a real workflow ID on the target instance. It self-skips gracefully if those aren't configured, but it does make real outbound calls to Entrust when they are.
 
 ---
 

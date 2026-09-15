@@ -4,8 +4,13 @@
  * Test Scenarios:
  *   - Missing payload, signature header, or secret handling
  *   - Malformed / non-hex signature format rejection
- *   - Valid HMAC-SHA256 signature generation & verification
+ *   - Valid HMAC-SHA256 signature generation & verification (incl. uppercase-hex signatures)
  *   - Tampered payload signature failure
+ *   - Wrong secret signature failure
+ *
+ * COVERS: EntrustWebhookSignatureValidator.validate() end-to-end, including the private
+ * _base64ToHex/_constantTimeEquals helpers exercised indirectly via a real HMAC-SHA256
+ * round-trip. No Entrust API call is involved — signature validation is local crypto only.
  */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Webhook Signature Validator Tests...");
@@ -69,6 +74,10 @@
     var isValid = validator.validate(samplePayload, validHexSignature, sampleSecret);
     check("Valid HMAC-SHA256 signature should pass validation", isValid, true);
 
+    // Signature comparison is case-insensitive (validator lowercases before comparing)
+    var isValidUppercase = validator.validate(samplePayload, validHexSignature.toUpperCase(), sampleSecret);
+    check("Uppercase hex signature should still pass validation", isValidUppercase, true);
+
     // -------------------------------------------------------------------------
     // Test Case 4.4: Tampered Payload Failure
     // -------------------------------------------------------------------------
@@ -76,6 +85,13 @@
     var tamperedPayload = '{"event":"workflow_run.completed","workflow_run_id":"wfr_test_123","status":"Declined"}';
     var isTamperedValid = validator.validate(tamperedPayload, validHexSignature, sampleSecret);
     check("Signature validation should fail when payload is tampered", isTamperedValid, false);
+
+    // -------------------------------------------------------------------------
+    // Test Case 4.5: Wrong Secret Failure
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 4.5] Testing validation fails when a different secret is used...");
+    var isWrongSecretValid = validator.validate(samplePayload, validHexSignature, "a_completely_different_secret");
+    check("Signature validation should fail when the secret does not match", isWrongSecretValid, false);
 
     stepResult.setOutputMessage("Webhook Signature Validator Tests completed successfully.");
     return true;
