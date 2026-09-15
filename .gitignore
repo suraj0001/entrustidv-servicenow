@@ -8,3 +8,4 @@ target/
 .jest_cache
 src/fluent/generated/other/oauth-entity/
 src/fluent/generated/other/oauth-entity-profile/
+src/fluent/generated/other/sys-atf-test/
