@@ -1,4 +1,4 @@
-import { GlideRecord } from "@servicenow/glide";
+import { GlideRecord } from '@servicenow/glide';
 
 export interface SubjectUser {
   userId: string;
@@ -12,7 +12,7 @@ export function findSubjectUser(userId: string): SubjectUser | null {
     return null;
   }
 
-  const user = new GlideRecord("sys_user");
+  const user = new GlideRecord('sys_user');
   user.get(userId);
   if (!user.isValidRecord()) {
     return null;
@@ -20,8 +20,8 @@ export function findSubjectUser(userId: string): SubjectUser | null {
 
   return {
     userId: user.getUniqueValue(),
-    firstName: user.getValue("first_name") || "",
-    lastName: user.getValue("last_name") || "",
-    email: user.getValue("email") || "",
+    firstName: user.getValue('first_name') || '',
+    lastName: user.getValue('last_name') || '',
+    email: user.getValue('email') || '',
   };
 }

@@ -1,5 +1,5 @@
-import { GlideRecord } from "@servicenow/glide";
-import { CONFIG_TABLE } from "../constants.ts";
+import { GlideRecord } from '@servicenow/glide';
+import { CONFIG_TABLE } from '../constants.ts';
 
 export type ConfigSettings = {
   workflowId: string;
@@ -29,20 +29,11 @@ export function getConfigSettings(): ConfigSettingsRecord | null {
     return null;
   }
 
-  const workflowId = (
-    (configGr.getValue("workflow_id") as string) || ""
-  ).trim();
-  const linkExpiryValue =
-    (configGr.getValue("link_expiry_minutes") as string) || "";
-  const deliveryChannel = (
-    (configGr.getValue("link_delivery_channel") as string) || ""
-  ).trim();
-  const webhookSecret = (
-    (configGr.getValue("webhook_signing_secret") as string) || ""
-  ).trim();
-  const redirectUrl = (
-    (configGr.getValue("redirect_url") as string) || ""
-  ).trim();
+  const workflowId = ((configGr.getValue('workflow_id') as string) || '').trim();
+  const linkExpiryValue = (configGr.getValue('link_expiry_minutes') as string) || '';
+  const deliveryChannel = ((configGr.getValue('link_delivery_channel') as string) || '').trim();
+  const webhookSecret = ((configGr.getValue('webhook_signing_secret') as string) || '').trim();
+  const redirectUrl = ((configGr.getValue('redirect_url') as string) || '').trim();
   const linkExpiry = parseInt(linkExpiryValue, 10);
 
   return {
@@ -61,22 +52,15 @@ export function getIdvConfiguration(): IdvConfiguration | null {
     return null;
   }
 
-  const workflowId = (
-    (configGr.getValue("workflow_id") as string) || ""
-  ).trim();
+  const workflowId = ((configGr.getValue('workflow_id') as string) || '').trim();
 
-  const linkExpiryValue =
-    (configGr.getValue("link_expiry_minutes") as string) || "";
+  const linkExpiryValue = (configGr.getValue('link_expiry_minutes') as string) || '';
 
-  const redirectUrl = (configGr.getValue("redirect_url") as string) || "";
+  const redirectUrl = (configGr.getValue('redirect_url') as string) || '';
 
   const linkExpiryMinutes = parseInt(linkExpiryValue, 10);
 
-  if (
-    !workflowId ||
-    Number.isNaN(linkExpiryMinutes) ||
-    linkExpiryMinutes <= 0
-  ) {
+  if (!workflowId || Number.isNaN(linkExpiryMinutes) || linkExpiryMinutes <= 0) {
     return null;
   }
 
@@ -87,21 +71,19 @@ export function getIdvConfiguration(): IdvConfiguration | null {
   };
 }
 
-export function saveConfigSettings(
-  settings: ConfigSettings,
-): void {
+export function saveConfigSettings(settings: ConfigSettings): void {
   const configGr = getUpsertConfigurationRecord();
 
-  configGr.setValue("workflow_id", settings.workflowId);
-  configGr.setValue("link_expiry_minutes", settings.linkExpiry);
-  configGr.setValue("link_delivery_channel", settings.linkDeliveryChannel);
-  configGr.setValue("redirect_url", settings.redirectUrl);
+  configGr.setValue('workflow_id', settings.workflowId);
+  configGr.setValue('link_expiry_minutes', settings.linkExpiry);
+  configGr.setValue('link_delivery_channel', settings.linkDeliveryChannel);
+  configGr.setValue('redirect_url', settings.redirectUrl);
 
   if (configGr.isNewRecord()) {
     const sysId = configGr.insert();
 
     if (!sysId) {
-      throw new Error("Failed to create configuration settings.");
+      throw new Error('Failed to create configuration settings.');
     }
 
     return;
@@ -110,19 +92,19 @@ export function saveConfigSettings(
   const sysId = configGr.update();
 
   if (!sysId) {
-    throw new Error("Failed to update configuration settings.");
+    throw new Error('Failed to update configuration settings.');
   }
 }
 
 export function saveWebhookSecret(webhookSecret: string): void {
   const configGr = getUpsertConfigurationRecord();
 
-  configGr.setValue("webhook_signing_secret", webhookSecret);
+  configGr.setValue('webhook_signing_secret', webhookSecret);
 
   const sysId = configGr.isNewRecord() ? configGr.insert() : configGr.update();
 
   if (!sysId) {
-    throw new Error("Failed to save webhook token.");
+    throw new Error('Failed to save webhook token.');
   }
 }
 

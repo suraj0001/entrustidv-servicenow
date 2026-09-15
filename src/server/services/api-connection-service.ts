@@ -1,18 +1,21 @@
-import { gs } from "@servicenow/glide";
+import { gs } from '@servicenow/glide';
 import {
   isSupportedRegion,
   type SaveConfigInput,
   validateSaveInput,
-} from "../admin-setup-pages/api-connection-validator.ts";
-import { API_VERSION, BASE_URLS, type EntrustRegion } from "../constants.ts";
-import { type EntrustConnectionTestResult, testEntrustConnection } from "../entrust/entrust-auth-client.ts";
+} from '../admin-setup-pages/api-connection-validator.ts';
+import { API_VERSION, BASE_URLS, type EntrustRegion } from '../constants.ts';
+import {
+  type EntrustConnectionTestResult,
+  testEntrustConnection,
+} from '../entrust/entrust-auth-client.ts';
 import {
   type AliasRecord,
   ApiConnectionRepository,
   type HttpConnectionRecord,
   type OAuthCredentialRecord,
   type OAuthEntityRecord,
-} from "../repositories/connection-credential-repository.ts";
+} from '../repositories/connection-credential-repository.ts';
 
 export interface GetConfigResult {
   success: boolean;
@@ -52,9 +55,9 @@ const repo = new ApiConnectionRepository();
 // -------------------------------------------------------------------------
 
 function tokenUrl(region: EntrustRegion): string {
-  const base = BASE_URLS[region].replace(/\/+$/, "");
+  const base = BASE_URLS[region].replace(/\/+$/, '');
 
-  return base + "/" + API_VERSION + "/oauth/token";
+  return base + '/' + API_VERSION + '/oauth/token';
 }
 
 // -------------------------------------------------------------------------
@@ -70,7 +73,7 @@ function loadConnectionSetupState(): ConnectionSetupState | null {
   const alias = repo.findAlias();
 
   if (!alias) {
-    gs.warn("[ApiConnection] " + "loadConnectionSetupState: " + "alias not found");
+    gs.warn('[ApiConnection] ' + 'loadConnectionSetupState: ' + 'alias not found');
 
     return null;
   }
@@ -120,7 +123,12 @@ function isConnectionStructureReady(): boolean {
     return false;
   }
 
-  return !!(state.connection && state.connection.credentialSysId && state.credential && state.oauthEntity);
+  return !!(
+    state.connection &&
+    state.connection.credentialSysId &&
+    state.credential &&
+    state.oauthEntity
+  );
 }
 
 // -------------------------------------------------------------------------
@@ -139,33 +147,46 @@ function saveConnectionDetails(input: SaveConfigInput): boolean {
   const state = loadConnectionSetupState();
 
   if (!state) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "Connection & Credential Alias is missing");
+    gs.error(
+      '[ApiConnection] ' + 'saveConnectionDetails: ' + 'Connection & Credential Alias is missing'
+    );
 
     return false;
   }
 
   if (!state.connection) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "Entrust IDV HTTP connection is missing");
+    gs.error(
+      '[ApiConnection] ' + 'saveConnectionDetails: ' + 'Entrust IDV HTTP connection is missing'
+    );
 
     return false;
   }
 
   if (!state.connection.credentialSysId) {
     gs.error(
-      "[ApiConnection] " + "saveConnectionDetails: " + "OAuth credential is not attached " + "to the HTTP connection",
+      '[ApiConnection] ' +
+        'saveConnectionDetails: ' +
+        'OAuth credential is not attached ' +
+        'to the HTTP connection'
     );
 
     return false;
   }
 
   if (!state.credential) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "Entrust IDV OAuth credential is missing");
+    gs.error(
+      '[ApiConnection] ' + 'saveConnectionDetails: ' + 'Entrust IDV OAuth credential is missing'
+    );
 
     return false;
   }
 
   if (!state.oauthEntity) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "OAuth Entity/Profile configuration is missing");
+    gs.error(
+      '[ApiConnection] ' +
+        'saveConnectionDetails: ' +
+        'OAuth Entity/Profile configuration is missing'
+    );
 
     return false;
   }
@@ -179,7 +200,9 @@ function saveConnectionDetails(input: SaveConfigInput): boolean {
    */
   if (state.connection.credentialSysId !== state.credential.sysId) {
     gs.error(
-      "[ApiConnection] " + "saveConnectionDetails: " + "HTTP connection is attached to an unexpected credential",
+      '[ApiConnection] ' +
+        'saveConnectionDetails: ' +
+        'HTTP connection is attached to an unexpected credential'
     );
 
     return false;
@@ -188,7 +211,7 @@ function saveConnectionDetails(input: SaveConfigInput): boolean {
   const normalisedRegion = input.region.toLowerCase();
 
   if (!isSupportedRegion(normalisedRegion)) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "unsupported region=" + input.region);
+    gs.error('[ApiConnection] ' + 'saveConnectionDetails: ' + 'unsupported region=' + input.region);
 
     return false;
   }
@@ -198,7 +221,10 @@ function saveConnectionDetails(input: SaveConfigInput): boolean {
   const oauthTokenUrl = tokenUrl(region);
 
   gs.info(
-    "[ApiConnection] " + "saveConnectionDetails: " + "updating existing OAuth entity sysId=" + state.oauthEntity.sysId,
+    '[ApiConnection] ' +
+      'saveConnectionDetails: ' +
+      'updating existing OAuth entity sysId=' +
+      state.oauthEntity.sysId
   );
 
   /*
@@ -210,16 +236,18 @@ function saveConnectionDetails(input: SaveConfigInput): boolean {
     state.oauthEntity.sysId,
     input.clientId,
     input.clientSecret,
-    oauthTokenUrl,
+    oauthTokenUrl
   );
 
   if (!updated) {
-    gs.error("[ApiConnection] " + "saveConnectionDetails: " + "OAuth credentials were not updated");
+    gs.error('[ApiConnection] ' + 'saveConnectionDetails: ' + 'OAuth credentials were not updated');
 
     return false;
   }
 
-  gs.info("[ApiConnection] " + "saveConnectionDetails: " + "OAuth credentials updated successfully");
+  gs.info(
+    '[ApiConnection] ' + 'saveConnectionDetails: ' + 'OAuth credentials updated successfully'
+  );
 
   return true;
 }
@@ -253,7 +281,7 @@ export function getConfig(): GetConfigResult {
 
     const supported = isSupportedRegion(region);
 
-    const base = supported ? BASE_URLS[region as EntrustRegion] : "";
+    const base = supported ? BASE_URLS[region as EntrustRegion] : '';
 
     return {
       success: true,
@@ -262,17 +290,17 @@ export function getConfig(): GetConfigResult {
 
       baseUrl: base,
 
-      tokenUrl: supported ? tokenUrl(region as EntrustRegion) : "",
+      tokenUrl: supported ? tokenUrl(region as EntrustRegion) : '',
 
       connectionTested: configured,
     };
   } catch (err) {
-    gs.error("[ApiConnection] " + "getConfig: " + String(err));
+    gs.error('[ApiConnection] ' + 'getConfig: ' + String(err));
 
     return {
       success: false,
 
-      message: "Failed to load configuration: " + String(err),
+      message: 'Failed to load configuration: ' + String(err),
     };
   }
 }
@@ -289,7 +317,7 @@ export function getAliasInfo(): AliasInfoResult {
       return {
         success: false,
 
-        message: "Connection alias not found.",
+        message: 'Connection alias not found.',
       };
     }
 
@@ -303,12 +331,12 @@ export function getAliasInfo(): AliasInfoResult {
       hasConnection: !!connection,
     };
   } catch (err) {
-    gs.error("[ApiConnection] " + "getAliasInfo: " + String(err));
+    gs.error('[ApiConnection] ' + 'getAliasInfo: ' + String(err));
 
     return {
       success: false,
 
-      message: "Failed to look up connection alias: " + String(err),
+      message: 'Failed to look up connection alias: ' + String(err),
     };
   }
 }
@@ -329,13 +357,13 @@ export function saveConfig(input: SaveConfigInput): SaveConfigResult {
   }
 
   gs.info(
-    "[ApiConnection] " +
-      "saveConfig: region=" +
+    '[ApiConnection] ' +
+      'saveConfig: region=' +
       input.region +
-      " hasClientId=" +
+      ' hasClientId=' +
       !!input.clientId +
-      " hasClientSecret=" +
-      !!input.clientSecret,
+      ' hasClientSecret=' +
+      !!input.clientSecret
   );
 
   try {
@@ -345,7 +373,7 @@ export function saveConfig(input: SaveConfigInput): SaveConfigResult {
       return {
         success: false,
 
-        message: "Failed to save connection configuration.",
+        message: 'Failed to save connection configuration.',
       };
     }
 
@@ -357,20 +385,20 @@ export function saveConfig(input: SaveConfigInput): SaveConfigResult {
      */
     repo.saveRegion(input.region);
 
-    gs.info("[ApiConnection] " + "saveConfig: configuration saved successfully");
+    gs.info('[ApiConnection] ' + 'saveConfig: configuration saved successfully');
 
     return {
       success: true,
 
-      message: "Configuration saved.",
+      message: 'Configuration saved.',
     };
   } catch (err) {
-    gs.error("[ApiConnection] " + "saveConfig: unexpected error: " + String(err));
+    gs.error('[ApiConnection] ' + 'saveConfig: unexpected error: ' + String(err));
 
     return {
       success: false,
 
-      message: "Failed to save configuration: " + String(err),
+      message: 'Failed to save configuration: ' + String(err),
     };
   }
 }
@@ -379,12 +407,16 @@ export function saveConfig(input: SaveConfigInput): SaveConfigResult {
 // Test connection
 // -------------------------------------------------------------------------
 
-export function testConnection(region: string, clientId: string, clientSecret: string): EntrustConnectionTestResult {
+export function testConnection(
+  region: string,
+  clientId: string,
+  clientSecret: string
+): EntrustConnectionTestResult {
   if (!region || !clientId || !clientSecret) {
     return {
       success: false,
 
-      message: "Region, Client ID and Client Secret are all required.",
+      message: 'Region, Client ID and Client Secret are all required.',
     };
   }
 
@@ -394,7 +426,7 @@ export function testConnection(region: string, clientId: string, clientSecret: s
     return {
       success: false,
 
-      message: "Unsupported region: " + region,
+      message: 'Unsupported region: ' + region,
     };
   }
 

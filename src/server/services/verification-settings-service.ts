@@ -1,21 +1,20 @@
 import {
   type VerificationSettingsInput,
   validateVerificationSettings,
-} from "../admin-setup-pages/verification-settings-validator.ts";
-
+} from '../admin-setup-pages/verification-settings-validator.ts';
+import { WEBHOOK_TOKEN_MAX_LEN, WEBHOOK_TOKEN_MIN_LEN } from '../constants.ts';
 import {
-  getConfigSettings,
-  saveWebhookSecret as saveWebhookSecretValue,
-  saveConfigSettings,
   type ConfigSettings,
   type ConfigSettingsRecord,
-} from "../repositories/configuration-repository.ts";
-import { WEBHOOK_TOKEN_MAX_LEN, WEBHOOK_TOKEN_MIN_LEN } from "../constants.ts";
+  getConfigSettings,
+  saveConfigSettings,
+  saveWebhookSecret as saveWebhookSecretValue,
+} from '../repositories/configuration-repository.ts';
 
 export type GetVerificationSettingsResult = {
   success: boolean;
   message?: string;
-  settings?: Omit<ConfigSettingsRecord, "webhookSecret">;
+  settings?: Omit<ConfigSettingsRecord, 'webhookSecret'>;
 };
 
 export type SaveVerificationSettingsResult = {
@@ -37,7 +36,7 @@ export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
       ? {
           workflowId: settings.workflowId,
           linkExpiry: settings.linkExpiry,
-          deliveryChannel: "email",
+          deliveryChannel: 'email',
           redirectUrl: settings.redirectUrl,
         }
       : undefined,
@@ -54,7 +53,7 @@ export function getWebhookSecretStatus(): WebhookSecretStatusResult {
 }
 
 export function saveVerificationSettings(
-  input: VerificationSettingsInput,
+  input: VerificationSettingsInput
 ): SaveVerificationSettingsResult {
   // 1. Server-side validation
   validateVerificationSettings(input);
@@ -63,8 +62,8 @@ export function saveVerificationSettings(
   var settings: ConfigSettings = {
     workflowId: input.workflowId.trim(),
     linkExpiry: Number(input.linkExpiry),
-    linkDeliveryChannel: "email",
-    redirectUrl: input.redirectUrl ? input.redirectUrl.trim() : "",
+    linkDeliveryChannel: 'email',
+    redirectUrl: input.redirectUrl ? input.redirectUrl.trim() : '',
   };
 
   // 3. Persistence
@@ -72,20 +71,27 @@ export function saveVerificationSettings(
 
   return {
     success: true,
-    message: "Verification settings saved successfully.",
+    message: 'Verification settings saved successfully.',
   };
 }
 
 export function saveWebhookSecret(webhookSecret: string): SaveVerificationSettingsResult {
-  const normalizedSecret = webhookSecret ? webhookSecret.trim() : "";
+  const normalizedSecret = webhookSecret ? webhookSecret.trim() : '';
 
   if (!normalizedSecret) {
-    throw new Error("Webhook token is required.");
+    throw new Error('Webhook token is required.');
   }
 
-  if (normalizedSecret.length < WEBHOOK_TOKEN_MIN_LEN || normalizedSecret.length > WEBHOOK_TOKEN_MAX_LEN) {
+  if (
+    normalizedSecret.length < WEBHOOK_TOKEN_MIN_LEN ||
+    normalizedSecret.length > WEBHOOK_TOKEN_MAX_LEN
+  ) {
     throw new Error(
-      "Webhook token must be between " + WEBHOOK_TOKEN_MIN_LEN + " and " + WEBHOOK_TOKEN_MAX_LEN + " characters.",
+      'Webhook token must be between ' +
+        WEBHOOK_TOKEN_MIN_LEN +
+        ' and ' +
+        WEBHOOK_TOKEN_MAX_LEN +
+        ' characters.'
     );
   }
 
@@ -93,6 +99,6 @@ export function saveWebhookSecret(webhookSecret: string): SaveVerificationSettin
 
   return {
     success: true,
-    message: "Webhook token saved successfully.",
+    message: 'Webhook token saved successfully.',
   };
 }

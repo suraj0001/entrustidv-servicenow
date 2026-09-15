@@ -1,6 +1,6 @@
-import '@servicenow/sdk/global'
+import '@servicenow/sdk/global';
 
-import { ScriptInclude } from '@servicenow/sdk/core'
+import { ScriptInclude } from '@servicenow/sdk/core';
 
 ScriptInclude({
   $id: Now.ID['idv-status-ajax'],
@@ -11,7 +11,5 @@ ScriptInclude({
   accessibleFrom: 'package_private',
   description:
     'Returns the current Entrust identity verification status for a supported source record.',
-  script: Now.include(
-    '../../server/ajax/idv-status-ajax.server.js',
-  ),
-})
+  script: Now.include('../../server/ajax/idv-status-ajax.server.js'),
+});

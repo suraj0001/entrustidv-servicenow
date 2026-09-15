@@ -1,0 +1,143 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": true,
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!!node_modules",
+      "!!dist",
+      "!!.now",
+      "!!**/*.tsbuildinfo",
+      "!src/fluent/generated",
+      "!**/sys_*.json",
+      "!**/*.update_set.xml",
+      "!**/*.xml",
+      "!**/*.html"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "recommended": false,
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "warn"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noDebugger": "warn",
+        "noDuplicateObjectKeys": "warn",
+        "noExplicitAny": "warn"
+      },
+      "style": "off",
+      "complexity": "off",
+      "performance": "off",
+      "a11y": "off",
+      "nursery": "off"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "es5",
+      "arrowParentheses": "always"
+    },
+    "globals": [
+      "gs",
+      "current",
+      "previous",
+      "g_form",
+      "g_scratchpad",
+      "g_user",
+      "g_list",
+      "g_i18n",
+      "g_document",
+      "GlideRecord",
+      "GlideAjax",
+      "GlideDateTime",
+      "GlideSystem",
+      "GlideDuration",
+      "GlideStringUtil",
+      "Class",
+      "global",
+      "module",
+      "exports",
+      "require",
+      "sn_ws",
+      "sn_hr_core",
+      "Now",
+      "JSUtil",
+      "workflow",
+      "answer",
+      "email",
+      "event",
+      "producer",
+      "template"
+    ]
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    },
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.client.js", "**/*.server.js", "tests/atf/server/**/*.js"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off",
+            "noInnerDeclarations": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.now.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noTemplateCurlyInString": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noDebugger": "off"
+          }
+        }
+      }
+    }
+  ]
+}

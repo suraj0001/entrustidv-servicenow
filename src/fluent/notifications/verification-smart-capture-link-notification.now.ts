@@ -1,35 +1,35 @@
-import "@servicenow/sdk/global";
-import { EmailNotification, Record } from "@servicenow/sdk/core";
-import { VERIFICATION_REQUEST_CREATED_EVENT } from "../../server/constants.ts";
+import '@servicenow/sdk/global';
+import { EmailNotification, Record } from '@servicenow/sdk/core';
+import { VERIFICATION_REQUEST_CREATED_EVENT } from '../../server/constants.ts';
 
 export const VerificationRequestCreatedEvent = Record({
-  $id: Now.ID["verification-request-created-event"],
-  table: "sysevent_register",
+  $id: Now.ID['verification-request-created-event'],
+  table: 'sysevent_register',
   data: {
     event_name: VERIFICATION_REQUEST_CREATED_EVENT,
-    table: "x_entru_entrustidv_verification_request",
-    description: "Triggered after an Entrust identity verification workflow has been created.",
+    table: 'x_entru_entrustidv_verification_request',
+    description: 'Triggered after an Entrust identity verification workflow has been created.',
   },
 });
 
 export const VerificationSmartCaptureLinkNotification = EmailNotification({
-  $id: Now.ID["verification-smart-capture-link-notification"],
-  table: "x_entru_entrustidv_verification_request",
-  name: "Entrust IDV Smart Capture Link",
-  description: "Send an Entrust IDV Smart Capture link to the caller.",
+  $id: Now.ID['verification-smart-capture-link-notification'],
+  table: 'x_entru_entrustidv_verification_request',
+  name: 'Entrust IDV Smart Capture Link',
+  description: 'Send an Entrust IDV Smart Capture link to the caller.',
   active: true,
   triggerConditions: {
-    generationType: "event",
+    generationType: 'event',
     eventName: VERIFICATION_REQUEST_CREATED_EVENT,
   },
   recipientDetails: {
-    recipientFields: ["subject_user"],
+    recipientFields: ['subject_user'],
     sendToCreator: false,
     isSubscribableByAllUsers: false,
   },
   emailContent: {
-    contentType: "multipart/mixed",
-    subject: "Action required: complete identity verification for ${event.parm2}",
+    contentType: 'multipart/mixed',
+    subject: 'Action required: complete identity verification for ${event.parm2}',
     messageHtml: `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:#f3f5f7; margin:0; padding:0;">
             <tr>
                 <td align="center" style="padding:32px 16px;">

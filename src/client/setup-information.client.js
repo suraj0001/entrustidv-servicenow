@@ -1,27 +1,25 @@
 // @ts-nocheck
-/* eslint-disable */
-
-var WEBHOOK_PATH = "/api/x_entru_entrustidv/entrustidv/webhook/events";
+var WEBHOOK_PATH = '/api/x_entru_entrustidv/entrustidv/webhook/events';
 var tokenMessageTimer = null;
 
 function _el(id) {
   return document.getElementById(id);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
   var webhookUrl = window.location.origin + WEBHOOK_PATH;
 
-  _el("webhook_url").value = webhookUrl;
+  _el('webhook_url').value = webhookUrl;
 
-  _el("btn_copy_webhook_url").addEventListener("click", function () {
+  _el('btn_copy_webhook_url').addEventListener('click', function () {
     copyWebhookUrl(webhookUrl);
   });
 
-  _el("btn_save_webhook_token").addEventListener("click", function () {
+  _el('btn_save_webhook_token').addEventListener('click', function () {
     saveWebhookToken();
   });
 
-  _el("webhook_token").addEventListener("input", function () {
+  _el('webhook_token').addEventListener('input', function () {
     clearTokenFieldError();
     clearTokenMessage();
     updateSaveButtonState();
@@ -31,8 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function getWebhookTokenStatus() {
-  var ajax = new GlideAjax("x_entru_entrustidv.VerificationSettingsAjax");
-  ajax.addParam("sysparm_name", "getWebhookSecretStatus");
+  var ajax = new GlideAjax('x_entru_entrustidv.VerificationSettingsAjax');
+  ajax.addParam('sysparm_name', 'getWebhookSecretStatus');
   ajax.getXMLAnswer(function (answer) {
     var result;
 
@@ -43,7 +41,7 @@ function getWebhookTokenStatus() {
     }
 
     if (result && result.success && result.configured) {
-      _el("webhook_token").placeholder = "Configured - enter a new token to replace";
+      _el('webhook_token').placeholder = 'Configured - enter a new token to replace';
     }
 
     updateSaveButtonState();
@@ -51,7 +49,7 @@ function getWebhookTokenStatus() {
 }
 
 function updateSaveButtonState() {
-  _el("btn_save_webhook_token").disabled = !_el("webhook_token").value.trim();
+  _el('btn_save_webhook_token').disabled = !_el('webhook_token').value.trim();
 }
 
 var COPY_ICON =
@@ -65,77 +63,77 @@ function copyWebhookUrl(webhookUrl) {
   if (navigator.clipboard) {
     copyPromise = navigator.clipboard.writeText(webhookUrl);
   } else {
-    _el("webhook_url").select();
-    document.execCommand("copy");
+    _el('webhook_url').select();
+    document.execCommand('copy');
     copyPromise = Promise.resolve();
   }
 
   copyPromise.then(function () {
-    var button = _el("btn_copy_webhook_url");
+    var button = _el('btn_copy_webhook_url');
 
     button.innerHTML = CHECK_ICON;
-    button.title = "Copied";
+    button.title = 'Copied';
 
     setTimeout(function () {
       button.innerHTML = COPY_ICON;
-      button.title = "Copy";
+      button.title = 'Copy';
     }, 1500);
   });
 }
 
 function showTokenMessage(type, message) {
-  var box = _el("webhook_token_message");
+  var box = _el('webhook_token_message');
 
   if (tokenMessageTimer) {
     clearTimeout(tokenMessageTimer);
     tokenMessageTimer = null;
   }
 
-  box.className = "status-message " + type;
-  box.querySelector(".status-text").textContent = message;
-  box.style.display = "flex";
+  box.className = 'status-message ' + type;
+  box.querySelector('.status-text').textContent = message;
+  box.style.display = 'flex';
 
-  if (type === "success") {
+  if (type === 'success') {
     tokenMessageTimer = setTimeout(clearTokenMessage, 5000);
   }
 }
 
 function clearTokenMessage() {
-  var box = _el("webhook_token_message");
+  var box = _el('webhook_token_message');
 
   if (tokenMessageTimer) {
     clearTimeout(tokenMessageTimer);
     tokenMessageTimer = null;
   }
 
-  box.style.display = "none";
-  box.querySelector(".status-text").textContent = "";
+  box.style.display = 'none';
+  box.querySelector('.status-text').textContent = '';
 }
 
 function showTokenFieldError(message) {
-  var input = _el("webhook_token");
-  var error = _el("webhook_token_error");
+  var input = _el('webhook_token');
+  var error = _el('webhook_token_error');
 
-  input.setAttribute("aria-invalid", "true");
-  input.setAttribute("aria-describedby", error.id);
+  input.setAttribute('aria-invalid', 'true');
+  input.setAttribute('aria-describedby', error.id);
   error.textContent = message;
-  error.style.display = "block";
+  error.style.display = 'block';
 }
 
 function clearTokenFieldError() {
-  var input = _el("webhook_token");
-  var error = _el("webhook_token_error");
+  var input = _el('webhook_token');
+  var error = _el('webhook_token_error');
 
-  input.removeAttribute("aria-invalid");
-  input.removeAttribute("aria-describedby");
-  error.textContent = "";
-  error.style.display = "none";
+  input.removeAttribute('aria-invalid');
+  input.removeAttribute('aria-describedby');
+  error.textContent = '';
+  error.style.display = 'none';
 }
 
 function showServerTokenValidationError(message) {
   if (
-    message === "Webhook token is required." ||
-    message === "Webhook token must be between 5 and 100 characters."
+    message === 'Webhook token is required.' ||
+    message === 'Webhook token must be between 5 and 100 characters.'
   ) {
     showTokenFieldError(message);
     return true;
@@ -145,30 +143,30 @@ function showServerTokenValidationError(message) {
 }
 
 function saveWebhookToken() {
-  var token = _el("webhook_token").value.trim();
-  var button = _el("btn_save_webhook_token");
+  var token = _el('webhook_token').value.trim();
+  var button = _el('btn_save_webhook_token');
 
   clearTokenFieldError();
   clearTokenMessage();
 
   if (!token) {
-    showTokenFieldError("Webhook token is required.");
-    _el("webhook_token").focus();
+    showTokenFieldError('Webhook token is required.');
+    _el('webhook_token').focus();
     return;
   }
 
   if (token.length < 5 || token.length > 100) {
-    showTokenFieldError("Webhook token must be between 5 and 100 characters.");
-    _el("webhook_token").focus();
+    showTokenFieldError('Webhook token must be between 5 and 100 characters.');
+    _el('webhook_token').focus();
     return;
   }
 
   button.disabled = true;
-  button.textContent = "Saving...";
+  button.textContent = 'Saving...';
 
-  var ajax = new GlideAjax("x_entru_entrustidv.VerificationSettingsAjax");
-  ajax.addParam("sysparm_name", "saveWebhookSecret");
-  ajax.addParam("sysparm_webhook_secret", token);
+  var ajax = new GlideAjax('x_entru_entrustidv.VerificationSettingsAjax');
+  ajax.addParam('sysparm_name', 'saveWebhookSecret');
+  ajax.addParam('sysparm_webhook_secret', token);
   ajax.getXMLAnswer(function (answer) {
     var result;
 
@@ -178,24 +176,24 @@ function saveWebhookToken() {
       result = null;
     }
 
-    button.textContent = "Save";
+    button.textContent = 'Save';
 
     if (result && result.success) {
-      _el("webhook_token").value = "";
-      _el("webhook_token").placeholder = "Configured - enter a new token to replace";
+      _el('webhook_token').value = '';
+      _el('webhook_token').placeholder = 'Configured - enter a new token to replace';
       updateSaveButtonState();
-      showTokenMessage("success", result.message || "Webhook token saved successfully.");
+      showTokenMessage('success', result.message || 'Webhook token saved successfully.');
       return;
     }
 
     updateSaveButtonState();
 
-    var message = (result && result.message) || "Unable to save webhook token.";
+    var message = (result && result.message) || 'Unable to save webhook token.';
     if (showServerTokenValidationError(message)) {
-      _el("webhook_token").focus();
+      _el('webhook_token').focus();
       return;
     }
 
-    showTokenMessage("error", message);
+    showTokenMessage('error', message);
   });
 }

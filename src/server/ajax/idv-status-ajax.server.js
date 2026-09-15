@@ -1,145 +1,97 @@
-/* eslint-disable */
-
 var IdvStatusAjax = Class.create();
 
-IdvStatusAjax.prototype = Object.extendsObject(
-  global.AbstractAjaxProcessor,
-  {
-    getLatestStatus: function () {
-      try {
-        var sourceTable =
-          this.getParameter(
-            "sysparm_table"
-          );
+IdvStatusAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+  getLatestStatus: function () {
+    try {
+      var sourceTable = this.getParameter('sysparm_table');
 
-        var sourceSysId =
-          this.getParameter(
-            "sysparm_sys_id"
-          );
+      var sourceSysId = this.getParameter('sysparm_sys_id');
 
-        if (
-          sourceTable !== "incident" &&
-          sourceTable !== "sn_hr_core_case"
-        ) {
-          return JSON.stringify({
-            success: false,
-            message:
-              "Unsupported source table",
-          });
-        }
-
-        if (!sourceSysId) {
-          return JSON.stringify({
-            success: false,
-            message:
-              "Source sys_id is required",
-          });
-        }
-
-        var verificationStatusService =
-          require(
-            "./src/server/services/verification-status-service.ts"
-          );
-
-        var result =
-          verificationStatusService
-            .getLatestVerificationStatus(
-              sourceTable,
-              sourceSysId
-            );
-
+      if (sourceTable !== 'incident' && sourceTable !== 'sn_hr_core_case') {
         return JSON.stringify({
-          success: true,
-
-          workflowRunId:
-            result.workflowRunId,
-
-          status:
-            result.status,
-
-          displayStatus:
-            result.displayStatus,
-
-          shouldPoll:
-            result.shouldPoll,
+          success: false,
+          message: 'Unsupported source table',
         });
-      } catch (error) {
-        return handleError(error);
       }
-    },
 
-    getStatusByWorkflowRunId:
-      function () {
-        try {
-          var workflowRunId =
-            this.getParameter(
-              "sysparm_workflow_run_id"
-            );
+      if (!sourceSysId) {
+        return JSON.stringify({
+          success: false,
+          message: 'Source sys_id is required',
+        });
+      }
 
-          if (!workflowRunId) {
-            return JSON.stringify({
-              success: false,
-              message:
-                "Workflow run id is required",
-            });
-          }
+      var verificationStatusService =
+        require('./src/server/services/verification-status-service.ts');
 
-          var verificationStatusService =
-            require(
-              "./src/server/services/verification-status-service.ts"
-            );
+      var result = verificationStatusService.getLatestVerificationStatus(sourceTable, sourceSysId);
 
-          var result =
-            verificationStatusService
-              .getVerificationStatusByWorkflowRunId(
-                workflowRunId
-              );
+      return JSON.stringify({
+        success: true,
 
-          if (!result) {
-            return JSON.stringify({
-              success: false,
-              message:
-                "Verification request not found",
-            });
-          }
+        workflowRunId: result.workflowRunId,
 
-          return JSON.stringify({
-            success: true,
+        status: result.status,
 
-            workflowRunId:
-              result.workflowRunId,
+        displayStatus: result.displayStatus,
 
-            status:
-              result.status,
+        shouldPoll: result.shouldPoll,
+      });
+    } catch (error) {
+      return handleError(error);
+    }
+  },
 
-            displayStatus:
-              result.displayStatus,
+  getStatusByWorkflowRunId: function () {
+    try {
+      var workflowRunId = this.getParameter('sysparm_workflow_run_id');
 
-            shouldPoll:
-              result.shouldPoll,
-          });
-        } catch (error) {
-          return handleError(error);
-        }
-      },
+      if (!workflowRunId) {
+        return JSON.stringify({
+          success: false,
+          message: 'Workflow run id is required',
+        });
+      }
 
-    type: "IdvStatusAjax",
-  }
-);
+      var verificationStatusService =
+        require('./src/server/services/verification-status-service.ts');
+
+      var result = verificationStatusService.getVerificationStatusByWorkflowRunId(workflowRunId);
+
+      if (!result) {
+        return JSON.stringify({
+          success: false,
+          message: 'Verification request not found',
+        });
+      }
+
+      return JSON.stringify({
+        success: true,
+
+        workflowRunId: result.workflowRunId,
+
+        status: result.status,
+
+        displayStatus: result.displayStatus,
+
+        shouldPoll: result.shouldPoll,
+      });
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+  type: 'IdvStatusAjax',
+});
 
 function handleError(error) {
   gs.error(
-    "[IDV Status Ajax] Failed to load status. message=" +
-      (
-        error && error.message
-          ? error.message
-          : String(error)
-      )
+    '[IDV Status Ajax] Failed to load status. message=' +
+      (error && error.message ? error.message : String(error))
   );
 
   return JSON.stringify({
     success: false,
-    message:
-      "Unable to retrieve identity verification status",
+    message: 'Unable to retrieve identity verification status',
   });
 }

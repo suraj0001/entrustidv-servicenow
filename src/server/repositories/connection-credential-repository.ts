@@ -1,7 +1,7 @@
-import { GlideRecord, gs } from "@servicenow/glide";
-import { ConnectionInfoProvider } from "@servicenow/glide/sn_cc";
+import { GlideRecord, gs } from '@servicenow/glide';
+import { ConnectionInfoProvider } from '@servicenow/glide/sn_cc';
 
-import { ALIAS_ID, BASE_URLS, CONFIG_TABLE, type EntrustRegion } from "../constants.ts";
+import { ALIAS_ID, BASE_URLS, CONFIG_TABLE, type EntrustRegion } from '../constants.ts';
 
 export interface ConfigRecord {
   sysId: string;
@@ -72,7 +72,7 @@ export class ApiConnectionRepository {
     return {
       sysId: gr.getUniqueValue(),
 
-      region: (gr.getValue("region") as string) || "",
+      region: (gr.getValue('region') as string) || '',
     };
   }
 
@@ -83,10 +83,10 @@ export class ApiConnectionRepository {
     gr.query();
 
     if (gr.next()) {
-      const currentRegion = (gr.getValue("region") as string) || "";
+      const currentRegion = (gr.getValue('region') as string) || '';
 
       if (currentRegion !== region) {
-        gr.setValue("region", region);
+        gr.setValue('region', region);
 
         gr.update();
       }
@@ -96,7 +96,7 @@ export class ApiConnectionRepository {
 
     gr.initialize();
 
-    gr.setValue("region", region);
+    gr.setValue('region', region);
 
     gr.insert();
   }
@@ -106,9 +106,9 @@ export class ApiConnectionRepository {
   // ---------------------------------------------------------------------
 
   findAlias(): AliasRecord | null {
-    const gr = new GlideRecord("sys_alias");
+    const gr = new GlideRecord('sys_alias');
 
-    gr.addQuery("id", ALIAS_ID);
+    gr.addQuery('id', ALIAS_ID);
 
     gr.setLimit(1);
     gr.query();
@@ -136,9 +136,9 @@ export class ApiConnectionRepository {
    * http_connection uses "connection_alias", not "credential_alias".
    */
   findHttpConnection(aliasSysId: string): HttpConnectionRecord | null {
-    const gr = new GlideRecord("http_connection");
+    const gr = new GlideRecord('http_connection');
 
-    gr.addQuery("connection_alias", aliasSysId);
+    gr.addQuery('connection_alias', aliasSysId);
 
     gr.setLimit(1);
     gr.query();
@@ -150,9 +150,9 @@ export class ApiConnectionRepository {
     return {
       sysId: gr.getUniqueValue(),
 
-      credentialSysId: (gr.getValue("credential") as string) || "",
+      credentialSysId: (gr.getValue('credential') as string) || '',
 
-      connectionUrl: (gr.getValue("connection_url") as string) || "",
+      connectionUrl: (gr.getValue('connection_url') as string) || '',
     };
   }
 
@@ -161,9 +161,9 @@ export class ApiConnectionRepository {
   // ---------------------------------------------------------------------
 
   findOAuthCredentialByAlias(aliasSysId: string): OAuthCredentialRecord | null {
-    const gr = new GlideRecord("oauth_2_0_credentials");
+    const gr = new GlideRecord('oauth_2_0_credentials');
 
-    gr.addQuery("credential_alias", aliasSysId);
+    gr.addQuery('credential_alias', aliasSysId);
 
     gr.setLimit(1);
     gr.query();
@@ -178,7 +178,7 @@ export class ApiConnectionRepository {
   }
 
   findOAuthCredentialById(credentialSysId: string): OAuthCredentialRecord | null {
-    const gr = getRecord("oauth_2_0_credentials", credentialSysId);
+    const gr = getRecord('oauth_2_0_credentials', credentialSysId);
 
     if (!gr) {
       return null;
@@ -205,31 +205,31 @@ export class ApiConnectionRepository {
    * oauth_entity
    */
   findOAuthEntity(credentialSysId: string): OAuthEntityRecord | null {
-    const credentialGr = getRecord("oauth_2_0_credentials", credentialSysId);
+    const credentialGr = getRecord('oauth_2_0_credentials', credentialSysId);
 
     if (!credentialGr) {
       return null;
     }
 
-    const profileSysId = (credentialGr.getValue("oauth_entity_profile") as string) || "";
+    const profileSysId = (credentialGr.getValue('oauth_entity_profile') as string) || '';
 
     if (!profileSysId) {
       return null;
     }
 
-    const profileGr = getRecord("oauth_entity_profile", profileSysId);
+    const profileGr = getRecord('oauth_entity_profile', profileSysId);
 
     if (!profileGr) {
       return null;
     }
 
-    const entitySysId = (profileGr.getValue("oauth_entity") as string) || "";
+    const entitySysId = (profileGr.getValue('oauth_entity') as string) || '';
 
     if (!entitySysId) {
       return null;
     }
 
-    const entityGr = getRecord("oauth_entity", entitySysId);
+    const entityGr = getRecord('oauth_entity', entitySysId);
 
     if (!entityGr) {
       return null;
@@ -259,25 +259,34 @@ export class ApiConnectionRepository {
    *
    * remain application/template metadata.
    */
-  updateOAuthCredentials(entitySysId: string, clientId: string, clientSecret: string, tokenUrl: string): boolean {
-    const entityGr = getRecord("oauth_entity", entitySysId);
+  updateOAuthCredentials(
+    entitySysId: string,
+    clientId: string,
+    clientSecret: string,
+    tokenUrl: string
+  ): boolean {
+    const entityGr = getRecord('oauth_entity', entitySysId);
 
     if (!entityGr) {
-      gs.error("[ApiConnection] " + "updateOAuthCredentials: " + "oauth_entity not found: " + entitySysId);
+      gs.error(
+        '[ApiConnection] ' + 'updateOAuthCredentials: ' + 'oauth_entity not found: ' + entitySysId
+      );
 
       return false;
     }
 
-    entityGr.setValue("client_id", clientId);
+    entityGr.setValue('client_id', clientId);
 
-    entityGr.setValue("client_secret", clientSecret);
+    entityGr.setValue('client_secret', clientSecret);
 
-    entityGr.setValue("token_url", tokenUrl);
+    entityGr.setValue('token_url', tokenUrl);
 
-    const updateResult = String(entityGr.update() || "");
+    const updateResult = String(entityGr.update() || '');
 
     if (!updateResult) {
-      gs.error("[ApiConnection] " + "updateOAuthCredentials: " + "oauth_entity update returned no sys_id");
+      gs.error(
+        '[ApiConnection] ' + 'updateOAuthCredentials: ' + 'oauth_entity update returned no sys_id'
+      );
 
       return false;
     }
@@ -291,20 +300,22 @@ export class ApiConnectionRepository {
      *
      * We intentionally do not read/compare client_secret.
      */
-    const verifyGr = getRecord("oauth_entity", entitySysId);
+    const verifyGr = getRecord('oauth_entity', entitySysId);
 
     if (!verifyGr) {
-      gs.error("[ApiConnection] " + "updateOAuthCredentials: " + "unable to verify updated oauth_entity");
+      gs.error(
+        '[ApiConnection] ' + 'updateOAuthCredentials: ' + 'unable to verify updated oauth_entity'
+      );
 
       return false;
     }
 
-    const savedClientId = (verifyGr.getValue("client_id") as string) || "";
+    const savedClientId = (verifyGr.getValue('client_id') as string) || '';
 
-    const savedTokenUrl = (verifyGr.getValue("token_url") as string) || "";
+    const savedTokenUrl = (verifyGr.getValue('token_url') as string) || '';
 
     if (savedClientId !== clientId || savedTokenUrl !== tokenUrl) {
-      gs.error("[ApiConnection] " + "updateOAuthCredentials: " + "OAuth values were not persisted");
+      gs.error('[ApiConnection] ' + 'updateOAuthCredentials: ' + 'OAuth values were not persisted');
 
       return false;
     }
@@ -330,7 +341,7 @@ export class ApiConnectionRepository {
       return null;
     }
 
-    const credentialSysId = String(connectionInfo.getCredentialAttribute("sys_id") || "");
+    const credentialSysId = String(connectionInfo.getCredentialAttribute('sys_id') || '');
 
     if (!credentialSysId) {
       return null;
@@ -370,7 +381,7 @@ export class ApiConnectionRepository {
     const alias = this.findAlias();
 
     if (!alias) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: alias not found");
+      gs.error('[ApiConnection] ' + 'getRuntimeConnection: alias not found');
 
       return null;
     }
@@ -379,15 +390,17 @@ export class ApiConnectionRepository {
     const connectionInfo = provider.getConnectionInfo(alias.sysId);
 
     if (!connectionInfo) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: " + "ConnectionInfoProvider returned null");
+      gs.error(
+        '[ApiConnection] ' + 'getRuntimeConnection: ' + 'ConnectionInfoProvider returned null'
+      );
 
       return null;
     }
 
-    const credentialSysId = String(connectionInfo.getCredentialAttribute("sys_id") || "");
+    const credentialSysId = String(connectionInfo.getCredentialAttribute('sys_id') || '');
 
     if (!credentialSysId) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: " + "credential sys_id not resolved");
+      gs.error('[ApiConnection] ' + 'getRuntimeConnection: ' + 'credential sys_id not resolved');
 
       return null;
     }
@@ -395,7 +408,7 @@ export class ApiConnectionRepository {
     const oauthEntity = this.findOAuthEntity(credentialSysId);
 
     if (!oauthEntity) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: " + "OAuth Entity/Profile not found");
+      gs.error('[ApiConnection] ' + 'getRuntimeConnection: ' + 'OAuth Entity/Profile not found');
 
       return null;
     }
@@ -403,7 +416,7 @@ export class ApiConnectionRepository {
     const config = this.findConfiguration();
 
     if (!config || !config.region) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: " + "region configuration not found");
+      gs.error('[ApiConnection] ' + 'getRuntimeConnection: ' + 'region configuration not found');
 
       return null;
     }
@@ -413,7 +426,9 @@ export class ApiConnectionRepository {
     const baseUrl = BASE_URLS[region];
 
     if (!baseUrl) {
-      gs.error("[ApiConnection] " + "getRuntimeConnection: " + "unsupported saved region=" + config.region);
+      gs.error(
+        '[ApiConnection] ' + 'getRuntimeConnection: ' + 'unsupported saved region=' + config.region
+      );
 
       return null;
     }
@@ -423,7 +438,7 @@ export class ApiConnectionRepository {
 
       oauthProfileId: oauthEntity.profileSysId,
 
-      requestorContext: "oauth_2_0_credentials",
+      requestorContext: 'oauth_2_0_credentials',
 
       requestorId: credentialSysId,
     };

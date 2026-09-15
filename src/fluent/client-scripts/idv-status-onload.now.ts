@@ -1,6 +1,6 @@
-import '@servicenow/sdk/global'
+import '@servicenow/sdk/global';
 
-import { ClientScript } from '@servicenow/sdk/core'
+import { ClientScript } from '@servicenow/sdk/core';
 
 ClientScript({
   $id: Now.ID['idv-status-onload-incident'],
@@ -11,10 +11,8 @@ ClientScript({
   uiType: 'all',
   appliesExtended: false,
   isolateScript: false,
-  script: Now.include(
-    '../../client/idv-status.client.js',
-  ),
-})
+  script: Now.include('../../client/idv-status.client.js'),
+});
 
 ClientScript({
   $id: Now.ID['idv-status-onload-hr-case'],
@@ -25,7 +23,5 @@ ClientScript({
   uiType: 'all',
   appliesExtended: false,
   isolateScript: false,
-  script: Now.include(
-    '../../client/idv-status.client.js',
-  ),
-})
+  script: Now.include('../../client/idv-status.client.js'),
+});

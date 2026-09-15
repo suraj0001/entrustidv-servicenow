@@ -10,13 +10,17 @@
     "build": "now-sdk build",
     "deploy": "now-sdk install",
     "transform": "now-sdk transform",
-    "types": "now-sdk dependencies"
+    "types": "now-sdk dependencies",
+    "biome:check": "biome check .",
+    "biome:fix": "biome check --write .",
+    "biome:format": "biome format --write .",
+    "lint": "biome check .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
-    "@servicenow/eslint-plugin-sdk-app-plugin": "4.9.2",
+    "@biomejs/biome": "2.5.13",
     "@servicenow/glide": "26.0.1",
     "@servicenow/sdk": "4.9.2",
-    "typescript": "5.5.4",
-    "eslint": "8.50.0"
+    "typescript": "5.5.4"
   }
 }

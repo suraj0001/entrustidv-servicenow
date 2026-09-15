@@ -1,5 +1,5 @@
-import { GlideRecord, gs } from "@servicenow/glide";
-import { VERIFICATION_REQUEST_TABLE } from "../constants.ts";
+import { GlideRecord, gs } from '@servicenow/glide';
+import { VERIFICATION_REQUEST_TABLE } from '../constants.ts';
 
 export interface CreateVerificationRequest {
   sourceTable: string;
@@ -13,71 +13,74 @@ export interface CreateVerificationRequest {
 }
 
 export interface VerificationRequest {
-  sysId: string
-  workflowRunId: string
-  workflowVersionId: string
-  applicantId: string
-  status: string
-  sourceTable: string
-  sourceRecordId: string
-  evidenceFolderHref: string
-  active?: boolean
-  sysCreatedOn?: string
-  sysUpdatedOn?: string
+  sysId: string;
+  workflowRunId: string;
+  workflowVersionId: string;
+  applicantId: string;
+  status: string;
+  sourceTable: string;
+  sourceRecordId: string;
+  evidenceFolderHref: string;
+  active?: boolean;
+  sysCreatedOn?: string;
+  sysUpdatedOn?: string;
 }
 
 export type VerificationStatusRecord = {
-  workflowRunId: string
-  status: string
-  sourceTable?: string
-  sourceRecordId?: string
-  active?: boolean
-  lastSyncFromEntrust?: string
-  sysCreatedOn?: string
-  sysUpdatedOn?: string
-  updatedAt?: string
-}
+  workflowRunId: string;
+  status: string;
+  sourceTable?: string;
+  sourceRecordId?: string;
+  active?: boolean;
+  lastSyncFromEntrust?: string;
+  sysCreatedOn?: string;
+  sysUpdatedOn?: string;
+  updatedAt?: string;
+};
 
 export function createVerificationRequest(input: CreateVerificationRequest): string {
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
   gr.initialize();
-  gr.setValue("source_table", input.sourceTable);
-  gr.setValue("source_record", input.sourceRecordId);
-  gr.setValue("subject_user", input.subjectUserId);
-  gr.setValue("applicant_id", input.applicantId);
-  gr.setValue("workflow_id", input.workflowId);
-  gr.setValue("workflow_version_id", input.workflowVersionId);
-  gr.setValue("workflow_run_id", input.workflowRunId);
-  gr.setValue("status", input.status);
-  gr.setValue("active", true);
+  gr.setValue('source_table', input.sourceTable);
+  gr.setValue('source_record', input.sourceRecordId);
+  gr.setValue('subject_user', input.subjectUserId);
+  gr.setValue('applicant_id', input.applicantId);
+  gr.setValue('workflow_id', input.workflowId);
+  gr.setValue('workflow_version_id', input.workflowVersionId);
+  gr.setValue('workflow_run_id', input.workflowRunId);
+  gr.setValue('status', input.status);
+  gr.setValue('active', true);
 
   const sysId = gr.insert();
   if (!sysId) {
-    throw new Error("Unable to create verification request.");
+    throw new Error('Unable to create verification request.');
   }
-  gs.info("[VerificationRequestRepository] Verification request created: sysId=" + sysId);
+  gs.info('[VerificationRequestRepository] Verification request created: sysId=' + sysId);
   return sysId.toString();
 }
 
-export function deactivateActiveVerificationRequests(sourceTable: string, sourceRecordId: string): void {
+export function deactivateActiveVerificationRequests(
+  sourceTable: string,
+  sourceRecordId: string
+): void {
   if (!sourceTable || !sourceRecordId) {
     return;
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
-  gr.addQuery("source_table", sourceTable);
-  gr.addQuery("source_record", sourceRecordId);
-  gr.addQuery("active", true);
+  gr.addQuery('source_table', sourceTable);
+  gr.addQuery('source_record', sourceRecordId);
+  gr.addQuery('active', true);
   gr.query();
 
-  gr.setValue("active", false);
+  gr.setValue('active', false);
   gr.updateMultiple();
 
   gs.info(
-    "[VerificationRequestRepository] Deactivated previous verification requests: sourceTable=" +
+    '[VerificationRequestRepository] Deactivated previous verification requests: sourceTable=' +
       sourceTable +
-      ", sourceRecordId=" +
-      sourceRecordId,
+      ', sourceRecordId=' +
+      sourceRecordId
   );
 }
 
@@ -87,8 +90,8 @@ export function countVerificationRequests(sourceTable: string, sourceRecordId: s
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
-  gr.addQuery("source_table", sourceTable);
-  gr.addQuery("source_record", sourceRecordId);
+  gr.addQuery('source_table', sourceTable);
+  gr.addQuery('source_record', sourceRecordId);
   gr.query();
 
   return gr.getRowCount();
@@ -100,14 +103,14 @@ export function findApplicantIdBySubjectUser(subjectUserId: string): string | nu
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
-  gr.addQuery("subject_user", subjectUserId);
-  gr.addNotNullQuery("applicant_id");
-  gr.orderByDesc("sys_created_on");
+  gr.addQuery('subject_user', subjectUserId);
+  gr.addNotNullQuery('applicant_id');
+  gr.orderByDesc('sys_created_on');
   gr.setLimit(1);
   gr.query();
 
   if (gr.next()) {
-    const applicantId = (gr.getValue("applicant_id") as string) || "";
+    const applicantId = (gr.getValue('applicant_id') as string) || '';
     return applicantId.trim() || null;
   }
 
@@ -130,19 +133,19 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
 }
 
 export function findVerificationRequestByWorkflowRunId(
-  workflowRunId: string,
+  workflowRunId: string
 ): VerificationRequest | null {
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  gr.addQuery('workflow_run_id', workflowRunId)
-  gr.query()
+  gr.addQuery('workflow_run_id', workflowRunId);
+  gr.query();
 
   if (!gr.next()) {
-    return null
+    return null;
   }
 
-  const rawActive = gr.getValue('active')
-  const active = rawActive === '1' || rawActive === 'true'
+  const rawActive = gr.getValue('active');
+  const active = rawActive === '1' || rawActive === 'true';
 
   return {
     sysId: gr.getUniqueValue(),
@@ -156,35 +159,38 @@ export function findVerificationRequestByWorkflowRunId(
     active,
     sysCreatedOn: (gr.getValue('sys_created_on') as string) || '',
     sysUpdatedOn: (gr.getValue('sys_updated_on') as string) || '',
-  }
+  };
 }
 
-export function findLatestVerificationStatus(sourceTable: string, sourceRecordId: string): VerificationStatusRecord | null {
+export function findLatestVerificationStatus(
+  sourceTable: string,
+  sourceRecordId: string
+): VerificationStatusRecord | null {
   if (!sourceTable || !sourceRecordId) {
     return null;
   }
 
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
-  gr.addQuery("source_table", sourceTable);
-  gr.addQuery("source_record", sourceRecordId);
-  gr.addQuery("active", true);
+  gr.addQuery('source_table', sourceTable);
+  gr.addQuery('source_record', sourceRecordId);
+  gr.addQuery('active', true);
 
   gr.query();
 
   if (gr.next()) {
-    const status = (gr.getValue("status") as string) || "";
-    const sysCreatedOn = (gr.getValue("sys_created_on") as string) || "";
-    const sysUpdatedOn = (gr.getValue("sys_updated_on") as string) || "";
+    const status = (gr.getValue('status') as string) || '';
+    const sysCreatedOn = (gr.getValue('sys_created_on') as string) || '';
+    const sysUpdatedOn = (gr.getValue('sys_updated_on') as string) || '';
     const updatedAt = sysUpdatedOn || sysCreatedOn;
     gs.info(
-      "[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=" +
+      '[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=' +
         sourceTable +
-        ", sourceRecordId=" +
+        ', sourceRecordId=' +
         sourceRecordId +
-        ", foundStatus=" +
+        ', foundStatus=' +
         status +
-        ", updatedAt=" +
-        updatedAt,
+        ', updatedAt=' +
+        updatedAt
     );
     return {
       workflowRunId: gr.getValue('workflow_run_id') || '',
@@ -196,44 +202,37 @@ export function findLatestVerificationStatus(sourceTable: string, sourceRecordId
       sysCreatedOn,
       sysUpdatedOn,
       updatedAt,
-    }
+    };
   }
 
   gs.info(
-    "[VerificationRequestRepository] findLatestVerificationStatus: no verification request found for sourceTable=" +
+    '[VerificationRequestRepository] findLatestVerificationStatus: no verification request found for sourceTable=' +
       sourceTable +
-      ", sourceRecordId=" +
-      sourceRecordId,
+      ', sourceRecordId=' +
+      sourceRecordId
   );
   return null;
 }
 
 export function findVerificationStatusByWorkflowRunId(
-  workflowRunId: string,
+  workflowRunId: string
 ): VerificationStatusRecord | null {
-  const verificationRequest = new GlideRecord(
-    VERIFICATION_REQUEST_TABLE,
-  )
+  const verificationRequest = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  verificationRequest.addQuery(
-    'workflow_run_id',
-    workflowRunId,
-  )
+  verificationRequest.addQuery('workflow_run_id', workflowRunId);
 
-  verificationRequest.query()
+  verificationRequest.query();
 
   if (!verificationRequest.next()) {
-    return null
+    return null;
   }
 
-  const rawActive = verificationRequest.getValue('active')
-  const active = rawActive === '1' || rawActive === 'true'
+  const rawActive = verificationRequest.getValue('active');
+  const active = rawActive === '1' || rawActive === 'true';
 
-  const sysCreatedOn =
-    (verificationRequest.getValue('sys_created_on') as string) || ''
-  const sysUpdatedOn =
-    (verificationRequest.getValue('sys_updated_on') as string) || ''
-  const updatedAt = sysUpdatedOn || sysCreatedOn
+  const sysCreatedOn = (verificationRequest.getValue('sys_created_on') as string) || '';
+  const sysUpdatedOn = (verificationRequest.getValue('sys_updated_on') as string) || '';
+  const updatedAt = sysUpdatedOn || sysCreatedOn;
 
   return {
     workflowRunId: verificationRequest.getValue('workflow_run_id') || '',
@@ -245,78 +244,72 @@ export function findVerificationStatusByWorkflowRunId(
     sysCreatedOn,
     sysUpdatedOn,
     updatedAt,
-  }
+  };
 }
 
 export function updateLastStatusSyncByWorkflowRunId(
   workflowRunId: string,
-  lastStatusSync: string,
+  lastStatusSync: string
 ): void {
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  gr.addQuery('workflow_run_id', workflowRunId)
-  gr.query()
+  gr.addQuery('workflow_run_id', workflowRunId);
+  gr.query();
 
   if (!gr.next()) {
-    return
+    return;
   }
 
-  gr.setValue('last_status_sync', lastStatusSync)
-  gr.update()
+  gr.setValue('last_status_sync', lastStatusSync);
+  gr.update();
 }
 
-export function updateStatusByWorkflowRunId(
-  workflowRunId: string,
-  status: string,
-): void {
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+export function updateStatusByWorkflowRunId(workflowRunId: string, status: string): void {
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-    gr.addQuery('workflow_run_id', workflowRunId)
-    gr.query()
+  gr.addQuery('workflow_run_id', workflowRunId);
+  gr.query();
 
-    if (!gr.next()) {
-        gs.warn(
-            `[VerificationRequestRepository] No verification request found ` +
-                `for workflow_run_id=${workflowRunId}`
-        )
-        return
-    }
+  if (!gr.next()) {
+    gs.warn(
+      `[VerificationRequestRepository] No verification request found ` +
+        `for workflow_run_id=${workflowRunId}`
+    );
+    return;
+  }
 
-    gr.setValue('status', status)
-    gr.update()
+  gr.setValue('status', status);
+  gr.update();
 
-    gs.info(
-        `[VerificationRequestRepository] Status updated ` +
-            `workflow_run_id=${workflowRunId}, status=${status}`
-    )
+  gs.info(
+    `[VerificationRequestRepository] Status updated ` +
+      `workflow_run_id=${workflowRunId}, status=${status}`
+  );
 }
 
 export function updateEvidenceFolderHrefByWorkflowRunId(
   workflowRunId: string,
-  evidenceFolderHref: string,
+  evidenceFolderHref: string
 ): void {
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE)
+  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-    gr.addQuery('workflow_run_id', workflowRunId)
-    gr.query()
+  gr.addQuery('workflow_run_id', workflowRunId);
+  gr.query();
 
-    if (!gr.next()) {
-        gs.warn(
-            `[VerificationRequestRepository] No verification request found ` +
-                `for workflow_run_id=${workflowRunId}`
-        )
-        return
-    }
+  if (!gr.next()) {
+    gs.warn(
+      `[VerificationRequestRepository] No verification request found ` +
+        `for workflow_run_id=${workflowRunId}`
+    );
+    return;
+  }
 
-    gr.setValue(
-        'evidence_folder_href',
-        evidenceFolderHref
-    )
+  gr.setValue('evidence_folder_href', evidenceFolderHref);
 
-    gr.update()
+  gr.update();
 
-    gs.info(
-        `[VerificationRequestRepository] Evidence folder href updated ` +
-            `workflow_run_id=${workflowRunId}`
-    )
+  gs.info(
+    `[VerificationRequestRepository] Evidence folder href updated ` +
+      `workflow_run_id=${workflowRunId}`
+  );
 }

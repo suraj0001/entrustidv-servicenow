@@ -1,36 +1,34 @@
-import "@servicenow/sdk/global";
+import '@servicenow/sdk/global';
 
-import { RestApi } from "@servicenow/sdk/core";
+import { RestApi } from '@servicenow/sdk/core';
 
 RestApi({
-  $id: Now.ID["entrust-idv-webhook-api"],
+  $id: Now.ID['entrust-idv-webhook-api'],
 
-  name: "Identity Verification Webhook",
+  name: 'Identity Verification Webhook',
 
-  serviceId: "entrustidv",
+  serviceId: 'entrustidv',
 
   active: true,
 
   shortDescription:
-    "Receives identity verification webhook events from Entrust Identity Verification.",
+    'Receives identity verification webhook events from Entrust Identity Verification.',
 
-  consumes: "application/json",
+  consumes: 'application/json',
 
   enforceAcl: [],
 
   routes: [
     {
-      $id: Now.ID["idv-webhook-public-route"],
+      $id: Now.ID['idv-webhook-public-route'],
 
-      name: "Identity Verification Webhook",
+      name: 'Identity Verification Webhook',
 
-      path: "/webhook/events",
+      path: '/webhook/events',
 
-      method: "POST",
+      method: 'POST',
 
-      script: Now.include(
-        "../../server/webhook/webhook-handler.server.js",
-      ),
+      script: Now.include('../../server/webhook/webhook-handler.server.js'),
 
       authorization: false,
 

@@ -1,150 +1,103 @@
 var EntrustWebhookSignatureValidator = Class.create();
 
 EntrustWebhookSignatureValidator.prototype = {
+  initialize: function () {},
 
-    initialize: function () {},
+  validate: function (rawBody, signature, webhookSecret) {
+    if (!rawBody || !signature || !webhookSecret) {
+      return false;
+    }
 
-    validate: function (rawBody, signature, webhookSecret) {
-        if (!rawBody || !signature || !webhookSecret) {
-            return false;
-        }
+    try {
+      var receivedSignature = String(signature).trim().toLowerCase();
 
-        try {
-            var receivedSignature =
-                String(signature).trim().toLowerCase();
+      if (receivedSignature.length !== 64 || !/^[0-9a-f]+$/.test(receivedSignature)) {
+        return false;
+      }
 
-            if (
-                receivedSignature.length !== 64 ||
-                !/^[0-9a-f]+$/.test(receivedSignature)
-            ) {
-                return false;
-            }
+      var encodedSecret = gs.base64Encode(webhookSecret);
 
-            var encodedSecret =
-                gs.base64Encode(webhookSecret);
+      var mac = new CertificateEncryption();
 
-            var mac =
-                new CertificateEncryption();
+      var expectedSignatureBase64 = mac.generateMac(encodedSecret, 'HmacSHA256', rawBody);
 
-            var expectedSignatureBase64 =
-                mac.generateMac(
-                    encodedSecret,
-                    'HmacSHA256',
-                    rawBody
-                );
+      if (!expectedSignatureBase64) {
+        return false;
+      }
 
-            if (!expectedSignatureBase64) {
-                return false;
-            }
+      var expectedSignature = this._base64ToHex(expectedSignatureBase64);
 
-            var expectedSignature =
-                this._base64ToHex(expectedSignatureBase64);
+      return this._constantTimeEquals(expectedSignature, receivedSignature);
+    } catch (error) {
+      gs.error('[WebhookSignatureValidator] Signature validation failed: ' + String(error));
 
-            return this._constantTimeEquals(
-                expectedSignature,
-                receivedSignature
-            );
+      return false;
+    }
+  },
 
-        } catch (error) {
-            gs.error(
-                '[WebhookSignatureValidator] Signature validation failed: ' +
-                String(error)
-            );
+  _base64ToHex: function (base64) {
+    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-            return false;
-        }
-    },
+    var input = String(base64).replace(/\s/g, '');
 
-    _base64ToHex: function (base64) {
-        var alphabet =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    var hex = '';
 
-        var input =
-            String(base64).replace(/\s/g, '');
+    for (var i = 0; i < input.length; i += 4) {
+      var char1 = input.charAt(i);
+      var char2 = input.charAt(i + 1);
+      var char3 = input.charAt(i + 2);
+      var char4 = input.charAt(i + 3);
 
-        var hex = '';
+      var enc1 = alphabet.indexOf(char1);
+      var enc2 = alphabet.indexOf(char2);
 
-        for (var i = 0; i < input.length; i += 4) {
-            var char1 = input.charAt(i);
-            var char2 = input.charAt(i + 1);
-            var char3 = input.charAt(i + 2);
-            var char4 = input.charAt(i + 3);
+      var enc3 = char3 === '=' ? 0 : alphabet.indexOf(char3);
 
-            var enc1 = alphabet.indexOf(char1);
-            var enc2 = alphabet.indexOf(char2);
+      var enc4 = char4 === '=' ? 0 : alphabet.indexOf(char4);
 
-            var enc3 =
-                char3 === '='
-                    ? 0
-                    : alphabet.indexOf(char3);
+      if (enc1 < 0 || enc2 < 0 || (char3 !== '=' && enc3 < 0) || (char4 !== '=' && enc4 < 0)) {
+        throw new Error('Invalid Base64 MAC');
+      }
 
-            var enc4 =
-                char4 === '='
-                    ? 0
-                    : alphabet.indexOf(char4);
+      var byte1 = (enc1 << 2) | (enc2 >> 4);
 
-            if (
-                enc1 < 0 ||
-                enc2 < 0 ||
-                (char3 !== '=' && enc3 < 0) ||
-                (char4 !== '=' && enc4 < 0)
-            ) {
-                throw new Error('Invalid Base64 MAC');
-            }
+      hex += this._byteToHex(byte1);
 
-            var byte1 =
-                (enc1 << 2) |
-                (enc2 >> 4);
+      if (char3 !== '=') {
+        var byte2 = ((enc2 & 15) << 4) | (enc3 >> 2);
 
-            hex += this._byteToHex(byte1);
+        hex += this._byteToHex(byte2);
+      }
 
-            if (char3 !== '=') {
-                var byte2 =
-                    ((enc2 & 15) << 4) |
-                    (enc3 >> 2);
+      if (char4 !== '=') {
+        var byte3 = ((enc3 & 3) << 6) | enc4;
 
-                hex += this._byteToHex(byte2);
-            }
+        hex += this._byteToHex(byte3);
+      }
+    }
 
-            if (char4 !== '=') {
-                var byte3 =
-                    ((enc3 & 3) << 6) |
-                    enc4;
+    return hex;
+  },
 
-                hex += this._byteToHex(byte3);
-            }
-        }
+  _byteToHex: function (value) {
+    var hex = (value & 0xff).toString(16);
 
-        return hex;
-    },
+    return hex.length === 1 ? '0' + hex : hex;
+  },
 
-    _byteToHex: function (value) {
-        var hex =
-            (value & 0xff).toString(16);
+  _constantTimeEquals: function (expected, actual) {
+    if (expected.length !== 64 || actual.length !== 64) {
+      return false;
+    }
 
-        return hex.length === 1
-            ? '0' + hex
-            : hex;
-    },
+    var difference = 0;
 
-    _constantTimeEquals: function (expected, actual) {
-        if (
-            expected.length !== 64 ||
-            actual.length !== 64
-        ) {
-            return false;
-        }
+    for (var i = 0; i < 64; i++) {
+      difference |= expected.charCodeAt(i) ^ actual.charCodeAt(i);
+    }
 
-        var difference = 0;
+    return difference === 0;
+  },
 
-        for (var i = 0; i < 64; i++) {
-            difference |=
-                expected.charCodeAt(i) ^
-                actual.charCodeAt(i);
-        }
-
-        return difference === 0;
-    },
-
-    type: 'EntrustWebhookSignatureValidator'
+  type: 'EntrustWebhookSignatureValidator',
 };
