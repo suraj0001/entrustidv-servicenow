@@ -10,6 +10,7 @@ import {
   type ConfigSettings,
   type ConfigSettingsRecord,
 } from "../repositories/configuration-repository.ts";
+import { WEBHOOK_TOKEN_MAX_LEN, WEBHOOK_TOKEN_MIN_LEN } from "../constants.ts";
 
 export type GetVerificationSettingsResult = {
   success: boolean;
@@ -82,8 +83,10 @@ export function saveWebhookSecret(webhookSecret: string): SaveVerificationSettin
     throw new Error("Webhook token is required.");
   }
 
-  if (normalizedSecret.length < 5 || normalizedSecret.length > 100) {
-    throw new Error("Webhook token must be between 5 and 100 characters.");
+  if (normalizedSecret.length < WEBHOOK_TOKEN_MIN_LEN || normalizedSecret.length > WEBHOOK_TOKEN_MAX_LEN) {
+    throw new Error(
+      "Webhook token must be between " + WEBHOOK_TOKEN_MIN_LEN + " and " + WEBHOOK_TOKEN_MAX_LEN + " characters.",
+    );
   }
 
   saveWebhookSecretValue(normalizedSecret);

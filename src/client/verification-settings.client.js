@@ -80,7 +80,7 @@ function focusFirstInvalidField() {
 function showServerValidationError(message) {
   var fieldId = null;
 
-  if (message === "Workflow ID is required.") fieldId = "workflow_id";
+  if (message === "Workflow ID is required." || message === "Workflow ID must be 100 characters or fewer.") fieldId = "workflow_id";
   else if (
     message === "Link expiry is required." ||
     message === "Link expiry must be a positive whole number."
@@ -147,9 +147,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// Must match WORKFLOW_ID_MAX_LEN in verification-settings-validator.ts
+var WORKFLOW_ID_MAX_LEN = 100;
+
 function validateWorkflowId() {
-  if (!_value("workflow_id")) {
+  var value = _value("workflow_id");
+
+  if (!value) {
     showFieldError("workflow_id", "Workflow ID is required.");
+    return false;
+  }
+
+  if (value.length > WORKFLOW_ID_MAX_LEN) {
+    showFieldError("workflow_id", "Workflow ID must be " + WORKFLOW_ID_MAX_LEN + " characters or fewer.");
     return false;
   }
 

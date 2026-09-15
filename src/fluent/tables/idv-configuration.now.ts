@@ -38,6 +38,7 @@ export const x_entru_entrustidv_configuration = Table({
     webhook_signing_secret: Password2Column({
       label: "Webhook Signing Secret",
       mandatory: true,
+      maxLength: 100,
     }),
   },
   audit: true,

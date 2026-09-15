@@ -6,7 +6,9 @@
  *   - Unsupported region error handling
  *   - Invalid credentials connection test against Entrust API
  *   - Configuration load via getConfig()
- *   - Save configuration input validation
+ *   - Save configuration input validation (missing/asymmetric fields, length bounds)
+ *   - Save configuration with valid region and credentials
+ *   - Alias/connection structural lookup via getAliasInfo()
  */
 (function(outputs, steps, params, stepResult, assertEqual) {
     gs.info("[ATF TEST] Starting Admin - API Connection Server Tests...");
@@ -64,6 +66,47 @@
     gs.info("[ATF TEST 1.5] Testing saveConfig() validation...");
     var saveMissing = apiSvc.saveConfig({ region: "", clientId: "", clientSecret: "" });
     check("saveConfig should fail with empty input", saveMissing.success, false);
+
+    var saveAsymmetric = apiSvc.saveConfig({ region: "us", clientId: "client_only_no_secret", clientSecret: "" });
+    check("saveConfig should fail when only Client ID is provided", saveAsymmetric.success, false);
+    check("ErrorMessage match for asymmetric fields", saveAsymmetric.message, "Provide both Client ID and Client Secret, or neither.");
+
+    var saveTooShort = apiSvc.saveConfig({ region: "us", clientId: "abc", clientSecret: "abc" });
+    check("saveConfig should fail when Client ID/Secret are shorter than minimum length", saveTooShort.success, false);
+
+    var saveTooLong = apiSvc.saveConfig({ region: "us", clientId: new Array(257).join("a"), clientSecret: "atf_test_client_secret" });
+    check("saveConfig should fail when Client ID exceeds maximum length", saveTooLong.success, false);
+
+    // -------------------------------------------------------------------------
+    // Test Case 1.6: Save Configuration - Valid Region and Credentials
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 1.6] Testing saveConfig() with valid region and credentials...");
+    var saveValid = apiSvc.saveConfig({
+        region: "us",
+        clientId: "atf_test_client_id",
+        clientSecret: "atf_test_client_secret"
+    });
+    check("saveConfig should succeed with valid region and credentials", saveValid.success, true);
+    check("saveConfig success message match", saveValid.message, "Configuration saved.");
+
+    var configAfterSave = apiSvc.getConfig();
+    check("getConfig() after save should return success: true", configAfterSave.success, true);
+    check("getConfig() after save should reflect saved region", configAfterSave.region, "us");
+
+    var saveMixedCaseRegion = apiSvc.saveConfig({
+        region: "US",
+        clientId: "atf_test_client_id",
+        clientSecret: "atf_test_client_secret"
+    });
+    check("saveConfig should succeed with mixed-case region", saveMixedCaseRegion.success, true);
+
+    // -------------------------------------------------------------------------
+    // Test Case 1.7: Alias / Connection Structural Lookup - getAliasInfo()
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 1.7] Testing getAliasInfo()...");
+    var aliasInfo = apiSvc.getAliasInfo();
+    check("getAliasInfo() should return success: true", aliasInfo.success, true);
+    check("getAliasInfo() should report an existing HTTP connection", aliasInfo.hasConnection, true);
 
     stepResult.setOutputMessage("Admin - API Connection Tests completed successfully.");
     return true;

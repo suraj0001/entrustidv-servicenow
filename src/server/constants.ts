@@ -12,12 +12,15 @@ export const BASE_URLS: Record<EntrustRegion, string> = {
 export const MIN_LEN = 5;
 export const MAX_LEN = 255;
 
+// Must match webhook_signing_secret.maxLength in idv-configuration.now.ts
+export const WEBHOOK_TOKEN_MIN_LEN = 5;
+export const WEBHOOK_TOKEN_MAX_LEN = 100;
+
 export const ALIAS_NAME = "entrust_idv_api_alias";
 export const ALIAS_ID = "x_entru_entrustidv.entrust_idv_api_alias";
 export const CONFIG_TABLE = "x_entru_entrustidv_configuration";
 export const VERIFICATION_REQUEST_TABLE = "x_entru_entrustidv_verification_request";
 
-export const DEFAULT_WORKFLOW_ID = "4aa50569-b226-4785-b5e1-ee9e30eee7e6";
 export const DEFAULT_LINK_EXPIRY_MINUTES = 60;
 
 export const VERIFICATION_REQUEST_CREATED_EVENT = "x_entru_entrustidv.verification.created";

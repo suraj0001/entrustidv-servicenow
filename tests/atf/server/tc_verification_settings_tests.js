@@ -3,8 +3,10 @@
  * 
  * Test Scenarios:
  *   - Missing Workflow ID validation
+ *   - Workflow ID max length validation
  *   - Invalid (negative) Link Expiry validation
  *   - Malformed Redirect URL validation
+ *   - Redirect URL is optional (omitted / valid http & https)
  *   - Save & retrieve valid verification settings
  *   - Webhook token secret length validation (5-100 chars) & status check
  */
@@ -38,12 +40,30 @@
     }
 
     // -------------------------------------------------------------------------
+    // Test Case 2.1b: Input Validation - Workflow ID Exceeds Max Length
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 2.1b] Testing workflow ID exceeding max length...");
+    try {
+        settingsSvc.saveVerificationSettings({
+            workflowId: new Array(102).join("a"), // 101 chars (> 100 max)
+            linkExpiry: "24",
+            deliveryChannel: "email",
+            redirectUrl: "https://example.com"
+        });
+        check("Should have thrown error for workflow ID exceeding max length", false, true);
+    } catch (e) {
+        check("Expected max length validation message", e.message, "Workflow ID must be 100 characters or fewer.");
+    }
+
+    var validWorkflowId = "wf_test_suite_123";
+
+    // -------------------------------------------------------------------------
     // Test Case 2.2: Input Validation - Invalid Link Expiry
     // -------------------------------------------------------------------------
     gs.info("[ATF TEST 2.2] Testing invalid link expiry...");
     try {
         settingsSvc.saveVerificationSettings({
-            workflowId: "wf_12345",
+            workflowId: validWorkflowId,
             linkExpiry: "-5",
             deliveryChannel: "email",
             redirectUrl: ""
@@ -59,7 +79,7 @@
     gs.info("[ATF TEST 2.3] Testing invalid redirect URL format...");
     try {
         settingsSvc.saveVerificationSettings({
-            workflowId: "wf_12345",
+            workflowId: validWorkflowId,
             linkExpiry: "24",
             deliveryChannel: "email",
             redirectUrl: "not_a_valid_url"
@@ -68,6 +88,26 @@
     } catch (e) {
         check("Expected invalid redirect URL message", e.message, "Enter a valid redirect URL.");
     }
+
+    // -------------------------------------------------------------------------
+    // Test Case 2.3b: Redirect URL is Optional
+    // -------------------------------------------------------------------------
+    gs.info("[ATF TEST 2.3b] Testing redirect URL is optional (omitted, http, https)...");
+    var saveNoRedirect = settingsSvc.saveVerificationSettings({
+        workflowId: validWorkflowId,
+        linkExpiry: "24",
+        deliveryChannel: "email",
+        redirectUrl: ""
+    });
+    check("saveVerificationSettings should succeed with omitted redirect URL", saveNoRedirect.success, true);
+
+    var saveHttpRedirect = settingsSvc.saveVerificationSettings({
+        workflowId: validWorkflowId,
+        linkExpiry: "24",
+        deliveryChannel: "email",
+        redirectUrl: "http://example.com/idv-return"
+    });
+    check("saveVerificationSettings should succeed with a valid http redirect URL", saveHttpRedirect.success, true);
 
     // -------------------------------------------------------------------------
     // Test Case 2.4: Save & Retrieve Valid Verification Settings
@@ -97,7 +137,15 @@
         check("Expected length validation error", e.message, "Webhook token must be between 5 and 100 characters.");
     }
 
-    var secretRes = settingsSvc.saveWebhookSecret("valid_webhook_secret_token_12345");
+    var saveTooLongSecret = new Array(102).join("a"); // 101 chars (> 100 max)
+    try {
+        settingsSvc.saveWebhookSecret(saveTooLongSecret);
+        check("Should have thrown error for secret exceeding max length", false, true);
+    } catch (e) {
+        check("Expected max length validation error", e.message, "Webhook token must be between 5 and 100 characters.");
+    }
+
+    var secretRes = settingsSvc.saveWebhookSecret("RJh4kjRgc-GfxESqNIkRNzU2Ffnz0MMY");
     check("saveWebhookSecret should succeed with valid length", secretRes.success, true);
 
     var secretStatus = settingsSvc.getWebhookSecretStatus();

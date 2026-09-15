@@ -5,6 +5,9 @@ export type VerificationSettingsInput = {
   redirectUrl: string;
 };
 
+// Must match workflow_id.maxLength in idv-configuration.now.ts
+var WORKFLOW_ID_MAX_LEN = 100;
+
 export function validateVerificationSettings(
   input: VerificationSettingsInput,
 ): void {
@@ -15,6 +18,10 @@ export function validateVerificationSettings(
 
   if (!workflowId) {
     throw new Error("Workflow ID is required.");
+  }
+
+  if (workflowId.length > WORKFLOW_ID_MAX_LEN) {
+    throw new Error("Workflow ID must be " + WORKFLOW_ID_MAX_LEN + " characters or fewer.");
   }
 
   if (!linkExpiry) {
