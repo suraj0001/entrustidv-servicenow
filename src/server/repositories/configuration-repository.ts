@@ -4,6 +4,7 @@ import { CONFIG_TABLE } from '../constants.ts';
 export type ConfigSettings = {
   workflowId: string;
   linkExpiry: number;
+  linkExpiryUnit: 'minutes' | 'hours';
   linkDeliveryChannel: string;
   redirectUrl: string;
 };
@@ -17,6 +18,7 @@ export type IdvConfiguration = {
 export type ConfigSettingsRecord = {
   workflowId: string;
   linkExpiry: number;
+  linkExpiryUnit: 'minutes' | 'hours';
   deliveryChannel: string;
   webhookSecret: string;
   redirectUrl: string;
@@ -31,6 +33,10 @@ export function getConfigSettings(): ConfigSettingsRecord | null {
 
   const workflowId = ((configGr.getValue('workflow_id') as string) || '').trim();
   const linkExpiryValue = (configGr.getValue('link_expiry_minutes') as string) || '';
+  const storedLinkExpiryUnit = ((configGr.getValue('link_expiry_unit') as string) || '')
+    .trim()
+    .toLowerCase();
+  const linkExpiryUnit = storedLinkExpiryUnit === 'hours' ? 'hours' : 'minutes';
   const deliveryChannel = ((configGr.getValue('link_delivery_channel') as string) || '').trim();
   const webhookSecret = ((configGr.getValue('webhook_signing_secret') as string) || '').trim();
   const redirectUrl = ((configGr.getValue('redirect_url') as string) || '').trim();
@@ -39,6 +45,7 @@ export function getConfigSettings(): ConfigSettingsRecord | null {
   return {
     workflowId,
     linkExpiry: Number.isNaN(linkExpiry) ? 0 : linkExpiry,
+    linkExpiryUnit,
     deliveryChannel,
     webhookSecret: webhookSecret,
     redirectUrl,
@@ -76,6 +83,7 @@ export function saveConfigSettings(settings: ConfigSettings): void {
 
   configGr.setValue('workflow_id', settings.workflowId);
   configGr.setValue('link_expiry_minutes', settings.linkExpiry);
+  configGr.setValue('link_expiry_unit', settings.linkExpiryUnit);
   configGr.setValue('link_delivery_channel', settings.linkDeliveryChannel);
   configGr.setValue('redirect_url', settings.redirectUrl);
 

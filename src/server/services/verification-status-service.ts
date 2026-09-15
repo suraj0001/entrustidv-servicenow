@@ -1,6 +1,5 @@
 import { GlideDateTime, gs } from '@servicenow/glide';
 import { getWorkflowRun } from '../entrust/entrust-verification-client.ts';
-import { getConfigSettings } from '../repositories/configuration-repository.ts';
 import { ApiConnectionRepository } from '../repositories/connection-credential-repository.ts';
 import {
   findLatestVerificationStatus,
@@ -255,20 +254,20 @@ function shouldTriggerFallbackSync(record: VerificationStatusRecord): boolean {
     ? (nowGdt.getNumericValue() - lastSyncGdt.getNumericValue()) / (60 * 1000)
     : minutesSinceCreated;
 
-  const settings = getConfigSettings();
-  const linkExpiryMinutes = settings?.linkExpiry || 0;
+  const expiresAtGdt = new GlideDateTime(record.expiresAt);
+  const linkHasExpired = nowGdt.getNumericValue() >= expiresAtGdt.getNumericValue();
 
   // 1. If link has expired, doubt is absolute -> synchronize immediately (unless throttled)
-  if (linkExpiryMinutes > 0 && minutesSinceCreated >= linkExpiryMinutes) {
+  if (linkHasExpired) {
     if (record.lastSyncFromEntrust && minutesSinceLastSync < THROTTLE_MINUTES) {
       gs.info(
-        `[VerificationStatusService] Link expired (${minutesSinceCreated.toFixed(1)} mins >= ${linkExpiryMinutes} mins) for workflowRunId=${record.workflowRunId}, but throttled (${minutesSinceLastSync.toFixed(1)} mins < ${THROTTLE_MINUTES} mins since last check).`
+        `[VerificationStatusService] Link expired (expiresAt=${record.expiresAt}) for workflowRunId=${record.workflowRunId}, but throttled (${minutesSinceLastSync.toFixed(1)} mins < ${THROTTLE_MINUTES} mins since last check).`
       );
       return false;
     }
 
     gs.info(
-      `[VerificationStatusService] Fallback polling triggered due to Link Expiry: workflowRunId=${record.workflowRunId}, minutesSinceCreated=${minutesSinceCreated.toFixed(1)}, linkExpiryMinutes=${linkExpiryMinutes}`
+      `[VerificationStatusService] Fallback polling triggered due to Link Expiry: workflowRunId=${record.workflowRunId}, expiresAt=${record.expiresAt}`
     );
     return true;
   }

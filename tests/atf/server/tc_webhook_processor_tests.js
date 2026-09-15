@@ -65,6 +65,7 @@
   grStale.setValue('workflow_run_id', inactiveWfrId);
   grStale.setValue('status', 'Pending');
   grStale.setValue('active', false); // Inactive
+  grStale.setValue('expires_at', new GlideDateTime().getValue());
   var staleSysId = grStale.insert();
 
   // Create an active request
@@ -75,6 +76,7 @@
   grActive.setValue('workflow_run_id', activeWfrId);
   grActive.setValue('status', 'Pending');
   grActive.setValue('active', true); // Active
+  grActive.setValue('expires_at', new GlideDateTime().getValue());
   var activeSysId = grActive.insert();
 
   // -------------------------------------------------------------------------
@@ -180,6 +182,7 @@
   grAltShape.setValue('workflow_run_id', altShapeWfrId);
   grAltShape.setValue('status', 'Pending');
   grAltShape.setValue('active', true);
+  grAltShape.setValue('expires_at', new GlideDateTime().getValue());
   var altShapeSysId = grAltShape.insert();
 
   webhookSvc.processWebhook({
@@ -215,6 +218,7 @@
     grMismatch.setValue('workflow_run_id', mismatchWfrId);
     grMismatch.setValue('status', 'Pending');
     grMismatch.setValue('active', true);
+    grMismatch.setValue('expires_at', new GlideDateTime().getValue());
     var mismatchSysId = grMismatch.insert();
 
     webhookSvc.processWebhook({

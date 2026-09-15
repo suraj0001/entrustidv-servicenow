@@ -144,6 +144,7 @@
     reqGr.setValue('workflow_run_id', 'wfr_max_limit_' + i);
     reqGr.setValue('status', 'Declined');
     reqGr.setValue('active', false);
+    reqGr.setValue('expires_at', new GlideDateTime().getValue());
     reqGr.insert();
   }
 

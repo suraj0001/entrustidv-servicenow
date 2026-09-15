@@ -12,6 +12,40 @@ export const VerificationRequestCreatedEvent = Record({
   },
 });
 
+export const NotificationIconUrlMailScript = Record({
+  $id: Now.ID['notification-icon-url-mail-script'],
+  table: 'sys_script_email',
+  data: {
+    name: 'Entrust IDV Notification Icon URL',
+    new_lines_to_html: false,
+    script: `(function runMailScript(current, template) {
+    var instanceUrl = gs.getProperty("glide.servlet.uri") || "";
+    if (instanceUrl && instanceUrl.charAt(instanceUrl.length - 1) !== "/") {
+        instanceUrl += "/";
+    }
+    template.print(instanceUrl + "x_entru_entrustidv/notifications/entrust-icon.png");
+})(current, template);`,
+  },
+});
+
+export const LinkExpiryMailScript = Record({
+  $id: Now.ID['link-expiry-mail-script'],
+  table: 'sys_script_email',
+  data: {
+    name: 'Entrust IDV Link Expiry',
+    new_lines_to_html: false,
+    script: `(function runMailScript(current, template) {
+    var expiresAt = current.getElement("expires_at").getGlideObject();
+    var subjectUser = current.getElement("subject_user").getRefRecord();
+    var timeZone = subjectUser.isValidRecord() ? subjectUser.getValue("time_zone") : "";
+    if (timeZone) {
+        expiresAt.setTimeZone(timeZone);
+    }
+    template.print(expiresAt.getDisplayValueLang("long", "en"));
+})(current, template);`,
+  },
+});
+
 export const VerificationSmartCaptureLinkNotification = EmailNotification({
   $id: Now.ID['verification-smart-capture-link-notification'],
   table: 'x_entru_entrustidv_verification_request',
@@ -35,46 +69,71 @@ export const VerificationSmartCaptureLinkNotification = EmailNotification({
                 <td align="center" style="padding:32px 16px;">
                     <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:100%; max-width:600px; background-color:#ffffff; border:1px solid #d9dee3; border-radius:6px;">
                         <tr>
-                            <td style="padding:24px 32px; background-color:#17324d; color:#ffffff; font-family:Verdana, sans-serif; font-size:20px; font-weight:bold;">
-                                Entrust Identity Verification
+                            <td style="padding:18px 32px; background-color:#293E40;">
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;">
+                                    <tr>
+                                        <td style="color:#ffffff; font-family:Verdana, sans-serif; font-size:20px; font-weight:500; white-space:nowrap; vertical-align:middle;">
+                                            <span style="display:inline-block; width:36px; height:36px; margin-right:10px; border:1px solid #ffffff; border-radius:4px; background-color:#ffffff; color:#293E40; font-size:13px; font-weight:bold; line-height:36px; text-align:center; vertical-align:middle;">SN</span>
+                                            <span style="display:inline-block; line-height:36px; vertical-align:middle;">ServiceNow</span>
+                                        </td>
+                                        <td align="right" style="padding-left:16px;">
+                                            <img src="\${mail_script:Entrust IDV Notification Icon URL}" width="166" height="30" alt="Powered by Entrust" style="display:block; width:166px; height:30px; border:0;" />
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
                             <td style="padding:32px; color:#263746; font-family:Verdana, sans-serif; font-size:15px; line-height:1.6;">
-                                <p style="margin:0 0 20px;">Hello \${subject_user.first_name},</p>
-                                <p style="margin:0 0 20px;">Please complete the identity verification requested for the case <strong>\${event.parm2}</strong></p>
-                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:28px 0;">
+                                <h1 style="margin:0 0 28px; color:#202936; font-family:Verdana, sans-serif; font-size:22px; font-weight:600; line-height:1.3;">Verify your identity</h1>
+                                <p style="margin:0 0 8px;">Hello \${subject_user.first_name},</p>
+                                <p style="margin:0 0 24px;">ServiceNow asked you to verify your identity for case \${event.parm2}.</p>
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 28px;">
                                     <tr>
-                                        <td style="background-color:#6D2077; border-radius:4px;">
+                                        <td style="background-color:#4F52BD; border-radius:4px;">
                                             <a href="\${event.parm1}" style="display:inline-block; padding:13px 22px; color:#ffffff; font-family:Verdana, sans-serif; font-size:15px; font-weight:bold; text-decoration:none;">Start identity verification</a>
                                         </td>
                                     </tr>
                                 </table>
-                                <p style="margin:0 0 12px; font-size:13px; color:#526574;"><strong>For your security:</strong></p>
-                                <p style="margin:0 0 8px; font-size:13px; color:#526574;">This link is unique to your verification. Do not forward or share it.</p>
-                                <p style="margin:0; font-size:13px; color:#526574;">If you were not expecting this request, do not open the link and contact your support team.</p>
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background-color:#eef2f5; border:1px solid #c8d1da; border-radius:4px;">
+                                    <tr>
+                                        <td style="padding:20px; color:#263746; font-family:Verdana, sans-serif; font-size:13px; line-height:1.6;">
+                                            <p style="margin:0 0 8px;"><strong>Keep this link private</strong></p>
+                                            <p style="margin:0 0 8px;">This link is unique to you and expires on \${mail_script:Entrust IDV Link Expiry}. Don't forward this email or share the link.</p>
+                                            <p style="margin:20px 0 0;">Didn't expect this request? Don't use the link.</p>
+                                            <p style="margin:20px 0 0;">Need help? Contact customer support.</p>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
                             <td style="padding:20px 32px; border-top:1px solid #e3e7ea; color:#6a7884; font-family:Verdana, sans-serif; font-size:12px; line-height:1.5;">
-                                This is an automated message regarding case \${event.parm2}. Please do not reply to this email.
+                                This automated email was sent for case \${event.parm2}.<br />
+                                Replies to this inbox aren't monitored.
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>`,
-    messageText: `Hello \${subject_user.first_name},
+    messageText: `Verify your identity
 
-Please complete the identity verification requested for case \${event.parm2}.
+Hello \${subject_user.first_name},
+
+ServiceNow asked you to verify your identity for case \${event.parm2}.
 
 Start identity verification: \${event.parm1}
 
-For your security, this link is unique to your verification. Do not forward or share it.
+Keep this link private
+This link is unique to you and expires on \${mail_script:Entrust IDV Link Expiry}. Don't forward this email or share the link.
 
-If you were not expecting this request, do not open the link and contact your support team.
+Didn't expect this request? Don't use the link.
 
-This is an automated message. Please do not reply.`,
+Need help? Contact customer support.
+
+This automated email was sent for case \${event.parm2}.
+Replies to this inbox aren't monitored.`,
     omitWatermark: true,
     forceDelivery: true,
   },

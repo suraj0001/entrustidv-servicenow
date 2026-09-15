@@ -1,4 +1,4 @@
-import { GlideRecord, gs } from '@servicenow/glide';
+import { GlideDateTime, GlideRecord, gs } from '@servicenow/glide';
 import { VERIFICATION_REQUEST_TABLE } from '../constants.ts';
 
 export interface CreateVerificationRequest {
@@ -10,6 +10,7 @@ export interface CreateVerificationRequest {
   workflowVersionId: string;
   workflowRunId: string;
   status: string;
+  expiresAt: string;
 }
 
 export interface VerificationRequest {
@@ -21,6 +22,7 @@ export interface VerificationRequest {
   sourceTable: string;
   sourceRecordId: string;
   evidenceFolderHref: string;
+  expiresAt: string;
   active?: boolean;
   sysCreatedOn?: string;
   sysUpdatedOn?: string;
@@ -29,6 +31,7 @@ export interface VerificationRequest {
 export type VerificationStatusRecord = {
   workflowRunId: string;
   status: string;
+  expiresAt: string;
   sourceTable?: string;
   sourceRecordId?: string;
   active?: boolean;
@@ -40,6 +43,14 @@ export type VerificationStatusRecord = {
 
 export function createVerificationRequest(input: CreateVerificationRequest): string {
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  const expiresAt = new GlideDateTime();
+  const expiresAtMillis = Date.parse(input.expiresAt);
+
+  if (Number.isNaN(expiresAtMillis)) {
+    throw new Error('Unable to persist an invalid verification link expiry.');
+  }
+
+  expiresAt.setNumericValue(expiresAtMillis);
   gr.initialize();
   gr.setValue('source_table', input.sourceTable);
   gr.setValue('source_record', input.sourceRecordId);
@@ -49,6 +60,7 @@ export function createVerificationRequest(input: CreateVerificationRequest): str
   gr.setValue('workflow_version_id', input.workflowVersionId);
   gr.setValue('workflow_run_id', input.workflowRunId);
   gr.setValue('status', input.status);
+  gr.setValue('expires_at', expiresAt.getValue());
   gr.setValue('active', true);
 
   const sysId = gr.insert();
@@ -156,6 +168,7 @@ export function findVerificationRequestByWorkflowRunId(
     sourceTable: gr.getValue('source_table') ?? '',
     sourceRecordId: gr.getValue('source_record') ?? '',
     evidenceFolderHref: gr.getValue('evidence_folder_href') ?? '',
+    expiresAt: (gr.getValue('expires_at') as string) || '',
     active,
     sysCreatedOn: (gr.getValue('sys_created_on') as string) || '',
     sysUpdatedOn: (gr.getValue('sys_updated_on') as string) || '',
@@ -195,6 +208,7 @@ export function findLatestVerificationStatus(
     return {
       workflowRunId: gr.getValue('workflow_run_id') || '',
       status: gr.getValue('status') || '',
+      expiresAt: (gr.getValue('expires_at') as string) || '',
       sourceTable: gr.getValue('source_table') || '',
       sourceRecordId: gr.getValue('source_record') || '',
       active: true,
@@ -237,6 +251,7 @@ export function findVerificationStatusByWorkflowRunId(
   return {
     workflowRunId: verificationRequest.getValue('workflow_run_id') || '',
     status: verificationRequest.getValue('status') || '',
+    expiresAt: (verificationRequest.getValue('expires_at') as string) || '',
     sourceTable: verificationRequest.getValue('source_table') || '',
     sourceRecordId: verificationRequest.getValue('source_record') || '',
     active,

@@ -96,11 +96,12 @@ export function startVerification(
     );
   }
 
-  // create a fresh workflow run
+  // Use the same expiry instant for the Entrust request and notification record.
+  const expiresAt = calculateExpiry(configuration.linkExpiryMinutes);
   const workflowRun = createWorkflowRun(connection, {
     applicantId,
     workflowId: configuration.workflowId,
-    expiresAt: calculateExpiry(configuration.linkExpiryMinutes),
+    expiresAt,
     redirectUrl: configuration.redirectUrl || undefined,
   });
 
@@ -120,6 +121,7 @@ export function startVerification(
     workflowVersionId: String(workflowRun.workflowVersionId),
     workflowRunId: workflowRun.workflowRunId,
     status: workflowRun.status,
+    expiresAt,
   });
 
   const verificationRequest = findVerificationRequestById(verificationRequestId);
@@ -158,5 +160,7 @@ export function startVerification(
 }
 
 function calculateExpiry(linkExpiryMinutes: number): string {
-  return new Date(Date.now() + linkExpiryMinutes * 60 * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + linkExpiryMinutes * 60 * 1000);
+  expiresAt.setUTCMilliseconds(0);
+  return expiresAt.toISOString();
 }

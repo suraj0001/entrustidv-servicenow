@@ -29,6 +29,12 @@ export const x_entru_entrustidv_configuration = Table({
       mandatory: true,
     }),
 
+    link_expiry_unit: StringColumn({
+      label: 'Smart Link Expiry Unit',
+      mandatory: true,
+      maxLength: 10,
+    }),
+
     link_delivery_channel: StringColumn({
       label: 'Smart Link Delivery Channel',
       mandatory: true,

@@ -5,9 +5,10 @@
  *   - Missing Workflow ID validation
  *   - Workflow ID max length validation
  *   - Invalid (negative) Link Expiry validation
+ *   - Link expiry unit validation (required, must be minutes/hours) and max duration (48h/2880min)
  *   - Malformed Redirect URL validation
  *   - Redirect URL is optional (omitted / valid http & https)
- *   - Save & retrieve valid verification settings
+ *   - Save & retrieve valid verification settings, incl. hours↔minutes round-trip conversion
  *   - Webhook token secret length validation (5-100 chars) & status check
  */
 (function (outputs, steps, params, stepResult, assertEqual) {
@@ -31,6 +32,7 @@
     settingsSvc.saveVerificationSettings({
       workflowId: '',
       linkExpiry: '24',
+      linkExpiryUnit: 'minutes',
       deliveryChannel: 'email',
       redirectUrl: 'https://example.com',
     });
@@ -47,6 +49,7 @@
     settingsSvc.saveVerificationSettings({
       workflowId: new Array(102).join('a'), // 101 chars (> 100 max)
       linkExpiry: '24',
+      linkExpiryUnit: 'minutes',
       deliveryChannel: 'email',
       redirectUrl: 'https://example.com',
     });
@@ -69,6 +72,7 @@
     settingsSvc.saveVerificationSettings({
       workflowId: validWorkflowId,
       linkExpiry: '-5',
+      linkExpiryUnit: 'minutes',
       deliveryChannel: 'email',
       redirectUrl: '',
     });
@@ -82,6 +86,78 @@
   }
 
   // -------------------------------------------------------------------------
+  // Test Case 2.2b: Link Expiry Unit Validation
+  // -------------------------------------------------------------------------
+  gs.info('[ATF TEST 2.2b] Testing missing/invalid link expiry unit...');
+  try {
+    settingsSvc.saveVerificationSettings({
+      workflowId: validWorkflowId,
+      linkExpiry: '24',
+      linkExpiryUnit: '',
+      deliveryChannel: 'email',
+      redirectUrl: '',
+    });
+    check('Should have thrown error for missing link expiry unit', false, true);
+  } catch (e) {
+    check('Expected missing link expiry unit message', e.message, 'Link expiry unit is required.');
+  }
+
+  try {
+    settingsSvc.saveVerificationSettings({
+      workflowId: validWorkflowId,
+      linkExpiry: '24',
+      linkExpiryUnit: 'days',
+      deliveryChannel: 'email',
+      redirectUrl: '',
+    });
+    check('Should have thrown error for invalid link expiry unit', false, true);
+  } catch (e) {
+    check(
+      'Expected invalid link expiry unit message',
+      e.message,
+      'Link expiry unit must be minutes or hours.'
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Test Case 2.2c: Link Expiry Max Duration (48 hours / 2880 minutes)
+  // -------------------------------------------------------------------------
+  gs.info('[ATF TEST 2.2c] Testing link expiry exceeding the 48-hour maximum...');
+  try {
+    settingsSvc.saveVerificationSettings({
+      workflowId: validWorkflowId,
+      linkExpiry: '49',
+      linkExpiryUnit: 'hours',
+      deliveryChannel: 'email',
+      redirectUrl: '',
+    });
+    check('Should have thrown error for link expiry exceeding 48 hours', false, true);
+  } catch (e) {
+    check(
+      'Expected max hours validation message',
+      e.message,
+      'Link expiry cannot exceed 48 hours.'
+    );
+  }
+
+  try {
+    settingsSvc.saveVerificationSettings({
+      workflowId: validWorkflowId,
+      linkExpiry: '2881',
+      linkExpiryUnit: 'minutes',
+      deliveryChannel: 'email',
+      redirectUrl: '',
+    });
+    check('Should have thrown error for link expiry exceeding 2880 minutes', false, true);
+  } catch (e) {
+    check(
+      'Expected max minutes validation message',
+      e.message,
+      'Link expiry cannot exceed 2880 minutes.'
+    );
+  }
+
+  // -------------------------------------------------------------------------
   // Test Case 2.3: Input Validation - Invalid Redirect URL
   // -------------------------------------------------------------------------
   gs.info('[ATF TEST 2.3] Testing invalid redirect URL format...');
@@ -89,6 +165,7 @@
     settingsSvc.saveVerificationSettings({
       workflowId: validWorkflowId,
       linkExpiry: '24',
+      linkExpiryUnit: 'minutes',
       deliveryChannel: 'email',
       redirectUrl: 'not_a_valid_url',
     });
@@ -104,6 +181,7 @@
   var saveNoRedirect = settingsSvc.saveVerificationSettings({
     workflowId: validWorkflowId,
     linkExpiry: '24',
+    linkExpiryUnit: 'minutes',
     deliveryChannel: 'email',
     redirectUrl: '',
   });
@@ -116,6 +194,7 @@
   var saveHttpRedirect = settingsSvc.saveVerificationSettings({
     workflowId: validWorkflowId,
     linkExpiry: '24',
+    linkExpiryUnit: 'minutes',
     deliveryChannel: 'email',
     redirectUrl: 'http://example.com/idv-return',
   });
@@ -132,6 +211,7 @@
   var saveRes = settingsSvc.saveVerificationSettings({
     workflowId: 'wf_test_suite_123',
     linkExpiry: '48',
+    linkExpiryUnit: 'minutes',
     deliveryChannel: 'email',
     redirectUrl: 'https://example.com/idv-return',
   });
@@ -141,6 +221,32 @@
   check('getVerificationSettingsConfig should succeed', getRes.success, true);
   check('Retrieved workflow ID should match', getRes.settings.workflowId, 'wf_test_suite_123');
   check('Retrieved link expiry should be numeric 48', getRes.settings.linkExpiry, 48);
+  check(
+    "Retrieved link expiry unit should be 'minutes'",
+    getRes.settings.linkExpiryUnit,
+    'minutes'
+  );
+
+  // -------------------------------------------------------------------------
+  // Test Case 2.4b: Save & Retrieve with Hours Unit (round-trip conversion)
+  // -------------------------------------------------------------------------
+  gs.info('[ATF TEST 2.4b] Testing hours\u2194minutes round-trip conversion...');
+  var saveHoursRes = settingsSvc.saveVerificationSettings({
+    workflowId: validWorkflowId,
+    linkExpiry: '2',
+    linkExpiryUnit: 'hours',
+    deliveryChannel: 'email',
+    redirectUrl: '',
+  });
+  check('saveVerificationSettings should succeed with hours unit', saveHoursRes.success, true);
+
+  var getHoursRes = settingsSvc.getVerificationSettingsConfig();
+  check(
+    "Retrieved link expiry unit should be 'hours'",
+    getHoursRes.settings.linkExpiryUnit,
+    'hours'
+  );
+  check('Retrieved link expiry should convert back to 2 hours', getHoursRes.settings.linkExpiry, 2);
 
   // -------------------------------------------------------------------------
   // Test Case 2.5: Webhook Token Secret Validation & Save

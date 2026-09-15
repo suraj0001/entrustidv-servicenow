@@ -1,5 +1,6 @@
 import {
   BooleanColumn,
+  DateTimeColumn,
   DocumentIdColumn,
   ReferenceColumn,
   StringColumn,
@@ -59,6 +60,11 @@ export const x_entru_entrustidv_verification_request = Table({
       label: 'Status',
       mandatory: true,
       maxLength: 50,
+    }),
+
+    expires_at: DateTimeColumn({
+      label: 'Link Expires At',
+      mandatory: true,
     }),
 
     evidence_folder_href: StringColumn({

@@ -1,6 +1,7 @@
 export type VerificationSettingsInput = {
   workflowId: string;
   linkExpiry: string;
+  linkExpiryUnit: string;
   deliveryChannel: string;
   redirectUrl: string;
 };
@@ -11,6 +12,7 @@ var WORKFLOW_ID_MAX_LEN = 100;
 export function validateVerificationSettings(input: VerificationSettingsInput): void {
   var workflowId = clean(input.workflowId);
   var linkExpiry = clean(input.linkExpiry);
+  var linkExpiryUnit = clean(input.linkExpiryUnit).toLowerCase();
   var deliveryChannel = clean(input.deliveryChannel).toLowerCase();
   var redirectUrl = clean(input.redirectUrl);
 
@@ -28,6 +30,24 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
 
   if (!/^[1-9]\d*$/.test(linkExpiry)) {
     throw new Error('Link expiry must be a positive whole number.');
+  }
+
+  if (!linkExpiryUnit) {
+    throw new Error('Link expiry unit is required.');
+  }
+
+  if (linkExpiryUnit !== 'minutes' && linkExpiryUnit !== 'hours') {
+    throw new Error('Link expiry unit must be minutes or hours.');
+  }
+
+  var linkExpiryMinutes = Number(linkExpiry) * (linkExpiryUnit === 'hours' ? 60 : 1);
+
+  if (linkExpiryMinutes > 48 * 60) {
+    throw new Error(
+      linkExpiryUnit === 'hours'
+        ? 'Link expiry cannot exceed 48 hours.'
+        : 'Link expiry cannot exceed 2880 minutes.'
+    );
   }
 
   if (!deliveryChannel) {
