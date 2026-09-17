@@ -35,3 +35,12 @@ CrossScopePrivilege({
     targetScope: 'sn_hr_core',
     targetType: 'sys_db_object',
 })
+
+CrossScopePrivilege({
+    $id: Now.ID['oauth_entity_write'],
+    operation: 'write',
+    status: 'allowed',
+    targetName: 'oauth_entity',
+    targetScope: 'global',
+    targetType: 'sys_db_object',
+})
