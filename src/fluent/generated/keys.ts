@@ -2865,6 +2865,14 @@ declare global {
                         }
                     },
                     {
+                        table: 'sys_dictionary'
+                        id: '5435931d00504874a2df56e9ce0bd54f'
+                        key: {
+                            name: 'x_entru_entrustidv_configuration'
+                            element: 'link_expiry_unit'
+                        }
+                    },
+                    {
                         table: 'sys_documentation'
                         id: '54c77c8c3d72468b90a868bcf058d41e'
                         key: {
@@ -2929,6 +2937,15 @@ declare global {
                         key: {
                             document_key: '46b269ee79e50a94b451d3d95a808dec'
                             variable: 'f3163e8eeb3331107626211f1a522880'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
+                        id: '5d6bb4ac3bc44b92b9f096f60102fcb6'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'expires_at'
+                            language: 'en'
                         }
                     },
                     {
@@ -3205,6 +3222,15 @@ declare global {
                     },
                     {
                         table: 'sys_documentation'
+                        id: '78897e7fd7f34689aae6eec35e815c6e'
+                        key: {
+                            name: 'x_entru_entrustidv_configuration'
+                            element: 'link_expiry_unit'
+                            language: 'en'
+                        }
+                    },
+                    {
+                        table: 'sys_documentation'
                         id: '78dde617473a0b1016bda144846d435f'
                         key: {
                             name: 'var__m_sys_pd_process_input_2cdd2a9f47f20b1016bda144846d43c6'
@@ -3368,6 +3394,14 @@ declare global {
                         key: {
                             document_key: 'ca7f0a5be6cddc2ae2635d929331d8aa'
                             variable: '32057a4eeb3331107626211f1a522880'
+                        }
+                    },
+                    {
+                        table: 'sys_dictionary'
+                        id: '8493ea49bc90465292afb4735db429c4'
+                        key: {
+                            name: 'x_entru_entrustidv_verification_request'
+                            element: 'expires_at'
                         }
                     },
                     {
