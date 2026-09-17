@@ -62,17 +62,18 @@ tests/
 
 ---
 
-### Step 2: Create Server-Side Test Cases
+### Step 2: Create Server-Side Test Cases (Multi-Step Structure)
 
-For each component test script in `tests/atf/server/`:
+Each server test file in `tests/atf/server/` contains **modular Step blocks** (e.g. `Step 1`, `Step 2`, `Step 3`). Creating multiple steps per test provides granular stats in the ATF Suite PDF export:
 
-1. Click **New**.
-2. Fill in the **Test Name** (matching the Output Title above, e.g. `Admin - API Connection Tests`).
+1. Click **New** under **Automated Test Framework > Tests**.
+2. Fill in the **Test Name** (e.g. `Admin - API Connection Tests`).
 3. Click **Save**.
 4. Scroll down to the **Test Steps** related list and click **Add Test Step**.
 5. Select Category **Server** $\rightarrow$ Step **Run Server-Side Script** $\rightarrow$ Click **Next**.
-6. Copy the corresponding JavaScript code from the file in `tests/atf/server/` and paste it into the **Script** field.
-7. Click **Submit**.
+6. Copy the **STEP 1** block from the corresponding `.js` file and paste it into the **Script** field. Set description / order (Order: 100). Click **Submit**.
+7. Click **Add Test Step** again, select **Run Server-Side Script**, copy **STEP 2** (Order: 200). Click **Submit**.
+8. Repeat for **STEP 3** (Order: 300) where applicable.
 
 > ⚠ **`tc_start_verification_live_integration_test.js` is opt-in.** Do not add it to the certification Test Suite (or run it) until you've configured a real, tested Entrust sandbox API connection and a real workflow ID on the target instance. It self-skips gracefully if those aren't configured, but it does make real outbound calls to Entrust when they are.
 
