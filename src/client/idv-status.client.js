@@ -290,12 +290,6 @@ function scheduleNextPoll() {
     var elapsed = new Date().getTime() - pollingStartedAt;
 
     if (elapsed >= MAX_POLL_DURATION_MS) {
-        console.log(
-            '[idv-status.client.js] Polling ended (max duration ' +
-                MAX_POLL_DURATION_MS / 1000 +
-                's reached): workflowRunId=' +
-                workflowRunId
-        );
         stopPolling();
         return;
     }
@@ -312,12 +306,6 @@ function handlePollingError() {
     consecutiveErrors++;
 
     if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
-        console.log(
-            '[idv-status.client.js] Polling ended (max consecutive errors ' +
-                MAX_CONSECUTIVE_ERRORS +
-                ' reached): workflowRunId=' +
-                workflowRunId
-        );
         stopPolling();
         return;
     }

@@ -52,10 +52,6 @@ export function addWorkNote(
  sourceRecordId: string,
  note: string
 ): boolean {
-gs.info(
-   `[IDV WorkNote] Starting addWorkNote table=${sourceTable}, ` +
-   `sys_id=${sourceRecordId}, note=${note}`
- );
  try {
    if (!isSupportedSourceTable(sourceTable)) {
      gs.error(
@@ -72,9 +68,6 @@ gs.info(
      return false;
    }
    const sourceRecord = new GlideRecord(sourceTable);
-gs.info(
-     `[IDV WorkNote] Created GlideRecord for table=${sourceTable}`
-   );
    sourceRecord.get(sourceRecordId);
    if (!sourceRecord.isValidRecord()) {
      gs.error(
@@ -83,10 +76,6 @@ gs.info(
      );
      return false;
    }
-gs.info(
-     `[IDV WorkNote] Record found. ` +
-     `table=${sourceTable}, sys_id=${sourceRecordId}`
-   );
    if (!sourceRecord.isValidField("work_notes")) {
      gs.error(
        `[IDV WorkNote] work_notes field does not exist on ${sourceTable}`
@@ -94,10 +83,10 @@ gs.info(
      return false;
    }
    const workNotes = sourceRecord.getElement("work_notes");
-gs.info(
-     `[IDV WorkNote] work_notes field is valid. ` +
-     `canWrite=${workNotes.canWrite()}`
-   );
+   if (!workNotes.canWrite()) {
+     gs.warn(`[IDV WorkNote] work_notes is not writable on ${sourceTable}`);
+     return false;
+   }
    /*
     * Journal fields cannot use setValue().
     * setJournalEntry() is also not allowed in scoped applications.
@@ -105,15 +94,7 @@ gs.info(
     * Direct field assignment is the supported approach.
     */
    (sourceRecord as any).work_notes = note;
-gs.info(
-     `[IDV WorkNote] Work note assigned. Calling update().`
-   );
    const updatedId = sourceRecord.update();
-gs.info(
-     `[IDV WorkNote] Update completed. ` +
-     `table=${sourceTable}, sys_id=${sourceRecordId}, ` +
-     `updatedId=${updatedId}`
-   );
    if (!updatedId) {
      gs.error(
        `[IDV WorkNote] Update returned no sys_id. ` +
@@ -121,10 +102,6 @@ gs.info(
      );
      return false;
    }
-gs.info(
-     `[IDV WorkNote] Work note successfully added. ` +
-     `table=${sourceTable}, sys_id=${sourceRecordId}`
-   );
    return true;
  } catch (error) {
    gs.error(

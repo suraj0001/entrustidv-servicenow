@@ -7,14 +7,7 @@ export function addWorkNote(
   recordId: string,
   message: string,
 ): void {
-  gs.info(
-    `[ActivityService] addWorkNote table=${tableName}, recordId=${recordId}, message=${message}`,
-  );
   const success = addSourceWorkNote(tableName, recordId, message);
-
-  gs.info(
-    `[ActivityService] addWorkNote success=${success}`,
-  );
 
   if (!success) {
     gs.warn(

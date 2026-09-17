@@ -67,7 +67,6 @@ export function createVerificationRequest(input: CreateVerificationRequest): str
   if (!sysId) {
     throw new Error("Unable to create verification request.");
   }
-  gs.info("[VerificationRequestRepository] Verification request created: sysId=" + sysId);
   return sysId.toString();
 }
 
@@ -88,12 +87,6 @@ export function deactivateActiveVerificationRequests(
   gr.setValue("active", false);
   gr.updateMultiple();
 
-  gs.info(
-    "[VerificationRequestRepository] Deactivated previous verification requests: sourceTable=" +
-      sourceTable +
-      ", sourceRecordId=" +
-      sourceRecordId,
-  );
 }
 
 export function countVerificationRequests(sourceTable: string, sourceRecordId: string): number {
@@ -188,23 +181,13 @@ export function findLatestVerificationStatus(
   gr.addQuery("source_record", sourceRecordId);
   gr.addQuery("active", true);
 
+  gr.setLimit(1);
   gr.query();
 
   if (gr.next()) {
-    const status = (gr.getValue("status") as string) || "";
     const sysCreatedOn = (gr.getValue("sys_created_on") as string) || "";
     const sysUpdatedOn = (gr.getValue("sys_updated_on") as string) || "";
     const updatedAt = sysUpdatedOn || sysCreatedOn;
-    gs.info(
-      "[VerificationRequestRepository] findLatestVerificationStatus: sourceTable=" +
-        sourceTable +
-        ", sourceRecordId=" +
-        sourceRecordId +
-        ", foundStatus=" +
-        status +
-        ", updatedAt=" +
-        updatedAt,
-    );
     return {
       workflowRunId: gr.getValue("workflow_run_id") || "",
       status: gr.getValue("status") || "",
@@ -219,12 +202,6 @@ export function findLatestVerificationStatus(
     };
   }
 
-  gs.info(
-    "[VerificationRequestRepository] findLatestVerificationStatus: no verification request found for sourceTable=" +
-      sourceTable +
-      ", sourceRecordId=" +
-      sourceRecordId,
-  );
   return null;
 }
 
@@ -296,10 +273,6 @@ export function updateStatusByWorkflowRunId(workflowRunId: string, status: strin
   gr.setValue("status", status);
   gr.update();
 
-  gs.info(
-    `[VerificationRequestRepository] Status updated ` +
-      `workflow_run_id=${workflowRunId}, status=${status}`,
-  );
 }
 
 export function updateEvidenceFolderHrefByWorkflowRunId(
@@ -323,8 +296,4 @@ export function updateEvidenceFolderHrefByWorkflowRunId(
 
   gr.update();
 
-  gs.info(
-    `[VerificationRequestRepository] Evidence folder href updated ` +
-      `workflow_run_id=${workflowRunId}`,
-  );
 }
