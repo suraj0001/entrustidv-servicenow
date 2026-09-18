@@ -1,26 +1,22 @@
-import { gs } from '@servicenow/glide';
-import { ACTIVITY_MESSAGES } from '../constants.ts';
-import { addWorkNote as addSourceWorkNote } from '../repositories/source-record-repository.ts';
+import { gs } from "@servicenow/glide";
+import { addWorkNote as addSourceWorkNote } from "../repositories/source-record-repository.ts";
+import { ACTIVITY_MESSAGES } from "../constants.ts";
 
-export function addWorkNote(tableName: string, recordId: string, message: string): void {
-  gs.info(
-    `[ActivityService] addWorkNote table=${tableName}, recordId=${recordId}, message=${message}`
-  );
+export function addWorkNote(
+  tableName: string,
+  recordId: string,
+  message: string,
+): void {
   const success = addSourceWorkNote(tableName, recordId, message);
-
-  gs.info(`[ActivityService] addWorkNote success=${success}`);
 
   if (!success) {
     gs.warn(
-      `[ActivityService] Unable to add work note. Record not found or unsupported: ${tableName}/${recordId}`
+      `[ActivityService] Unable to add work note. Record not found or unsupported: ${tableName}/${recordId}`,
     );
   }
 }
 
-export function getVerificationCreatedActivityMessage(
-  existingRequestCount: number,
-  workflowRunId: string
-): string {
+export function getVerificationCreatedActivityMessage(existingRequestCount: number, workflowRunId: string): string {
   let baseMessage: string;
 
   if (existingRequestCount <= 0) {
@@ -36,19 +32,19 @@ export function getVerificationCreatedActivityMessage(
 
 export function getCompletionActivityMessage(status: string): string {
   switch (status.trim().toLowerCase()) {
-    case 'approved':
+    case "approved":
       return ACTIVITY_MESSAGES.OUTCOME_APPROVED;
 
-    case 'review':
+    case "review":
       return ACTIVITY_MESSAGES.OUTCOME_REVIEW;
 
-    case 'declined':
+    case "declined":
       return ACTIVITY_MESSAGES.OUTCOME_DECLINED;
 
-    case 'abandoned':
+    case "abandoned":
       return ACTIVITY_MESSAGES.OUTCOME_ABANDONED;
 
-    case 'error':
+    case "error":
       return ACTIVITY_MESSAGES.OUTCOME_ERROR;
 
     default:

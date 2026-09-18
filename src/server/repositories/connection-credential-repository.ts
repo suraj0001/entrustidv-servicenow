@@ -27,11 +27,6 @@ export interface OAuthEntityRecord {
   profileSysId: string;
 }
 
-export interface RuntimeConnectionInfo {
-  baseUrl: string;
-  credentialSysId: string;
-}
-
 export interface EntrustRuntimeConnection {
   baseUrl: string;
   oauthProfileId: string;
@@ -326,46 +321,6 @@ export class ApiConnectionRepository {
   // ---------------------------------------------------------------------
   // Runtime connection resolution
   // ---------------------------------------------------------------------
-
-  /**
-   * Retained for callers that only need the credential resolved
-   * through ConnectionInfoProvider.
-   *
-   * The API URL is NOT taken from http_connection anymore.
-   */
-  getConnectionInfo(aliasSysId: string): RuntimeConnectionInfo | null {
-    const provider = new ConnectionInfoProvider();
-    const connectionInfo = provider.getConnectionInfo(aliasSysId);
-
-    if (!connectionInfo) {
-      return null;
-    }
-
-    const credentialSysId = String(connectionInfo.getCredentialAttribute('sys_id') || '');
-
-    if (!credentialSysId) {
-      return null;
-    }
-
-    const config = this.findConfiguration();
-
-    if (!config || !config.region) {
-      return null;
-    }
-
-    const region = config.region.toLowerCase() as EntrustRegion;
-
-    const baseUrl = BASE_URLS[region];
-
-    if (!baseUrl) {
-      return null;
-    }
-
-    return {
-      baseUrl,
-      credentialSysId,
-    };
-  }
 
   /**
    * Runtime Entrust connection information.
