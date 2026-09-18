@@ -86,7 +86,6 @@ export function deactivateActiveVerificationRequests(
 
   gr.setValue('active', false);
   gr.updateMultiple();
-
 }
 
 export function countVerificationRequests(sourceTable: string, sourceRecordId: string): number {
@@ -185,8 +184,8 @@ export function findLatestVerificationStatus(
   gr.query();
 
   if (gr.next()) {
-    const sysCreatedOn = (gr.getValue("sys_created_on") as string) || "";
-    const sysUpdatedOn = (gr.getValue("sys_updated_on") as string) || "";
+    const sysCreatedOn = (gr.getValue('sys_created_on') as string) || '';
+    const sysUpdatedOn = (gr.getValue('sys_updated_on') as string) || '';
     const updatedAt = sysUpdatedOn || sysCreatedOn;
     return {
       workflowRunId: gr.getValue('workflow_run_id') || '',
@@ -272,7 +271,6 @@ export function updateStatusByWorkflowRunId(workflowRunId: string, status: strin
 
   gr.setValue('status', status);
   gr.update();
-
 }
 
 export function updateEvidenceFolderHrefByWorkflowRunId(
@@ -295,5 +293,4 @@ export function updateEvidenceFolderHrefByWorkflowRunId(
   gr.setValue('evidence_folder_href', evidenceFolderHref);
 
   gr.update();
-
 }
