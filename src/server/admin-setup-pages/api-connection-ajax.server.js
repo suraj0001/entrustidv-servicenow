@@ -1,4 +1,7 @@
+// @ts-nocheck
 var ApiConnectionAjax = Class.create();
+
+// eslint-disable-next-line no-unsupported-node-builtins -- `global` refers to the ServiceNow global scope object here, not Node's global
 ApiConnectionAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
   getConfig: function () {
     return _call(this, (svc) => svc.getConfig());

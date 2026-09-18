@@ -1,5 +1,7 @@
+// @ts-nocheck
 var IdvStatusAjax = Class.create();
 
+// eslint-disable-next-line no-unsupported-node-builtins -- `global` refers to the ServiceNow global scope object here, not Node's global
 IdvStatusAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
   getLatestStatus: function () {
     try {

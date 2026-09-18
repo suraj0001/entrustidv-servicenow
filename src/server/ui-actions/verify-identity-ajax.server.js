@@ -1,5 +1,7 @@
+// @ts-nocheck
 var VerifyIdentityAjax = Class.create();
 
+// eslint-disable-next-line no-unsupported-node-builtins -- `global` refers to the ServiceNow global scope object here, not Node's global
 VerifyIdentityAjax.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
   startVerification: function () {
     try {
