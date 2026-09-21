@@ -13,7 +13,9 @@ var LINK_EXPIRY_MINUTES_MAX = 2880;
 var LINK_EXPIRY_HOURS_MIN = 1;
 var LINK_EXPIRY_HOURS_MAX = 48;
 
-export function validateVerificationSettings(input: VerificationSettingsInput): void {
+export function validateVerificationSettings(
+  input: VerificationSettingsInput,
+): void {
   var workflowId = clean(input.workflowId);
   var linkExpiry = clean(input.linkExpiry);
   var linkExpiryUnit = clean(input.linkExpiryUnit).toLowerCase();
@@ -25,7 +27,9 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
   }
 
   if (workflowId.length > WORKFLOW_ID_MAX_LEN) {
-    throw new Error("Workflow ID must be " + WORKFLOW_ID_MAX_LEN + " characters or fewer.");
+    throw new Error(
+      "Workflow ID must be " + WORKFLOW_ID_MAX_LEN + " characters or fewer.",
+    );
   }
 
   if (!linkExpiry) {
@@ -43,10 +47,6 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
   var expiry = Number(linkExpiry);
 
   if (linkExpiryUnit === "minutes") {
-    if (!Number.isInteger(expiry)) {
-      throw new Error("Decimal minutes are not allowed for link expiry.");
-    }
-
     if (expiry < LINK_EXPIRY_MINUTES_MIN) {
       throw new Error("Link expiry must be at least 15 minutes.");
     }
@@ -54,13 +54,15 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
     if (expiry > LINK_EXPIRY_MINUTES_MAX) {
       throw new Error("Link expiry cannot exceed 2880 minutes.");
     }
+
+    if (!Number.isInteger(expiry)) {
+      throw new Error(
+        "Decimal values are not allowed for link expiry in minutes.",
+      );
+    }
   }
 
   if (linkExpiryUnit === "hours") {
-    if (!Number.isInteger(expiry)) {
-      throw new Error("Decimal hours are not allowed for link expiry.");
-    }
-
     if (expiry < LINK_EXPIRY_HOURS_MIN) {
       throw new Error(
         "When Hours is selected, the minimum link expiry is 1 hour. For a shorter duration, select Minutes.",
@@ -69,6 +71,12 @@ export function validateVerificationSettings(input: VerificationSettingsInput): 
 
     if (expiry > LINK_EXPIRY_HOURS_MAX) {
       throw new Error("Link expiry cannot exceed 48 hours.");
+    }
+
+    if (!Number.isInteger(expiry)) {
+      throw new Error(
+        "Decimal values are not allowed for link expiry in hours.",
+      );
     }
   }
 

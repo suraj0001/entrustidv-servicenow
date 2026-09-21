@@ -68,7 +68,9 @@ function clearFieldError(fieldId) {
 }
 
 function clearFieldErrors() {
-  ["workflow_id", "link_expiry", "delivery_channel", "redirect_url"].forEach(clearFieldError);
+  ["workflow_id", "link_expiry", "delivery_channel", "redirect_url"].forEach(
+    clearFieldError,
+  );
 }
 
 function focusFirstInvalidField() {
@@ -87,10 +89,10 @@ function showServerValidationError(message) {
     fieldId = "workflow_id";
   else if (
     message === "Link expiry is required." ||
-    message === "Decimal minutes are not allowed for link expiry." ||
+    message === "Decimal values are not allowed for link expiry in minutes." ||
     message === "Link expiry must be at least 15 minutes." ||
     message === "Link expiry cannot exceed 2880 minutes." ||
-    message === "Decimal hours are not allowed for link expiry." ||
+    message === "Decimal values are not allowed for link expiry in hours." ||
     message ===
       "When Hours is selected, the minimum link expiry is 1 hour. For a shorter duration, select Minutes." ||
     message === "Link expiry cannot exceed 48 hours." ||
@@ -179,8 +181,12 @@ function setLinkExpiryInputConstraints(unit) {
   var input = _el("link_expiry");
   var isHours = unit === "hours";
 
-  input.min = isHours ? String(LINK_EXPIRY_HOURS_MIN) : String(LINK_EXPIRY_MINUTES_MIN);
-  input.max = isHours ? String(LINK_EXPIRY_HOURS_MAX) : String(LINK_EXPIRY_MINUTES_MAX);
+  input.min = isHours
+    ? String(LINK_EXPIRY_HOURS_MIN)
+    : String(LINK_EXPIRY_MINUTES_MIN);
+  input.max = isHours
+    ? String(LINK_EXPIRY_HOURS_MAX)
+    : String(LINK_EXPIRY_MINUTES_MAX);
   input.step = "1";
 }
 
@@ -220,11 +226,6 @@ function validateLinkExpiry() {
   }
 
   if (unit === "minutes") {
-    if (!Number.isInteger(expiry)) {
-      showFieldError("link_expiry", "Decimal minutes are not allowed for link expiry.");
-      return false;
-    }
-
     if (expiry < LINK_EXPIRY_MINUTES_MIN) {
       showFieldError("link_expiry", "Link expiry must be at least 15 minutes.");
       return false;
@@ -234,14 +235,17 @@ function validateLinkExpiry() {
       showFieldError("link_expiry", "Link expiry cannot exceed 2880 minutes.");
       return false;
     }
+
+    if (!Number.isInteger(expiry)) {
+      showFieldError(
+        "link_expiry",
+        "Decimal values are not allowed for link expiry in minutes.",
+      );
+      return false;
+    }
   }
 
   if (unit === "hours") {
-    if (!Number.isInteger(expiry)) {
-      showFieldError("link_expiry", "Decimal hours are not allowed for link expiry.");
-      return false;
-    }
-
     if (expiry < LINK_EXPIRY_HOURS_MIN) {
       showFieldError(
         "link_expiry",
@@ -252,6 +256,14 @@ function validateLinkExpiry() {
 
     if (expiry > LINK_EXPIRY_HOURS_MAX) {
       showFieldError("link_expiry", "Link expiry cannot exceed 48 hours.");
+      return false;
+    }
+
+    if (!Number.isInteger(expiry)) {
+      showFieldError(
+        "link_expiry",
+        "Decimal values are not allowed for link expiry in hours.",
+      );
       return false;
     }
   }
@@ -296,7 +308,12 @@ function validateForm() {
   var deliveryChannelValid = validateDeliveryChannel();
   var redirectUrlValid = validateRedirectUrl();
 
-  return workflowIdValid && linkExpiryValid && deliveryChannelValid && redirectUrlValid;
+  return (
+    workflowIdValid &&
+    linkExpiryValid &&
+    deliveryChannelValid &&
+    redirectUrlValid
+  );
 }
 
 _el("btn_save").addEventListener("click", function () {
@@ -327,11 +344,14 @@ _el("btn_save").addEventListener("click", function () {
       button.textContent = "Save";
 
       if (result && result.success) {
-        showSuccess(result.message || "Verification settings saved successfully.");
+        showSuccess(
+          result.message || "Verification settings saved successfully.",
+        );
         return;
       }
 
-      var message = (result && result.message) || "Failed to save verification settings.";
+      var message =
+        (result && result.message) || "Failed to save verification settings.";
       if (showServerValidationError(message)) {
         focusFirstInvalidField();
         return;
