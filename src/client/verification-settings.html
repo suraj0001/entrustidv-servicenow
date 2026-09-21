@@ -193,7 +193,7 @@
         </label>
         <span class="hint">The Entrust workflow that will be used for identity verification
           requests.</span>
-        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off" placeholder="Enter Entrust workflow ID"></input>
+        <input id="workflow_id" name="workflow_id" type="text" autocomplete="off"></input>
         <div id="workflow_id_error" class="field-error" role="alert"></div>
       </div>
       <!-- Link Expiry -->
@@ -201,12 +201,12 @@
         <label for="link_expiry">Link Expiry
           <span class="req">*</span>
         </label>
-        <span class="hint">How long the identity verification link remains valid after the request is created.</span>
+        <span class="hint">Set how long the identity verification link remains valid.</span>
         <div class="input-with-suffix">
-          <input id="link_expiry" name="link_expiry" type="number" min="1" max="2880" value="60"></input>
+          <input id="link_expiry" name="link_expiry" type="number" min="1" max="48" step="1" value="1"></input>
           <select id="link_expiry_unit" name="link_expiry_unit" class="expiry-unit-select" aria-label="Link expiry unit">
-            <option value="minutes" selected="selected">Minutes</option>
-            <option value="hours">Hours</option>
+            <option value="minutes">Minutes</option>
+            <option value="hours" selected="selected">Hours</option>
           </select>
         </div>
         <div id="link_expiry_error" class="field-error" role="alert"></div>

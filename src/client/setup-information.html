@@ -343,7 +343,7 @@
           <label class="setup-form-label" for="webhook_token">Webhook Token</label>
           <p class="helper-text field-description">After configuring the webhook, enter the token provided by Entrust. ServiceNow uses it to verify incoming webhook events.</p>
           <div class="setup-input-row">
-            <input id="webhook_token" class="setup-input" type="password" autocomplete="new-password" minlength="5" maxlength="100" placeholder="Enter webhook token"></input>
+            <input id="webhook_token" class="setup-input" type="password" autocomplete="new-password" minlength="5" maxlength="100"></input>
             <button id="btn_save_webhook_token" type="button" class="setup-btn btn btn-save" disabled="true">Save</button>
           </div>
           <div id="webhook_token_error" class="field-error" role="alert"></div>
@@ -383,8 +383,7 @@
             <div class="role-info">
               <p class="role-name">Agent</p>
               <p class="role-value">x_entru_entrustidv.agent</p>
-              <p class="role-description">Assign the Agent role to start identity verifications and track their
-                status.</p>
+              <p class="role-description">Assign the Agent role to view the Verify Identity button on incident pages and start the identity verification process in ServiceNow.</p>
             </div>
           </div>
           <div class="role-item">
