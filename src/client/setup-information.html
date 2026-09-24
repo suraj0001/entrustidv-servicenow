@@ -352,28 +352,22 @@
           <span class="status-text"></span>
         </div>
       </section>
-      <section class="setup-section">
+      <g:evaluate var="jvar_email_sending_enabled" expression="gs.getProperty('glide.email.smtp.active', 'false') == 'true'"></g:evaluate>
+      <section class="setup-section" id="email_delivery_section" data-email-enabled="${jvar_email_sending_enabled}">
         <h2 class="setup-section-title">Email Delivery</h2>
-        <g:evaluate var="jvar_email_sending_enabled" expression="gs.getProperty('glide.email.smtp.active', 'false') == 'true'"></g:evaluate>
-        <j:choose>
-          <j:when test="${jvar_email_sending_enabled}">
-            <div class="status-message success email-status">
-              <span class="status-icon" aria-hidden="true">$[AMP]#10003;</span>
-              <span>Outbound email is enabled.</span>
-            </div>
-            <p class="helper-text">Identity verification links can be sent from this instance.</p>
-          </j:when>
-          <j:otherwise>
-            <div class="status-message warning email-status">
-              <span class="status-icon" aria-hidden="true">!</span>
-              <span>Outbound email is not enabled.</span>
-            </div>
-            <p class="helper-text">Enable outbound email so identity verification links can be
-              delivered to users.</p>
-            <div class="email-settings-path">All $[AMP]#8594; System Properties $[AMP]#8594; Email Properties $[AMP]#8594;
-              Outbound Email Configuration</div>
-          </j:otherwise>
-        </j:choose>
+        <div id="email_status_enabled" class="status-message success email-status" style="display:none">
+          <span class="status-icon" aria-hidden="true">$[AMP]#10003;</span>
+          <span>Outbound email is enabled.</span>
+        </div>
+        <p id="email_helper_enabled" class="helper-text" style="display:none">Identity verification links can be sent from this instance.</p>
+        <div id="email_status_disabled" class="status-message warning email-status" style="display:none">
+          <span class="status-icon" aria-hidden="true">!</span>
+          <span>Outbound email is not enabled.</span>
+        </div>
+        <p id="email_helper_disabled" class="helper-text" style="display:none">Enable outbound email so identity verification links can be
+          delivered to users.</p>
+        <div id="email_settings_path" class="email-settings-path" style="display:none">All $[AMP]#8594; System Properties $[AMP]#8594; Email Properties $[AMP]#8594;
+          Outbound Email Configuration</div>
       </section>
       <section class="setup-section">
         <h2 class="setup-section-title">Application Access</h2>

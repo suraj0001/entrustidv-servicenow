@@ -26,7 +26,30 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   getWebhookTokenStatus();
+  applyEmailDeliveryStatus();
 });
+
+function applyEmailDeliveryStatus() {
+  var section = _el('email_delivery_section');
+  var emailEnabled = section && section.getAttribute('data-email-enabled') === 'true';
+
+  var shownDisplay = { email_status_enabled: 'flex', email_helper_enabled: 'block' };
+  var shownDisplayDisabled = { email_status_disabled: 'flex', email_helper_disabled: 'block', email_settings_path: 'block' };
+
+  Object.keys(shownDisplay).forEach(function (id) {
+    var el = _el(id);
+    if (el) {
+      el.style.display = emailEnabled ? shownDisplay[id] : 'none';
+    }
+  });
+
+  Object.keys(shownDisplayDisabled).forEach(function (id) {
+    var el = _el(id);
+    if (el) {
+      el.style.display = emailEnabled ? 'none' : shownDisplayDisabled[id];
+    }
+  });
+}
 
 function getWebhookTokenStatus() {
   var ajax = new GlideAjax('x_entru_entrustidv.VerificationSettingsAjax');

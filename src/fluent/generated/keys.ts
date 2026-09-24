@@ -3229,15 +3229,6 @@ declare global {
                         }
                     },
                     {
-                        table: 'sys_dictionary'
-                        id: '57b7ae8c914847bdbbb21fe277c29d4c'
-                        deleted: true
-                        key: {
-                            name: 'x_entru_entrustidv_configuration'
-                            element: 'link_expiry_unit'
-                        }
-                    },
-                    {
                         table: 'sys_documentation'
                         id: '59c9004accb54cc79052c1be21f12e54'
                         key: {
@@ -3269,16 +3260,6 @@ declare global {
                         key: {
                             document_key: 'be3c43ae479b8b1016bda144846d4327'
                             variable: 'ad351a4e53a0220002c6435723dc34f0'
-                        }
-                    },
-                    {
-                        table: 'sys_documentation'
-                        id: '5d6bb4ac3bc44b92b9f096f60102fcb6'
-                        deleted: true
-                        key: {
-                            name: 'x_entru_entrustidv_verification_request'
-                            element: 'expires_at'
-                            language: 'en'
                         }
                     },
                     {
@@ -3818,15 +3799,6 @@ declare global {
                         key: {
                             document_key: 'f90547ea475b8b1016bda144846d43c6'
                             variable: '989d9e235324220002c6435723dc3484'
-                        }
-                    },
-                    {
-                        table: 'sys_dictionary'
-                        id: '8493ea49bc90465292afb4735db429c4'
-                        deleted: true
-                        key: {
-                            name: 'x_entru_entrustidv_verification_request'
-                            element: 'expires_at'
                         }
                     },
                     {
@@ -4591,16 +4563,6 @@ declare global {
                             field: 'icon'
                             table: 'var__m_sys_pd_activity_type_prop_9205f64eeb3331107626211f1a52284f'
                             id: 'dbca8bfb43956d002f84a1502bc4d352'
-                        }
-                    },
-                    {
-                        table: 'sys_documentation'
-                        id: 'bbb0ccec236e4f1b9cdd2b276edd0a18'
-                        deleted: true
-                        key: {
-                            name: 'x_entru_entrustidv_configuration'
-                            element: 'link_expiry_unit'
-                            language: 'en'
                         }
                     },
                     {
