@@ -1,4 +1,4 @@
-import { GlideDateTime, GlideRecord, gs } from '@servicenow/glide';
+import { GlideAggregate, GlideDateTime, GlideRecord, gs } from '@servicenow/glide';
 import { VERIFICATION_REQUEST_TABLE } from '../constants.ts';
 
 export interface CreateVerificationRequest {
@@ -93,14 +93,18 @@ export function countVerificationRequests(sourceTable: string, sourceRecordId: s
     return 0;
   }
 
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
-  gr.addQuery('source_table', sourceTable);
-  gr.addQuery('source_record', sourceRecordId);
-  gr.query();
+  const ga = new GlideAggregate(VERIFICATION_REQUEST_TABLE);
+  ga.addQuery('source_table', sourceTable);
+  ga.addQuery('source_record', sourceRecordId);
+  ga.addAggregate('COUNT');
+  ga.query();
 
-  return gr.getRowCount();
+  if (ga.next()) {
+    return Number.parseInt(ga.getAggregate('COUNT'), 10) || 0;
+  }
+
+  return 0;
 }
-
 export function findApplicantIdBySubjectUser(subjectUserId: string): string | null {
   if (!subjectUserId) {
     return null;
@@ -127,13 +131,11 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
   }
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  gr.get(sysId);
-
-  if (!gr.isValidRecord()) {
-    return null;
+  if (Boolean(gr.get(sysId))) {
+    return gr;
   }
 
-  return gr;
+  return null;
 }
 
 export function findVerificationRequestByWorkflowRunId(

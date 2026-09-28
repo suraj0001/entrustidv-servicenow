@@ -13,8 +13,7 @@ export function findSubjectUser(userId: string): SubjectUser | null {
   }
 
   const user = new GlideRecord('sys_user');
-  user.get(userId);
-  if (!user.isValidRecord()) {
+  if (!Boolean(user.get(userId))) {
     return null;
   }
 
