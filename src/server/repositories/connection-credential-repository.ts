@@ -44,9 +44,11 @@ function getRecord(table: string, sysId: string): GlideRecord | null {
 
   const gr = new GlideRecord(table);
 
-  gr.get(sysId);
+  if (Boolean(gr.get(sysId))) {
+    return gr;
+  }
 
-  return gr.isValidRecord() ? gr : null;
+  return null;
 }
 
 export class ApiConnectionRepository {

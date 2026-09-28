@@ -13,9 +13,7 @@ var LINK_EXPIRY_MINUTES_MAX = 2880;
 var LINK_EXPIRY_HOURS_MIN = 1;
 var LINK_EXPIRY_HOURS_MAX = 48;
 
-export function validateVerificationSettings(
-  input: VerificationSettingsInput,
-): void {
+export function validateVerificationSettings(input: VerificationSettingsInput): void {
   var workflowId = clean(input.workflowId);
   var linkExpiry = clean(input.linkExpiry);
   var linkExpiryUnit = clean(input.linkExpiryUnit).toLowerCase();
@@ -23,73 +21,67 @@ export function validateVerificationSettings(
   var redirectUrl = clean(input.redirectUrl);
 
   if (!workflowId) {
-    throw new Error("Workflow ID is required.");
+    throw new Error('Workflow ID is required.');
   }
 
   if (workflowId.length > WORKFLOW_ID_MAX_LEN) {
-    throw new Error(
-      "Workflow ID must be " + WORKFLOW_ID_MAX_LEN + " characters or fewer.",
-    );
+    throw new Error('Workflow ID must be ' + WORKFLOW_ID_MAX_LEN + ' characters or fewer.');
   }
 
   if (!linkExpiry) {
-    throw new Error("Link expiry is required.");
+    throw new Error('Link expiry is required.');
   }
 
   if (!linkExpiryUnit) {
-    throw new Error("Link expiry unit is required.");
+    throw new Error('Link expiry unit is required.');
   }
 
-  if (linkExpiryUnit !== "minutes" && linkExpiryUnit !== "hours") {
-    throw new Error("Link expiry unit must be minutes or hours.");
+  if (linkExpiryUnit !== 'minutes' && linkExpiryUnit !== 'hours') {
+    throw new Error('Link expiry unit must be minutes or hours.');
   }
 
   var expiry = Number(linkExpiry);
 
-  if (linkExpiryUnit === "minutes") {
+  if (linkExpiryUnit === 'minutes') {
     if (expiry < LINK_EXPIRY_MINUTES_MIN) {
-      throw new Error("Link expiry must be at least 15 minutes.");
+      throw new Error('Link expiry must be at least 15 minutes.');
     }
 
     if (expiry > LINK_EXPIRY_MINUTES_MAX) {
-      throw new Error("Link expiry cannot exceed 2880 minutes.");
+      throw new Error('Link expiry cannot exceed 2880 minutes.');
     }
 
     if (!Number.isInteger(expiry)) {
-      throw new Error(
-        "Decimal values are not allowed for link expiry in minutes.",
-      );
+      throw new Error('Decimal values are not allowed for link expiry in minutes.');
     }
   }
 
-  if (linkExpiryUnit === "hours") {
+  if (linkExpiryUnit === 'hours') {
     if (expiry < LINK_EXPIRY_HOURS_MIN) {
       throw new Error(
-        "When Hours is selected, the minimum link expiry is 1 hour. For a shorter duration, select Minutes.",
+        'When Hours is selected, the minimum link expiry is 1 hour. For a shorter duration, select Minutes.'
       );
     }
 
     if (expiry > LINK_EXPIRY_HOURS_MAX) {
-      throw new Error("Link expiry cannot exceed 48 hours.");
+      throw new Error('Link expiry cannot exceed 48 hours.');
     }
 
     if (!Number.isInteger(expiry)) {
-      throw new Error(
-        "Decimal values are not allowed for link expiry in hours.",
-      );
+      throw new Error('Decimal values are not allowed for link expiry in hours.');
     }
   }
 
   if (!deliveryChannel) {
-    throw new Error("Delivery channel is required.");
+    throw new Error('Delivery channel is required.');
   }
 
-  if (deliveryChannel !== "email") {
-    throw new Error("Email is currently the only supported delivery channel.");
+  if (deliveryChannel !== 'email') {
+    throw new Error('Email is currently the only supported delivery channel.');
   }
 
   if (redirectUrl && !isValidHttpUrl(redirectUrl)) {
-    throw new Error("Enter a valid redirect URL.");
+    throw new Error('Enter a valid redirect URL.');
   }
 }
 
@@ -98,5 +90,5 @@ function isValidHttpUrl(value: string): boolean {
 }
 
 function clean(value: string | null | undefined): string {
-  return value ? String(value).trim() : "";
+  return value ? String(value).trim() : '';
 }

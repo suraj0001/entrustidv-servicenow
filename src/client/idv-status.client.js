@@ -1,3 +1,4 @@
+// @ts-nocheck
 var STATUS_FIELD = 'x_entru_entrustidv_verification_status';
 var LOADING_STATUS_TEXT = 'Fetching status...';
 var LOADING_SPINNER_ID = 'idv-status-loading-spinner';
@@ -9,7 +10,7 @@ var SHORT_TIER_LIMIT_MS = 10 * 60 * 1000; // First 10 minutes
 var SHORT_TIER_INTERVAL_MS = 60 * 1000; // Poll every 1 minute (up to 10 mins)
 var LONG_TIER_INTERVAL_MS = 5 * 60 * 1000; // Poll every 5 minutes (10 to 60 mins)
 var MAX_CONSECUTIVE_ERRORS = 3;
-var MESSAGE_AUTO_DISMISS_MS = 10000;
+var MESSAGE_AUTO_DISMISS_MS = 20000;
 
 var workflowRunId = null;
 var pollingStartedAt = 0;
@@ -180,13 +181,29 @@ function executeVerifyIdentity() {
     return;
   }
 
-  var currentDisplayStatus = getLastKnownDisplayStatus();
-  if (currentDisplayStatus && currentDisplayStatus !== 'Not Started') {
-    confirmReverification(sourceTable, sourceRecordId);
-    return;
-  }
+  // Re-check the authoritative status from the server on every click instead of
+  // trusting the onLoad-populated cache, since that cache may not have resolved
+  // yet (or may be stale right after a refresh) by the time the button is clicked.
+  var ga = new GlideAjax('x_entru_entrustidv.IdvStatusAjax');
+  ga.addParam('sysparm_name', 'getLatestStatus');
+  ga.addParam('sysparm_table', sourceTable);
+  ga.addParam('sysparm_sys_id', sourceRecordId);
 
-  startVerificationRequest(sourceTable, sourceRecordId);
+  ga.getXMLAnswer(function (answer) {
+    var result = parseResponse(answer);
+    var currentDisplayStatus = result.success
+      ? result.displayStatus || formatStatus(result.status)
+      : getLastKnownDisplayStatus();
+
+    setLastKnownDisplayStatus(currentDisplayStatus);
+
+    if (currentDisplayStatus && currentDisplayStatus !== 'Not Started') {
+      confirmReverification(sourceTable, sourceRecordId);
+      return;
+    }
+
+    startVerificationRequest(sourceTable, sourceRecordId);
+  });
 }
 
 function confirmReverification(sourceTable, sourceRecordId) {

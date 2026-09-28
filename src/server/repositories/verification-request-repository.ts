@@ -105,7 +105,6 @@ export function countVerificationRequests(sourceTable: string, sourceRecordId: s
 
   return 0;
 }
-
 export function findApplicantIdBySubjectUser(subjectUserId: string): string | null {
   if (!subjectUserId) {
     return null;
@@ -132,13 +131,11 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
   }
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  gr.get(sysId);
-
-  if (!gr.isValidRecord()) {
-    return null;
+  if (Boolean(gr.get(sysId))) {
+    return gr;
   }
 
-  return gr;
+  return null;
 }
 
 export function findVerificationRequestByWorkflowRunId(
