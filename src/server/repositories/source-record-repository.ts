@@ -1,4 +1,4 @@
-import { GlideRecord, gs } from '@servicenow/glide';
+import { GlideRecord, GlideRecordSecure, gs } from '@servicenow/glide';
 
 export type SupportedSourceTable = 'incident' | 'sn_hr_core_case';
 
@@ -24,9 +24,7 @@ export function findSourceRecordContext(
 
   const sourceRecord = new GlideRecord(sourceTable);
 
-  sourceRecord.get(sourceRecordId);
-
-  if (!sourceRecord.isValidRecord()) {
+  if (!Boolean(sourceRecord.get(sourceRecordId))) {
     return null;
   }
 
