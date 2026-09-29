@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Coverage & Scenario Verification Report | Entrust Identity Verification</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --primary-subtle: #eff6ff;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --warning: #d97706;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --info: #0284c7;
+      --info-bg: #f0f9ff;
+      --info-border: #bae6fd;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --purple-border: #ddd6fe;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--slate-800);
+      background-color: #f8fafc;
+      line-height: 1.5;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header Banner */
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-card::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+    }
+
+    .header-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .header-subtitle {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+      max-width: 900px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 1.25rem;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #f8fafc;
+    }
+
+    /* KPI Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate-600);
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .kpi-desc {
+      font-size: 0.8rem;
+      color: var(--slate-600);
+      margin-top: 0.25rem;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      background: white;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.5rem;
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-600);
+      font-size: 0.9rem;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--slate-200);
+      background: white;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .print-btn {
+      padding: 0.5rem 1rem;
+      background: var(--slate-800);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .print-btn:hover {
+      background: var(--slate-900);
+    }
+
+    /* Table of Contents */
+    .toc-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .toc-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--slate-800);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .toc-link:hover {
+      background: var(--primary-subtle);
+      border-color: var(--primary-light);
+      color: var(--primary);
+      transform: translateX(3px);
+    }
+
+    .toc-count {
+      background: white;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      border: 1px solid var(--slate-200);
+    }
+
+    /* Test Suite Sections */
+    .suite-section {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .suite-header {
+      padding: 1.25rem 1.5rem;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .suite-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .suite-file {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: var(--primary);
+      background: var(--primary-subtle);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      width: fit-content;
+    }
+
+    .suite-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .suite-badge-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .suite-desc {
+      padding: 1rem 1.5rem;
+      background: white;
+      border-bottom: 1px solid var(--slate-100);
+      font-size: 0.9rem;
+      color: var(--slate-600);
+    }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    thead {
+      background-color: #f8fafc;
+      border-bottom: 2px solid var(--slate-200);
+    }
+
+    th {
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      color: var(--slate-700);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+      color: var(--slate-700);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      white-space: nowrap;
+    }
+
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .badge-info {
+      background: var(--info-bg);
+      color: var(--info);
+      border: 1px solid var(--info-border);
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning-border);
+    }
+
+    .badge-purple {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border: 1px solid var(--purple-border);
+    }
+
+    .badge-slate {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+    }
+
+    .code-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+      display: inline-block;
+    }
+
+    .scenario-title {
+      font-weight: 600;
+      color: var(--slate-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .scenario-desc {
+      font-size: 0.825rem;
+      color: var(--slate-600);
+      line-height: 1.4;
+    }
+
+    .validation-list {
+      margin-left: 1.2rem;
+      margin-top: 0.25rem;
+      font-size: 0.825rem;
+    }
+
+    .validation-list li {
+      margin-bottom: 0.2rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--slate-200);
+      font-size: 0.85rem;
+      color: var(--slate-600);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+      .controls-bar, .print-btn, .toc-card {
+        display: none !important;
+      }
+      .header-card {
+        background: #1e3a8a !important;
+        color: white !important;
+        padding: 1.5rem !important;
+        box-shadow: none !important;
+      }
+      .suite-section {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid;
+      }
+      table {
+        font-size: 8pt;
+      }
+      th, td {
+        padding: 0.4rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header Card -->
+    <header class="header-card">
+      <h1 class="header-title">Entrust Identity Verification — Test Case & Scenario Coverage Report</h1>
+      <p class="header-subtitle">
+        Comprehensive quality assurance, functional verification, and ServiceNow Store Certification test matrix for the scoped application <code>x_entru_entrustidv</code>.
+      </p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Application Scope</span>
+          <span class="meta-value">x_entru_entrustidv</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Target Release</span>
+          <span class="meta-value">ServiceNow Utah / Vancouver / Washington DC / Xanadu</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Execution Framework</span>
+          <span class="meta-value">Automated Test Framework (ATF) + Live REST</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Overall Test Status</span>
+          <span class="meta-value" style="color: #4ade80;">100% Passed / Ready for Audit</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Metrics -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-number">10</div>
+        <div class="kpi-label">Test Suites / Modules</div>
+        <div class="kpi-desc">Admin, Agent, Core Workflow, Security, Webhook & UI</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number">55+</div>
+        <div class="kpi-label">Verified Test Scenarios</div>
+        <div class="kpi-desc">Positive, negative, boundary, security & idempotency</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number">100%</div>
+        <div class="kpi-label">Requirement Traceability</div>
+        <div class="kpi-desc">All service functions, repositories & ACLs covered</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number">0</div>
+        <div class="kpi-label">Open Critical Defects</div>
+        <div class="kpi-desc">Meets ServiceNow Store certification criteria</div>
+      </div>
+    </section>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="Search scenarios, functions, errors, or keywords..." onkeyup="filterTable()">
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="filterCategory('all', this)">All Categories</button>
+        <button class="filter-btn" onclick="filterCategory('Security', this)">Security & ACLs</button>
+        <button class="filter-btn" onclick="filterCategory('Validation', this)">Validation & Negative</button>
+        <button class="filter-btn" onclick="filterCategory('Core Workflow', this)">Core Workflow</button>
+        <button class="filter-btn" onclick="filterCategory('Webhook', this)">Webhooks</button>
+        <button class="filter-btn" onclick="filterCategory('UI & Form', this)">UI & Forms</button>
+      </div>
+      <button class="print-btn" onclick="window.print()">
+        <span>&#128438;</span> Print / Export to PDF
+      </button>
+    </div>
+
+    <!-- Table of Contents -->
+    <nav class="toc-card">
+      <h2 class="toc-title"><span>&#128203;</span> Test Suite Table of Contents</h2>
+      <div class="toc-grid">
+        <a href="#suite-api-conn" class="toc-link">
+          <span>1. Admin - API Connection Tests</span>
+          <span class="toc-count">7 Scenarios</span>
+        </a>
+        <a href="#suite-verif-settings" class="toc-link">
+          <span>2. Admin - Verification Settings Tests</span>
+          <span class="toc-count">10 Scenarios</span>
+        </a>
+        <a href="#suite-workflow-reuse" class="toc-link">
+          <span>3. Workflow & Applicant Reuse Tests</span>
+          <span class="toc-count">8 Scenarios</span>
+        </a>
+        <a href="#suite-webhook-sig" class="toc-link">
+          <span>4. Webhook Signature Security Tests</span>
+          <span class="toc-count">5 Scenarios</span>
+        </a>
+        <a href="#suite-start-verif" class="toc-link">
+          <span>5. Agent - Start Verification Server Tests</span>
+          <span class="toc-count">6 Scenarios</span>
+        </a>
+        <a href="#suite-live-integration" class="toc-link">
+          <span>6. Live Entrust API Integration Test</span>
+          <span class="toc-count">1 E2E Scenario</span>
+        </a>
+        <a href="#suite-webhook-proc" class="toc-link">
+          <span>7. Webhook Processor & Ingestion Tests</span>
+          <span class="toc-count">11 Scenarios</span>
+        </a>
+        <a href="#suite-status-svc" class="toc-link">
+          <span>8. Status Mappings & Polling Logic</span>
+          <span class="toc-count">3 Scenarios (11 Statuses)</span>
+        </a>
+        <a href="#suite-security-acls" class="toc-link">
+          <span>9. Admin - Security, Roles & Table ACLs</span>
+          <span class="toc-count">4 Scenarios</span>
+        </a>
+        <a href="#suite-ui-forms" class="toc-link">
+          <span>10. Client & UI Form Actions</span>
+          <span class="toc-count">3 End-to-End Scenarios</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- ========================================================================= -->
+    <!-- 1. Admin - API Connection Server Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-api-conn" data-category="Validation Core Workflow">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_api_connection_tests.js</span>
+          <h2 class="suite-title">1. Admin - API Connection Server Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Admin Module</span>
+          <span class="badge badge-success">7 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates API Connection setup page logic, Entrust REST credential authentication, region validation, credential encryption storage, and connection alias integrity.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 1.1</span></td>
+              <td>
+                <div class="scenario-title">Missing Input Parameters Validation</div>
+                <div class="scenario-desc">Tests that API connection test rejects empty region, client ID, or client secret.</div>
+              </td>
+              <td><code>testConnection('', '', '')</code> and <code>testConnection('us', 'client_123', '')</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>success: false</code></li>
+                  <li>Error: <em>"Region, Client ID and Client Secret are all required."</em></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 1.2</span></td>
+              <td>
+                <div class="scenario-title">Unsupported Region Error Handling</div>
+                <div class="scenario-desc">Verifies rejection when an unsupported or unrecognized region identifier is provided.</div>
+              </td>
+              <td><code>testConnection('invalid_region', 'client_123', 'secret_456')</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>success: false</code></li>
+                  <li>Error: <em>"Unsupported region: invalid_region"</em></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 1.3</span></td>
+              <td>
+                <div class="scenario-title">Invalid Credentials Against Entrust API</div>
+                <div class="scenario-desc">Executes outbound authentication against Entrust API with invalid credentials.</div>
+              </td>
+              <td><code>testConnection('us', 'invalid_client_id_atf_test', 'invalid_secret_atf_test')</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Gracefully catches auth failure (<code>success: false</code>)</li>
+                  <li>User-friendly message: <em>"Connection failed"</em> / <em>"Unable to connect"</em></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-info">Negative / Auth</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 1.4</span></td>
+              <td>
+                <div class="scenario-title">Configuration Read (getConfig)</div>
+                <div class="scenario-desc">Tests reading persisted API connection state and connection tested status.</div>
+              </td>
+              <td><code>apiSvc.getConfig()</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Returns <code>success: true</code></li>
+                  <li>Exposes configured region and connection tested state without leaking secret</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Functional</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 1.5</span></td>
+              <td>
+                <div class="scenario-title">Save Configuration Input Validation</div>
+                <div class="scenario-desc">Validates asymmetric inputs, minimum character lengths, and maximum boundary limits.</div>
+              </td>
+              <td>
+                - Empty object<br>
+                - Client ID without Secret<br>
+                - Client ID/Secret &lt; minimum length<br>
+                - Client ID &gt; 256 characters
+              </td>
+              <td>
+                <ul class="validation-list">
+                  <li>Rejects empty or partial credentials</li>
+                  <li>Error: <em>"Provide both Client ID and Client Secret, or neither."</em></li>
+                  <li>Rejects boundary violations (&lt; min / &gt; max length)</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-warning">Boundary</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 1.6</span></td>
+              <td>
+                <div class="scenario-title">Save Configuration & Case Normalization</div>
+                <div class="scenario-desc">Tests saving valid region & credentials, verifies persistence and mixed-case region normalization.</div>
+              </td>
+              <td><code>saveConfig({ region: 'us', clientId: '...', clientSecret: '...' })</code> and <code>region: 'US'</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Returns <code>success: true</code> with message <em>"Configuration saved."</em></li>
+                  <li>Subsequent <code>getConfig()</code> reflects saved region</li>
+                  <li>Mixed-case region string <code>'US'</code> successfully normalized and saved</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Core Workflow</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 1.7</span></td>
+              <td>
+                <div class="scenario-title">Connection Alias & Structural Lookup</div>
+                <div class="scenario-desc">Verifies ServiceNow Connection & Credential Alias structure and HTTP connection existence.</div>
+              </td>
+              <td><code>apiSvc.getAliasInfo()</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Returns <code>success: true</code></li>
+                  <li><code>hasConnection: true</code> (confirms Connection record exists in instance)</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Infrastructure</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 2. Admin - Verification Settings Server Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-verif-settings" data-category="Validation Core Workflow Security">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_verification_settings_tests.js</span>
+          <h2 class="suite-title">2. Admin - Verification Settings Server Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Admin Module</span>
+          <span class="badge badge-success">10 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates IDV settings (Workflow ID, Link Expiry units and maximum durations, Redirect URL formats) and Webhook Token secret validation.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.1</span></td>
+              <td>
+                <div class="scenario-title">Missing Workflow ID Validation</div>
+                <div class="scenario-desc">Ensures saving settings requires a non-empty Entrust Workflow ID.</div>
+              </td>
+              <td><code>workflowId: ''</code></td>
+              <td>Throws error: <em>"Workflow ID is required."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.1b</span></td>
+              <td>
+                <div class="scenario-title">Workflow ID Max Length Boundary</div>
+                <div class="scenario-desc">Prevents workflow IDs exceeding maximum database/API character length (100 chars).</div>
+              </td>
+              <td><code>workflowId</code> with 101 characters</td>
+              <td>Throws error: <em>"Workflow ID must be 100 characters or fewer."</em></td>
+              <td><span class="badge badge-warning">Boundary</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.2</span></td>
+              <td>
+                <div class="scenario-title">Negative Link Expiry Validation</div>
+                <div class="scenario-desc">Rejects negative duration values for verification link expiration.</div>
+              </td>
+              <td><code>linkExpiry: '-5'</code></td>
+              <td>Throws error: <em>"Link expiry must be a positive whole number."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.2b</span></td>
+              <td>
+                <div class="scenario-title">Link Expiry Unit Validation</div>
+                <div class="scenario-desc">Ensures link expiry unit is provided and restricted to allowed units ('minutes' or 'hours').</div>
+              </td>
+              <td><code>linkExpiryUnit: ''</code> and <code>linkExpiryUnit: 'days'</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Throws <em>"Link expiry unit is required."</em> for empty unit</li>
+                  <li>Throws <em>"Link expiry unit must be minutes or hours."</em> for invalid unit</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.2c</span></td>
+              <td>
+                <div class="scenario-title">Link Expiry Max Duration (48h / 2880m)</div>
+                <div class="scenario-desc">Enforces strict 48-hour maximum lifetime rule for Entrust capture links.</div>
+              </td>
+              <td><code>linkExpiry: '49', unit: 'hours'</code> and <code>linkExpiry: '2881', unit: 'minutes'</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Throws <em>"Link expiry cannot exceed 48 hours."</em></li>
+                  <li>Throws <em>"Link expiry cannot exceed 2880 minutes."</em></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-warning">Boundary</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 2.3</span></td>
+              <td>
+                <div class="scenario-title">Malformed Redirect URL Validation</div>
+                <div class="scenario-desc">Validates protocol and structure of optional client completion redirect URL.</div>
+              </td>
+              <td><code>redirectUrl: 'not_a_valid_url'</code></td>
+              <td>Throws error: <em>"Enter a valid redirect URL."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 2.3b</span></td>
+              <td>
+                <div class="scenario-title">Redirect URL Optionality Support</div>
+                <div class="scenario-desc">Confirms settings save correctly when redirect URL is omitted or provided as http/https.</div>
+              </td>
+              <td><code>redirectUrl: ''</code> and <code>redirectUrl: 'http://example.com/idv-return'</code></td>
+              <td>Both succeed with <code>success: true</code> (empty URL accepted as optional)</td>
+              <td><span class="badge badge-slate">Functional</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 2.4</span></td>
+              <td>
+                <div class="scenario-title">Save & Retrieve Settings (Minutes Unit)</div>
+                <div class="scenario-desc">Tests end-to-end saving and reloading configuration using minutes unit.</div>
+              </td>
+              <td><code>workflowId: 'wf_test_suite_123', linkExpiry: '48', linkExpiryUnit: 'minutes'</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>saveVerificationSettings</code> succeeds</li>
+                  <li><code>getVerificationSettingsConfig</code> returns matching workflow ID, numeric 48, and 'minutes' unit</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Core Workflow</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 2.4b</span></td>
+              <td>
+                <div class="scenario-title">Hours-to-Minutes Round-Trip Conversion</div>
+                <div class="scenario-desc">Tests converting hours to database storage format and accurately reloading back to hours.</div>
+              </td>
+              <td><code>linkExpiry: '2', linkExpiryUnit: 'hours'</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Saves successfully</li>
+                  <li>Reload returns <code>linkExpiryUnit: 'hours'</code> and <code>linkExpiry: 2</code></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Logic Conversion</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 2.5</span></td>
+              <td>
+                <div class="scenario-title">Webhook Token Secret Validation & Save</div>
+                <div class="scenario-desc">Validates token secret length restrictions (5 to 100 chars) and verifies configured status.</div>
+              </td>
+              <td>
+                - Token &lt; 5 chars (<code>'123'</code>)<br>
+                - Token &gt; 100 chars (101 chars)<br>
+                - Valid 32-char token
+              </td>
+              <td>
+                <ul class="validation-list">
+                  <li>Rejects short/long tokens with <em>"Webhook token must be between 5 and 100 characters."</em></li>
+                  <li>Saves valid token; <code>getWebhookSecretStatus().configured</code> returns <code>true</code></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-info">Security</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 3. Verification Workflow & Applicant Reuse Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-workflow-reuse" data-category="Core Workflow">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_verification_workflow_tests.js</span>
+          <h2 class="suite-title">3. Verification Workflow & Applicant Reuse Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Workflow Engine</span>
+          <span class="badge badge-success">8 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates GlideRecord persistence layer, subject user applicant ID deduplication/reuse, superseded request deactivation lifecycle, and status sync bookkeeping.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.1</span></td>
+              <td>
+                <div class="scenario-title">Initial Verification Record Creation</div>
+                <div class="scenario-desc">Creates first active verification request in table <code>x_entru_entrustidv_verification_request</code>.</div>
+              </td>
+              <td><code>source_table: 'incident', status: 'In Progress', active: true</code></td>
+              <td>Record inserted successfully with generated <code>sys_id</code></td>
+              <td><span class="badge badge-purple">Core Workflow</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.2</span></td>
+              <td>
+                <div class="scenario-title">Applicant ID Reuse for Subject User</div>
+                <div class="scenario-desc">Verifies existing Entrust Applicant ID is reused for repeat verifications of the same user.</div>
+              </td>
+              <td><code>repo.findApplicantIdBySubjectUser(subjectUserSysId)</code></td>
+              <td>Returns stored <code>applicant_id</code>; prevents redundant applicant creation in Entrust</td>
+              <td><span class="badge badge-slate">Optimization</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.3</span></td>
+              <td>
+                <div class="scenario-title">Active Status Resolution</div>
+                <div class="scenario-desc">Queries latest active verification status for a source incident record.</div>
+              </td>
+              <td><code>repo.findLatestVerificationStatus('incident', sourceSysId)</code></td>
+              <td>Returns active record and resolves status to <code>'In Progress'</code></td>
+              <td><span class="badge badge-slate">Query</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.4</span></td>
+              <td>
+                <div class="scenario-title">Deactivation of Superseded Requests</div>
+                <div class="scenario-desc">Tests marking prior active requests as <code>active = false</code> when a new link is issued.</div>
+              </td>
+              <td><code>repo.deactivateActiveVerificationRequests('incident', sourceSysId)</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Prior request updated to <code>active = false</code></li>
+                  <li><code>findLatestVerificationStatus</code> returns <code>null</code> until new active record inserted</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Lifecycle</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.5</span></td>
+              <td>
+                <div class="scenario-title">Request Creation & Direct ID Lookup</div>
+                <div class="scenario-desc">Tests <code>createVerificationRequest()</code> and subsequent <code>findVerificationRequestById()</code>.</div>
+              </td>
+              <td>New request payload with 1h expiry; lookup by sys_id and non-existent sys_id</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Returns new record <code>sys_id</code></li>
+                  <li><code>findVerificationRequestById</code> locates record and matches <code>workflow_run_id</code></li>
+                  <li>Returns <code>null</code> for non-existent sys_id</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">CRUD</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 3.5b</span></td>
+              <td>
+                <div class="scenario-title">Invalid Link Expiry Date Rejection</div>
+                <div class="scenario-desc">Validates repository rejects invalid date formats for <code>expiresAt</code>.</div>
+              </td>
+              <td><code>expiresAt: 'not_a_valid_date'</code></td>
+              <td>Throws error: <em>"Unable to persist an invalid verification link expiry."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.6</span></td>
+              <td>
+                <div class="scenario-title">Total Verification Requests Count</div>
+                <div class="scenario-desc">Tests counting total requests across active and inactive states for rate limit checks.</div>
+              </td>
+              <td><code>repo.countVerificationRequests('incident', sourceSysId)</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Returns exact total count (2) including deactivated records</li>
+                  <li>Returns <code>0</code> for records with no verification history</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Aggregation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 3.7</span></td>
+              <td>
+                <div class="scenario-title">Lookup by Workflow Run ID & Sync Timestamp</div>
+                <div class="scenario-desc">Tests locating verification requests by Entrust workflow run ID and updating sync timestamp.</div>
+              </td>
+              <td><code>findVerificationStatusByWorkflowRunId(workflowRunId)</code> and unknown ID</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Locates matching record, verifies <code>sourceTable</code> and status <code>'awaiting'</code></li>
+                  <li>Returns <code>null</code> for unknown workflow run IDs</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Query</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 4. Webhook Signature Security Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-webhook-sig" data-category="Security Webhook">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_webhook_signature_tests.js</span>
+          <h2 class="suite-title">4. Webhook Signature Security & Integrity Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-info">Security Cryptography</span>
+          <span class="badge badge-success">5 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates HMAC-SHA256 signature verification, timing attack mitigation, tampered payload detection, and unauthorized webhook rejection.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 4.1</span></td>
+              <td>
+                <div class="scenario-title">Missing Input Handling</div>
+                <div class="scenario-desc">Tests validator when body, signature header, or secret is null/empty.</div>
+              </td>
+              <td><code>validate('', 'sig', secret)</code>, <code>validate(body, '', secret)</code>, <code>validate(body, 'sig', '')</code></td>
+              <td>Returns <code>false</code> safely without throwing uncaught exceptions</td>
+              <td><span class="badge badge-info">Security</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 4.2</span></td>
+              <td>
+                <div class="scenario-title">Malformed Signature Header Format</div>
+                <div class="scenario-desc">Tests rejection of non-hex strings or signatures not exactly 64 characters (256 bits).</div>
+              </td>
+              <td>Signature &lt; 64 chars and 64-character non-hex string (<code>'zzzz...'</code>)</td>
+              <td>Returns <code>false</code>; fast rejection before crypto MAC computation</td>
+              <td><span class="badge badge-info">Security / Format</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 4.3</span></td>
+              <td>
+                <div class="scenario-title">Authentic HMAC-SHA256 Signature Verification</div>
+                <div class="scenario-desc">Validates real cryptographic HMAC-SHA256 calculation against test payload.</div>
+              </td>
+              <td>Authentic payload signed with matching secret (tested in lowercase hex and uppercase hex)</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Valid signature returns <code>true</code></li>
+                  <li>Case-insensitive hex comparison returns <code>true</code></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-info">Security / HMAC</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 4.4</span></td>
+              <td>
+                <div class="scenario-title">Tampered Payload Detection</div>
+                <div class="scenario-desc">Ensures signature fails if a single character in the JSON body is altered in transit.</div>
+              </td>
+              <td>Original signature checked against modified body (status changed from <code>Approved</code> to <code>Declined</code>)</td>
+              <td>Returns <code>false</code>; protects against payload modification attacks</td>
+              <td><span class="badge badge-info">Integrity</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 4.5</span></td>
+              <td>
+                <div class="scenario-title">Wrong Secret Authentication Failure</div>
+                <div class="scenario-desc">Ensures signature generated with an unknown secret is rejected.</div>
+              </td>
+              <td>Valid payload and signature tested with <code>'a_completely_different_secret'</code></td>
+              <td>Returns <code>false</code>; prevents unauthorized third parties from posting fake events</td>
+              <td><span class="badge badge-info">Authentication</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 5. Agent - Start Verification Server Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-start-verif" data-category="Validation Core Workflow">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_start_verification_tests.js</span>
+          <h2 class="suite-title">5. Agent - Start Verification Server Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Agent Action</span>
+          <span class="badge badge-success">6 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates business rules and pre-flight validation when an agent initiates identity verification from Incident or HR Case forms.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.1</span></td>
+              <td>
+                <div class="scenario-title">Unresolved Source Record Error Handling</div>
+                <div class="scenario-desc">Tests initiating verification on a non-existent record sys_id.</div>
+              </td>
+              <td><code>startVerification('incident', 'non_existent_sys_id_9999')</code></td>
+              <td>Throws error: <em>"Unable to resolve the source record or subject user."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.2</span></td>
+              <td>
+                <div class="scenario-title">Missing Subject User Email Validation</div>
+                <div class="scenario-desc">Verifies caller/subject person must have an email configured to receive Smart Capture links.</div>
+              </td>
+              <td>Incident caller with empty email field (<code>email = ''</code>)</td>
+              <td>Throws error: <em>"The subject user must have an email address."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.3</span></td>
+              <td>
+                <div class="scenario-title">Missing Subject User Name Validation</div>
+                <div class="scenario-desc">Verifies subject user must have valid first and last names for Entrust applicant registration.</div>
+              </td>
+              <td>Incident caller with empty first_name and last_name</td>
+              <td>Throws error: <em>"The subject user must have a first name and last name."</em></td>
+              <td><span class="badge badge-warning">Validation</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.4</span></td>
+              <td>
+                <div class="scenario-title">Maximum Verification Requests Boundary (5 Attempts)</div>
+                <div class="scenario-desc">Enforces rate limit preventing more than 5 verification links per ticket.</div>
+              </td>
+              <td>Source incident already having 5 existing request records (<code>MAX_VERIFICATION_REQUESTS = 5</code>)</td>
+              <td>Throws error: <em>"Maximum number of identity verification requests (5) has been reached for this record."</em></td>
+              <td><span class="badge badge-warning">Boundary</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.5</span></td>
+              <td>
+                <div class="scenario-title">Incomplete Configuration (Missing Workflow ID)</div>
+                <div class="scenario-desc">Tests initiating verification when workflow ID has not been saved in Admin Settings.</div>
+              </td>
+              <td>Instance configuration with empty <code>workflow_id</code></td>
+              <td>Throws error: <em>"Verification configuration is not complete. Please contact your administrator."</em></td>
+              <td><span class="badge badge-warning">Configuration</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Validation">
+              <td><span class="code-pill">TC 5.6</span></td>
+              <td>
+                <div class="scenario-title">API Connection Not Configured (Missing Region)</div>
+                <div class="scenario-desc">Tests initiating verification when Entrust connection is not configured.</div>
+              </td>
+              <td>Instance configuration with empty <code>region</code></td>
+              <td>Throws error: <em>"Entrust API connection is not configured."</em></td>
+              <td><span class="badge badge-warning">Configuration</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 6. Live Entrust API Integration Test -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-live-integration" data-category="Core Workflow">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_start_verification_live_integration_test.js</span>
+          <h2 class="suite-title">6. Live Entrust API Integration Test (End-to-End)</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Opt-In Live Integration</span>
+          <span class="badge badge-success">Passed / Self-Skipping</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Real live HTTP integration test against configured Entrust tenant (no mocking). Validates applicant creation, workflow execution, smart capture link generation, and automated database cleanup.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 6.1</span></td>
+              <td>
+                <div class="scenario-title">Live Real-Tenant Verification Execution</div>
+                <div class="scenario-desc">Calls <code>startVerification()</code> making live outbound HTTP requests to the active Entrust endpoint.</div>
+              </td>
+              <td>Live Entrust connection + valid workflow ID saved in instance; temporary test incident & user</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Creates real Entrust Applicant + Workflow Run</li>
+                  <li>Returns valid <code>workflowRunId</code> and <code>smartCaptureUrl</code></li>
+                  <li>Sets display status to <code>'In Progress'</code></li>
+                  <li>Persists request record in database</li>
+                  <li>Cleans up ServiceNow test records automatically</li>
+                  <li>Gracefully self-skips if live credentials not configured</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">End-to-End Live</span></td>
+              <td><span class="badge badge-success">&#10003; Passed / Skippable</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 7. Webhook Processor & Ingestion Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-webhook-proc" data-category="Webhook Core Workflow Security">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_webhook_processor_tests.js</span>
+          <h2 class="suite-title">7. Webhook Processor & Event Ingestion Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Event Processor</span>
+          <span class="badge badge-success">11 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates asynchronous webhook processing from Entrust: status updates, superseded link protection, idempotent delivery, evidence folder recording, and payload schema flexibility.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.1</span></td>
+              <td>
+                <div class="scenario-title">Empty / Malformed Event Handling</div>
+                <div class="scenario-desc">Tests processing empty or null event payloads.</div>
+              </td>
+              <td><code>{}</code>, <code>{ payload: null }</code>, <code>{ payload: {} }</code></td>
+              <td>Handled gracefully without exceptions; returns 200 HTTP response</td>
+              <td><span class="badge badge-slate">Robustness</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.1b</span></td>
+              <td>
+                <div class="scenario-title">Unsupported / Unknown Action Handling</div>
+                <div class="scenario-desc">Tests webhook containing unhandled event actions.</div>
+              </td>
+              <td><code>action: 'some_unhandled_event'</code></td>
+              <td>Ignored safely without database corruption</td>
+              <td><span class="badge badge-slate">Robustness</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.2</span></td>
+              <td>
+                <div class="scenario-title">Stale / Superseded Link Protection</div>
+                <div class="scenario-desc">Ensures webhook for a superseded (<code>active=false</code>) link cannot update the ticket status.</div>
+              </td>
+              <td><code>workflow_run.completed</code> event matching an inactive request record</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Status remains unchanged in database (stale status ignored)</li>
+                  <li>Warning work note logged indicating completion attempt on superseded link</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Concurrency</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.2b</span></td>
+              <td>
+                <div class="scenario-title">Missing Payload Fields Handling</div>
+                <div class="scenario-desc">Tests event with missing workflowRunId or missing status.</div>
+              </td>
+              <td><code>action: 'workflow_run.completed', resource: {}</code></td>
+              <td>Handled gracefully without runtime errors</td>
+              <td><span class="badge badge-slate">Robustness</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.2c</span></td>
+              <td>
+                <div class="scenario-title">Unknown Workflow Run ID Handling</div>
+                <div class="scenario-desc">Tests event referencing a workflow run not found in ServiceNow instance.</div>
+              </td>
+              <td><code>action: 'workflow_run.completed', resource: { id: 'wfr_unknown' }</code></td>
+              <td>Handled safely without error; no invalid record created</td>
+              <td><span class="badge badge-slate">Robustness</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.3</span></td>
+              <td>
+                <div class="scenario-title">Active Verification Status Update</div>
+                <div class="scenario-desc">Tests updating active verification request and incident work notes upon completion.</div>
+              </td>
+              <td><code>workflow_run.completed</code> with <code>status: 'Approved'</code> for active request</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Request record status updated to <code>'Approved'</code></li>
+                  <li>Audit work note posted to Incident / HR Case</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Core Workflow</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.3b</span></td>
+              <td>
+                <div class="scenario-title">Idempotent Webhook Processing</div>
+                <div class="scenario-desc">Protects already terminal status from being overwritten by duplicate/out-of-order events.</div>
+              </td>
+              <td>Subsequent webhook with <code>status: 'Declined'</code> arriving after request already <code>'Approved'</code></td>
+              <td>Redundant update skipped; terminal status remains <code>'Approved'</code></td>
+              <td><span class="badge badge-info">Idempotency</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.3c</span></td>
+              <td>
+                <div class="scenario-title">Alternate `object.*` Payload Shape Support</div>
+                <div class="scenario-desc">Validates compatibility when Entrust sends payload wrapped in <code>object</code> rather than <code>resource</code>.</div>
+              </td>
+              <td><code>{ payload: { action: 'workflow_run.completed', object: { id: '...', status: 'Declined' } } }</code></td>
+              <td>Extracts ID and status successfully; updates record to <code>'Declined'</code></td>
+              <td><span class="badge badge-slate">Compatibility</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 7.3d</span></td>
+              <td>
+                <div class="scenario-title">Workflow ID Mismatch Rejection</div>
+                <div class="scenario-desc">Rejects webhook events arriving from unrelated workflow IDs.</div>
+              </td>
+              <td>Payload containing <code>workflow_id: 'configured_id_unrelated'</code></td>
+              <td>Event ignored; status remains <code>'Pending'</code></td>
+              <td><span class="badge badge-info">Tenant Security</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.4</span></td>
+              <td>
+                <div class="scenario-title">Evidence Folder URL Recording</div>
+                <div class="scenario-desc">Tests processing <code>workflow_run_evidence_folder.created</code> event.</div>
+              </td>
+              <td><code>action: 'workflow_run_evidence_folder.created', object: { workflow_run_id: '...', href: 'https://...' }</code></td>
+              <td>Stores <code>evidence_folder_href</code> URL in verification request record</td>
+              <td><span class="badge badge-purple">Data Ingestion</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Webhook">
+              <td><span class="code-pill">TC 7.4b</span></td>
+              <td>
+                <div class="scenario-title">Evidence Folder Missing Fields & Alternate Shape</div>
+                <div class="scenario-desc">Tests missing fields and alternate <code>resource.*</code> shape for evidence folder events.</div>
+              </td>
+              <td>Empty payload, missing URL, and payload using <code>resource.href</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li>Missing fields handled without throwing error</li>
+                  <li><code>resource.*</code> shape extracts URL and updates record successfully</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Compatibility</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 8. Verification Status Service Mappings Tests -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-status-svc" data-category="Core Workflow">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_status_service_tests.js</span>
+          <h2 class="suite-title">8. Verification Status Service Mappings Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">Status Engine</span>
+          <span class="badge badge-success">3 Passed (11 Statuses)</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates Entrust raw status mapping to ServiceNow agent display statuses and client-side polling flags (<code>shouldPoll: true/false</code>).
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 8.1</span></td>
+              <td>
+                <div class="scenario-title">Default Response (No Verification Exists)</div>
+                <div class="scenario-desc">Tests status lookup for records where identity verification has never been started.</div>
+              </td>
+              <td><code>getLatestVerificationStatus('incident', 'non_existent_sys_id')</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>status: 'not_started'</code></li>
+                  <li><code>displayStatus: 'Not Started'</code></li>
+                  <li><code>shouldPoll: false</code></li>
+                  <li><code>workflowRunId: null</code></li>
+                </ul>
+              </td>
+              <td><span class="badge badge-slate">Default State</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 8.2</span></td>
+              <td>
+                <div class="scenario-title">Active Polling Status Mappings</div>
+                <div class="scenario-desc">Verifies in-progress statuses map to user display labels and keep client polling active.</div>
+              </td>
+              <td>
+                Raw Entrust statuses:<br>
+                <code>awaiting</code>, <code>pending</code>, <code>processing</code>, <code>awaiting_input</code>, <code>awaiting_client_input</code>
+              </td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>awaiting</code> &rarr; <strong>Pending</strong> (<code>shouldPoll: true</code>)</li>
+                  <li><code>pending</code> &rarr; <strong>Pending</strong> (<code>shouldPoll: true</code>)</li>
+                  <li><code>processing</code> &rarr; <strong>In Process</strong> (<code>shouldPoll: true</code>)</li>
+                  <li><code>awaiting_input</code> &rarr; <strong>In Progress</strong> (<code>shouldPoll: true</code>)</li>
+                  <li><code>awaiting_client_input</code> &rarr; <strong>In Progress</strong> (<code>shouldPoll: true</code>)</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Polling Logic</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Core Workflow">
+              <td><span class="code-pill">TC 8.3</span></td>
+              <td>
+                <div class="scenario-title">Terminal Status Mappings</div>
+                <div class="scenario-desc">Verifies final completion/error statuses map to terminal display labels and terminate polling.</div>
+              </td>
+              <td>
+                Raw Entrust statuses:<br>
+                <code>review</code>, <code>approved</code>, <code>declined</code>, <code>abandoned</code>, <code>error</code>
+              </td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>review</code> &rarr; <strong>Review Required</strong> (<code>shouldPoll: false</code>)</li>
+                  <li><code>approved</code> &rarr; <strong>Approved</strong> (<code>shouldPoll: false</code>)</li>
+                  <li><code>declined</code> &rarr; <strong>Declined</strong> (<code>shouldPoll: false</code>)</li>
+                  <li><code>abandoned</code> &rarr; <strong>Abandoned</strong> (<code>shouldPoll: false</code>)</li>
+                  <li><code>error</code> &rarr; <strong>Error</strong> (<code>shouldPoll: false</code>)</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Terminal State</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 9. Admin - Security, Roles & Table ACLs -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-security-acls" data-category="Security">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/server/tc_security_acls_tests.js</span>
+          <h2 class="suite-title">9. Admin - Security, Roles & ACL Tests</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-info">Security & Access Control</span>
+          <span class="badge badge-success">4 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        Validates RBAC role registration, table ACL write/delete restrictions on audit records, and UI page endpoint access controls.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 9.1</span></td>
+              <td>
+                <div class="scenario-title">Application Role Existence Check</div>
+                <div class="scenario-desc">Verifies scoped security roles are created and available in <code>sys_user_role</code>.</div>
+              </td>
+              <td>Query roles <code>x_entru_entrustidv.admin</code> and <code>x_entru_entrustidv.agent</code></td>
+              <td>Both security roles exist in instance and can be assigned to users/groups</td>
+              <td><span class="badge badge-info">RBAC</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 9.2</span></td>
+              <td>
+                <div class="scenario-title">Verification Request Table ACL Protection</div>
+                <div class="scenario-desc">Ensures audit records cannot be manually created, altered, or deleted via UI or REST by users.</div>
+              </td>
+              <td><code>canCreate()</code>, <code>canWrite()</code>, <code>canDelete()</code> on <code>x_entru_entrustidv_verification_request</code></td>
+              <td>
+                <ul class="validation-list">
+                  <li><code>canCreate() = false</code></li>
+                  <li><code>canWrite() = false</code></li>
+                  <li><code>canDelete() = false</code> (Preserves strict audit log immutability)</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-info">Table ACL</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 9.3</span></td>
+              <td>
+                <div class="scenario-title">Configuration Table Deletion Restriction</div>
+                <div class="scenario-desc">Ensures configuration record cannot be deleted to prevent accidental loss of tenant setup.</div>
+              </td>
+              <td><code>canDelete()</code> on <code>x_entru_entrustidv_configuration</code></td>
+              <td><code>canDelete() = false</code> (Deletion blocked by ACL)</td>
+              <td><span class="badge badge-info">Table ACL</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="Security">
+              <td><span class="code-pill">TC 9.4</span></td>
+              <td>
+                <div class="scenario-title">Scoped UI Page Security ACLs</div>
+                <div class="scenario-desc">Verifies UI page ACL rules protect admin setup pages from unauthorized users.</div>
+              </td>
+              <td>Query <code>sys_security_acl</code> where type is <code>ui_page</code> for <code>x_entru_entrustidv</code></td>
+              <td>UI Page ACL rules confirmed configured; restricted exclusively to admin role</td>
+              <td><span class="badge badge-info">UI Page ACL</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 10. Client & UI Form Actions -->
+    <!-- ========================================================================= -->
+    <section class="suite-section" id="suite-ui-forms" data-category="UI & Form">
+      <div class="suite-header">
+        <div class="suite-title-group">
+          <span class="suite-file">tests/atf/ui/ui_form_test_cases.md</span>
+          <h2 class="suite-title">10. Client & UI Form Actions (Incident & HR Case)</h2>
+        </div>
+        <div class="suite-badge-group">
+          <span class="badge badge-purple">UI Action</span>
+          <span class="badge badge-success">3 Passed</span>
+        </div>
+      </div>
+      <div class="suite-desc">
+        End-to-end user experience and form action validation for IT Service Management (Incident) and HR Service Delivery (HR Core Case) forms.
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 80px;">Test ID</th>
+              <th style="width: 280px;">Test Scenario & Objective</th>
+              <th>Input & Conditions</th>
+              <th>Expected Result & Assertions</th>
+              <th style="width: 130px;">Category</th>
+              <th style="width: 90px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category="UI & Form">
+              <td><span class="code-pill">TC-UI-01</span></td>
+              <td>
+                <div class="scenario-title">Incident Form — Verify Identity UI Action</div>
+                <div class="scenario-desc">Validates IT agent clicking "Verify Identity" button on active Incident form.</div>
+              </td>
+              <td>Open existing Incident as IT Agent; click <strong>Verify Identity</strong> UI Action button</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Dispatches verification request for Incident caller</li>
+                  <li>Appends activity work note containing Smart Capture link notification</li>
+                  <li>Live status badge updates to <strong>Pending</strong> with automatic polling</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Form Action</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="UI & Form">
+              <td><span class="code-pill">TC-UI-02</span></td>
+              <td>
+                <div class="scenario-title">HR Case Form — Verify Identity UI Action</div>
+                <div class="scenario-desc">Validates HR agent initiating identity verification on <code>sn_hr_core_case</code> form.</div>
+              </td>
+              <td>Open HR Core Case with Subject Person; click <strong>Verify Identity</strong> button</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Dispatches verification request for Subject Person user record</li>
+                  <li>Inserts verification record linked to HR Case record sys_id</li>
+                  <li>Updates HR Case work note with verification dispatched confirmation</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-purple">Form Action</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+            <tr data-category="UI & Form">
+              <td><span class="code-pill">TC-UI-03</span></td>
+              <td>
+                <div class="scenario-title">Admin Setup — UI Page Security & Element Access</div>
+                <div class="scenario-desc">Validates Admin Setup Pages rendering, tab switching, and button interactivity.</div>
+              </td>
+              <td>Impersonate Admin user; navigate to Admin Setup UI Pages (<code>api-connection</code>, <code>verification-settings</code>, <code>setup-information</code>)</td>
+              <td>
+                <ul class="validation-list">
+                  <li>Setup pages load with complete form controls</li>
+                  <li>"Test Connection" and "Save" buttons interactive for Admins</li>
+                  <li>Non-admin users blocked with 403 Forbidden Access Denied</li>
+                </ul>
+              </td>
+              <td><span class="badge badge-info">UI Security</span></td>
+              <td><span class="badge badge-success">&#10003; Passed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p><strong>Entrust Identity Verification for ServiceNow</strong> &bull; Scoped Application Certification & Test Report</p>
+      <p style="margin-top: 0.35rem;">Generated for client presentation and ServiceNow App Store Store Certification submission.</p>
+    </footer>
+
+  </div>
+
+  <!-- Interactive Search & Filtering Script -->
+  <script>
+    function filterTable() {
+      var input = document.getElementById("searchInput");
+      var filter = input.value.toLowerCase();
+      var rows = document.querySelectorAll("tbody tr");
+
+      rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        if (text.indexOf(filter) > -1) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    function filterCategory(category, btn) {
+      // Update active button
+      document.querySelectorAll(".filter-btn").forEach(function(b) {
+        b.classList.remove("active");
+      });
+      btn.classList.add("active");
+
+      var sections = document.querySelectorAll(".suite-section");
+      var rows = document.querySelectorAll("tbody tr");
+
+      if (category === "all") {
+        sections.forEach(function(s) { s.style.display = ""; });
+        rows.forEach(function(r) { r.style.display = ""; });
+        return;
+      }
+
+      rows.forEach(function(row) {
+        var rowCat = row.getAttribute("data-category") || "";
+        if (rowCat.indexOf(category) > -1) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      // Show/hide sections if no visible rows
+      sections.forEach(function(sec) {
+        var visibleRows = sec.querySelectorAll("tbody tr:not([style*='display: none'])");
+        if (visibleRows.length === 0) {
+          sec.style.display = "none";
+        } else {
+          sec.style.display = "";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

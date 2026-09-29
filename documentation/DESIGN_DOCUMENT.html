@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrust IDV for ServiceNow — Design & Architecture Document</title>
+  <!-- GitHub Markdown CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown-light.min.css">
+  <!-- Highlight.js for code syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --color-canvas-default: #ffffff;
+      --color-canvas-subtle: #f6f8fa;
+      --color-border-default: #d0d7de;
+      --color-accent-emphasis: #0969da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 32px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      color: #1f2328;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .doc-container {
+      max-width: 1020px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 48px 56px;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    .doc-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e1e4e8;
+    }
+
+    .doc-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge-primary {
+      background: #0969da;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-secondary {
+      background: #2da44e;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .doc-meta {
+      font-size: 13px;
+      color: #59636e;
+      font-weight: 500;
+    }
+
+    .markdown-body {
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .markdown-body h1 {
+      font-size: 2em;
+      border-bottom: 2px solid #d0d7de;
+      padding-bottom: 0.3em;
+      margin-top: 0;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.45em;
+      border-bottom: 1px solid #d0d7de;
+      padding-bottom: 0.25em;
+      margin-top: 1.6em;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.18em;
+      margin-top: 1.3em;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    .markdown-body table th,
+    .markdown-body table td {
+      padding: 10px 14px;
+      border: 1px solid #d0d7de;
+    }
+
+    .markdown-body table tr:nth-child(2n) {
+      background-color: #f6f8fa;
+    }
+
+    .mermaid {
+      background: #ffffff;
+      border: 1px solid #e1e4e8;
+      border-radius: 8px;
+      padding: 20px 12px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Print / PDF Export Styles */
+    @media print {
+      @page {
+        size: letter;
+        margin: 15mm 15mm 15mm 15mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .doc-container {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .doc-header-bar {
+        border-bottom: 2px solid #333 !important;
+        margin-bottom: 20px !important;
+      }
+
+      h1, h2, h3, h4 {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .mermaid, pre, table, tr, blockquote {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-container">
+    <div class="doc-header-bar">
+      <div class="doc-badges">
+        <span class="badge-primary">ServiceNow Store App</span>
+        <span class="badge-secondary">x_entru_entrustidv</span>
+      </div>
+      <div class="doc-meta">
+        Architecture &amp; Design Specification
+      </div>
+    </div>
+    <article id="content" class="markdown-body">
+      <em>Rendering document content and diagrams...</em>
+    </article>
+  </div>
+
+  <!-- Embedded Markdown Source: Zero server requirement, runs locally on file:/// -->
+  <script type="text/markdown" id="md-source">
+# Entrust IDV for ServiceNow — Design & Architecture Document
+
+---
+
+## 1. Requirement & Problem Statement
+
+### 1.1 The Business Problem
+IT Service Desk and HR Help Desk teams are primary targets for identity impersonation and social engineering attacks (such as vishing or caller impersonation attacks like *Scattered Spider*). When employees contact the help desk requesting high-risk actions—such as **password resets, MFA device re-registration, account unlocks, or sensitive profile updates**—agents have traditionally relied on knowledge-based verification questions.
+
+These traditional verification methods pose severe security risks:
+* **Easily Bypassed Information:** Knowledge-based data (such as employee IDs, dates of birth, manager names, or security questions) is often leaked in data breaches, purchased on the dark web, or discovered on social media.
+* **High Financial & Operational Impact:** A single unauthorized credential reset can give attackers complete access to enterprise networks, leading to devastating ransomware deployments and data theft.
+* **Lack of Tamper-Proof Verification:** Help desk agents face intense pressure to resolve calls quickly and have lacked a fast, cryptographically verifiable, and tamper-proof way to confirm caller identity directly within their ServiceNow workflow.
+
+### 1.2 The Solution
+* A certified **ServiceNow Store Scoped Application** (`x_entru_entrustidv`).
+* Allows service desk agents to initiate high-assurance identity verification with a single click directly from an **Incident** or **HR Case** record.
+* **Entrust Identity Verification Platform Integration:** Leverages the Entrust Identity Verification platform (Smart Capture Link, Workflow Studio, and v3.6 REST APIs) without requiring custom backend middleware.
+* **Email Delivery:** The verification link is delivered automatically and securely to the employee's registered email address.
+* **Any-Device Access:** The end user can open the secure link on any internet-connected device with a camera and web browser (laptop, desktop, mobile phone, or tablet) to complete verification via government ID scanning and real-time biometric selfie with liveness detection.
+* **Automated Record Synchronization:** Verification results post back automatically to ServiceNow, updating the ticket's verification status and logging detailed audit entries in the ticket's work notes.
+
+---
+
+## 2. Solution Flow & Architecture
+
+### 2.1 Sequence Flow Diagram
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Agent as Service Desk Agent
+    actor User as Employee / Caller
+    participant SN as ServiceNow Record (Incident / HR Case)
+    participant Server as IDV Scoped App (Server)
+    participant Entrust as Entrust IDV Platform
+
+    Agent->>SN: Clicks "Verify Identity" UI Action
+    SN->>Server: Start Verification (VerifyIdentityAjax)
+    Server->>Entrust: Create Applicant & Start Workflow Run
+    Entrust-->>Server: Return workflowRunId & Smart Link Expiry
+    Server->>SN: Create Verification Request Record (active = true)
+    Server-->>SN: Display "In Progress" & Start Adaptive Fallback Polling
+
+    par User Completes Verification
+        Entrust-)User: Delivers Smart Capture Link via Email
+        User->>Entrust: Opens link on any device, uploads ID & selfie
+    and Primary Update (Webhook)
+        Entrust->>Server: POST /webhook/events (HMAC-SHA256 Signed)
+        Server->>Server: Validate Signature & Match workflowRunId
+        Server->>SN: Update Request Status & Post Work Note
+    and Secondary Update (Fallback Polling)
+        loop Adaptive Polling (up to 60 mins)
+            SN->>Server: IdvStatusAjax.getLatestStatus()
+            Note over Server: Check local status, sync with Entrust if past grace period
+            Server-->>SN: Return current display status
+        end
+    end
+
+    SN-->>Agent: Form displays final status (Approved / Declined)
+```
+
+### 2.2 Architecture Overview
+
+```mermaid
+flowchart LR
+    subgraph SN["ServiceNow (Scoped App)"]
+        Form["Agent Form View<br/>(Incident / HR Case)"]
+        Ajax["GlideAjax Services<br/>(VerifyIdentity / IdvStatus)"]
+        Webhook["Scripted REST API<br/>(/webhook/events)"]
+        DB[("App Tables & Ticket Fields")]
+    end
+
+    subgraph Entrust["Entrust Identity Verification Platform"]
+        API["IDV v3.6 REST APIs"]
+        Workflow["Workflow Studio & Smart Link Engine"]
+        Events["Webhook Notification Engine"]
+    end
+
+    subgraph User["End User Device"]
+        Browser["Web Browser<br/>(Laptop, Mobile, Tablet)"]
+    end
+
+    Form -->|1. Trigger Verification| Ajax
+    Ajax -->|2. Create Applicant & Start Workflow| API
+    Workflow -->|3. Deliver Smart Link via Email| Browser
+    Browser -->|4. Submit ID & Biometric Selfie| Workflow
+    Events -->|5. Push Webhook Event| Webhook
+    Webhook -->|6. Validate HMAC & Update Record| DB
+    Ajax -.->|7. Fallback Status Query| API
+```
+
+#### Step-by-Step Flow Details
+* **1. Trigger Verification:** The service desk agent clicks the "Verify Identity" button on an Incident or HR Case.
+* **2. Initiate Workflow:** ServiceNow calls the Entrust IDV REST API to create an applicant and generate a Smart Capture Link.
+* **3. Email Delivery:** Entrust IDV platform sends an email containing the secure verification link directly to the employee's registered email.
+* **4. Complete Verification:** The employee opens the link on any camera-enabled device (laptop, phone, or tablet) and submits their ID document and biometric selfie.
+* **5. Webhook Notification (Primary):** Entrust IDV platform immediately dispatches an HMAC-SHA256 signed webhook event to ServiceNow upon status change.
+* **6. Record & Work Notes Update:** ServiceNow validates the signature, updates the status field on the ticket, and logs an audit trail in the work notes.
+* **7. Fallback Reconciliation:** If webhooks are delayed or blocked by network policies, ServiceNow client polling and server-side fallback sync with Entrust reconcile the status.
+
+---
+
+## 3. Dual-Channel Status Sync (Webhook + Fallback Polling)
+
+To guarantee 100% reliable status delivery under all enterprise network conditions, the application implements a **dual-channel sync architecture**:
+
+```mermaid
+flowchart TD
+    Start["Verification Triggered"] --> Init["Set status = 'In Progress'"]
+    Init --> DualPath{"Dual Channel Sync"}
+
+    subgraph PrimaryChannel["Primary: Webhook (Event-Driven)"]
+        DualPath -->|Push| WH["Entrust sends POST to /webhook/events"]
+        WH --> HMAC{"HMAC Signature Valid?"}
+        HMAC -->|Yes| UpdateWH["Update DB & Post Work Note"]
+        HMAC -->|No| RejectWH["Reject (401/403)"]
+    end
+
+    subgraph FallbackChannel["Fallback: Client Polling & Server Reconciliation"]
+        DualPath -->|Poll| ClientPoll["Client Form Polling (GlideAjax)"]
+        ClientPoll --> CheckGrace{"Past 60-min Grace Period<br/>or Link Expired?"}
+        CheckGrace -->|No| ReturnLocal["Return Local DB Status"]
+        CheckGrace -->|Yes| CheckThrottle{"Last Sync < 5 mins ago?"}
+        CheckThrottle -->|Yes - Throttled| ReturnLocal
+        CheckThrottle -->|No| CallAPI["Query Entrust API (GET /workflow_runs)"]
+        CallAPI --> UpdateDB["Update DB & Post Work Note (if terminal)"]
+    end
+
+    UpdateWH --> Done["Final State (Approved / Declined / Review Required)"]
+    UpdateDB --> Done
+```
+
+### 3.1 Primary Channel: Inbound Webhooks
+* **Instantaneous & Event-Driven:** Entrust IDV platform sends status updates to the ServiceNow Scripted REST endpoint (`/webhook/events`) immediately as the workflow progresses.
+* **Cryptographically Signed:** Every inbound payload is authenticated using an **HMAC-SHA256 signature** against the configured secret key.
+* **Automatic Ticket Update:** On terminal status, the record is updated and an activity work note is posted to the ticket.
+
+### 3.2 Fallback Channel: Client Polling & Smart Server Reconciliation
+To ensure status updates even if network restrictions or firewall policies delay or block inbound webhooks:
+
+* **Client-Side Adaptive Polling (`IdvStatusAjax`):**
+  * **Initial Delays:**
+    * **Trigger (Button Click):** **5-minute initial delay** before the first poll, giving the employee time to check their email and start verification.
+    * **Form Load (`onLoad`):** **1-minute initial delay** if an active verification is already in progress.
+  * **Two-Tier Polling Intervals:**
+    * **Tier 1 (First 10 minutes):** Polls every **1 minute** for responsive initial updates.
+    * **Tier 2 (10 to 60 minutes):** Polls every **5 minutes** to reduce unnecessary network traffic.
+  * **Safety & Termination Limits:**
+    * Polling stops immediately upon reaching any terminal state (`Approved`, `Declined`, `Review Required`, `Abandoned`, `Error`).
+    * Polling terminates after a maximum duration of **60 minutes** or after **3 consecutive communication errors**.
+
+* **Server-Side Grace Period & Outbound Throttling (`VerificationStatusService`):**
+  * **60-Minute Grace Period:** During the first 60 minutes, the server trusts the inbound webhook channel and answers client polls using the local database, avoiding redundant outbound REST calls to Entrust.
+  * **Smart Fallback Trigger:** If a request remains in a non-terminal state past the **60-minute grace period** or after the **Smart Capture Link expires**, the server doubts webhook delivery and initiates a direct outbound REST call (`GET /workflow_runs/{id}`) to Entrust.
+  * **5-Minute Server Throttling:** Direct outbound REST checks to Entrust are throttled to at most **once every 5 minutes** per verification request (`last_status_sync`), preventing API rate exhaustion regardless of client polling frequency.
+  * **Terminal State Reconciliation:** When Entrust reports a terminal state during fallback sync, ServiceNow updates the database and adds completion work notes to the ticket.
+
+---
+
+## 4. Re-Verification Flow
+
+If an identity verification was previously performed on a ticket and needs to be repeated:
+
+```mermaid
+flowchart TD
+    Click["Agent clicks 'Verify Identity'"] --> Check["Check active request on record"]
+    Check --> HasPrior{"Prior status != 'Not Started'?"}
+    HasPrior -->|Yes| ConfirmModal["Prompt Confirmation Modal:<br/>The verification request is already in progress.<br/>Do you want to create a new request?"]
+    HasPrior -->|No| Proceed["Create New Verification"]
+    ConfirmModal -->|No| Cancel["Abort (No changes)"]
+    ConfirmModal -->|Yes| Deactivate["Deactivate prior request<br/>(active = false)"]
+    Deactivate --> Proceed
+    Proceed --> NewReq["Insert new request (active = true)<br/>Reset UI to 'In Progress'"]
+```
+
+* **Data Integrity:** Only **one** verification request is marked `active = true` per source record at any time.
+* **Audit Trail:** Prior verification attempts remain in the verification request table for audit purposes (`active = false`).
+
+---
+
+## 5. Schema & Data Model Changes
+
+```mermaid
+erDiagram
+    sys_user ||--o{ x_entru_entrustidv_verification_request : "subject_user"
+    incident ||--o{ x_entru_entrustidv_verification_request : "source_record"
+    sn_hr_core_case ||--o{ x_entru_entrustidv_verification_request : "source_record"
+    x_entru_entrustidv_configuration ||--|| x_entru_entrustidv_verification_request : "provides config"
+
+    x_entru_entrustidv_configuration {
+        string region "Data center region (US, EU, etc.)"
+        string workflow_id "Entrust Workflow ID"
+        integer link_expiry_minutes "Smart Link validity window"
+        string link_delivery_channel "Email delivery channel"
+        url redirect_url "Optional post-verification redirect"
+        password2 webhook_signing_secret "HMAC Secret (Encrypted)"
+    }
+
+    x_entru_entrustidv_verification_request {
+        tableName source_table "incident / sn_hr_core_case"
+        documentId source_record "Sys ID of parent ticket"
+        reference subject_user "Reference to sys_user"
+        string applicant_id "Entrust Applicant ID"
+        string workflow_id "Entrust Workflow ID"
+        string workflow_version_id "Workflow Version"
+        string workflow_run_id "Unique Workflow Run ID"
+        string status "Approved / Declined / In Progress / etc."
+        dateTime expires_at "Link expiration time"
+        string evidence_folder_href "Link to Entrust evidence (if configured)"
+        string last_status_sync "Timestamp of last sync"
+        boolean active "True for latest request, False for archived runs"
+    }
+
+    incident {
+        string x_entru_entrustidv_verification_status "Read-only display status on Incident"
+    }
+
+    sn_hr_core_case {
+        string x_entru_entrustidv_verification_status "Read-only display status on HR Case"
+    }
+```
+
+### 5.1 Tables Summary
+1. **`x_entru_entrustidv_configuration` (Custom Table):**
+   * Stores global settings (Region, Workflow ID, Link Expiry, Delivery Channel, HMAC Signing Secret).
+2. **`x_entru_entrustidv_verification_request` (Custom Table):**
+   * Stores transaction logs linking ServiceNow records with Entrust workflow runs. Includes `active` boolean column for re-verification support.
+3. **`incident` (Augmented Schema):**
+   * Adds read-only column `x_entru_entrustidv_verification_status`.
+4. **`sn_hr_core_case` (Augmented Schema):**
+   * Adds read-only column `x_entru_entrustidv_verification_status`.
+
+---
+
+## 6. Security, Roles & Platform Governance
+
+### 6.1 User Roles
+* **`x_entru_entrustidv.admin`:**
+  * Configures connection credentials, workflow settings, and webhook secret keys.
+  * Access to Admin Setup UI Pages and full transaction history.
+* **`x_entru_entrustidv.agent`:**
+  * Triggers verification on Incident and HR Case records.
+  * Views real-time verification status banners.
+  * **No access** to API credentials or system configuration.
+
+### 6.2 Security Controls
+* **Encrypted Secrets:** Webhook secrets are stored using `Password2Column` (2-way encryption) preventing plain-text exposure.
+* **HMAC Payload Verification:** Inbound webhook endpoint validates the SHA256 signature against raw payload bytes before any record processing.
+* **Least-Privilege Cross-Scope Access:** Cross-scope privileges strictly scoped to reading target users (`sys_user`) and updating parent tickets (`incident`, `sn_hr_core_case`).
+* **Connection & Credential Aliases:** Outbound REST uses ServiceNow standard Connection & Credential Aliases; no hardcoded API keys in script code.
+
+---
+
+## 7. Status Lifecycle & Values
+
+The application uses clean, timestamp-free display statuses across server and client scripts:
+
+| Status Value | Meaning | Action / Next Step |
+| :--- | :--- | :--- |
+| **Not Started** | No verification initiated for this ticket | "Verify Identity" button available |
+| **Pending** / **In Progress** | Smart link sent; waiting for user completion | Fallback polling active |
+| **In Process** | User currently uploading ID or completing selfie | Polling continues |
+| **Approved** | Identity verification passed successfully | Work note added, polling stops |
+| **Declined** | Identity verification failed / rejected | Work note added, polling stops |
+| **Review Required** | Manual review needed in Entrust console | Alert shown to agent |
+| **Abandoned** / **Error** | User closed link or process timed out | Error banner shown |
+  </script>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+    });
+
+    async function renderDocument() {
+      try {
+        const mdSource = document.getElementById('md-source').textContent;
+        
+        // Custom markdown renderer
+        const renderer = new marked.Renderer();
+        const defaultCodeRenderer = renderer.code.bind(renderer);
+
+        renderer.code = function(code, language) {
+          if (language === 'mermaid') {
+            return `<div class="mermaid">${code}</div>`;
+          }
+          return defaultCodeRenderer(code, language);
+        };
+
+        marked.setOptions({
+          renderer: renderer,
+          highlight: function(code, lang) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+          }
+        });
+
+        document.getElementById('content').innerHTML = marked.parse(mdSource);
+        await mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+        document.body.setAttribute('data-rendered', 'true');
+      } catch (err) {
+        document.getElementById('content').innerHTML = `
+          <div style="color: #cf222e; padding: 16px; background: #ffebe9; border-radius: 6px;">
+            <h3>Error Rendering Document</h3>
+            <p>${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Execute rendering on DOM load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderDocument);
+    } else {
+      renderDocument();
+    }
+  </script>
+</body>
+</html>
