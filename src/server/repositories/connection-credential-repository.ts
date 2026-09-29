@@ -1,5 +1,4 @@
 import { GlideRecord, gs } from '@servicenow/glide';
-import { ConnectionInfoProvider } from '@servicenow/glide/sn_cc';
 
 import { ALIAS_ID, BASE_URLS, CONFIG_TABLE, type EntrustRegion } from '../constants.ts';
 
@@ -343,18 +342,13 @@ export class ApiConnectionRepository {
       return null;
     }
 
-    const provider = new ConnectionInfoProvider();
-    const connectionInfo = provider.getConnectionInfo(alias.sysId);
+    // ConnectionInfoProvider enforces per-user credential access and returns null for non-admin agents.
+    const httpConnection = this.findHttpConnection(alias.sysId);
+    const credential =
+      (httpConnection && this.findOAuthCredentialById(httpConnection.credentialSysId)) ||
+      this.findOAuthCredentialByAlias(alias.sysId);
 
-    if (!connectionInfo) {
-      gs.error(
-        '[ApiConnection] ' + 'getRuntimeConnection: ' + 'ConnectionInfoProvider returned null'
-      );
-
-      return null;
-    }
-
-    const credentialSysId = String(connectionInfo.getCredentialAttribute('sys_id') || '');
+    const credentialSysId = credential ? credential.sysId : '';
 
     if (!credentialSysId) {
       gs.error('[ApiConnection] ' + 'getRuntimeConnection: ' + 'credential sys_id not resolved');
