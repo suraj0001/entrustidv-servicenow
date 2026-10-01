@@ -1,4 +1,4 @@
-import { GlideRecord } from '@servicenow/glide';
+import { GlideRecord, GlideRecordSecure } from '@servicenow/glide';
 import { CONFIG_TABLE } from '../constants.ts';
 
 export type ConfigSettings = {
@@ -127,14 +127,14 @@ function getExistingConfigurationRecord(): GlideRecord | null {
   return null;
 }
 
-function getUpsertConfigurationRecord(): GlideRecord {
-  const existing = getExistingConfigurationRecord();
+function getUpsertConfigurationRecord(): GlideRecordSecure {
+  const configGr = new GlideRecordSecure(CONFIG_TABLE);
+  configGr.setLimit(1);
+  configGr.query();
 
-  if (existing) {
-    return existing;
+  if (!configGr.next()) {
+    configGr.initialize();
   }
 
-  const configGr = new GlideRecord(CONFIG_TABLE);
-  configGr.initialize();
   return configGr;
 }

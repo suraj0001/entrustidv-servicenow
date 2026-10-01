@@ -1,4 +1,4 @@
-import { GlideRecord, gs } from '@servicenow/glide';
+import { GlideRecord, GlideRecordSecure, gs } from '@servicenow/glide';
 
 import { ALIAS_ID, BASE_URLS, CONFIG_TABLE, type EntrustRegion } from '../constants.ts';
 
@@ -43,7 +43,7 @@ function getRecord(table: string, sysId: string): GlideRecord | null {
 
   const gr = new GlideRecord(table);
 
-  if (Boolean(gr.get(sysId))) {
+  if ((gr.get(sysId) as unknown as boolean)) {
     return gr;
   }
 
@@ -73,7 +73,7 @@ export class ApiConnectionRepository {
   }
 
   saveRegion(region: string): void {
-    const gr = new GlideRecord(CONFIG_TABLE);
+    const gr = new GlideRecordSecure(CONFIG_TABLE);
 
     gr.setLimit(1);
     gr.query();

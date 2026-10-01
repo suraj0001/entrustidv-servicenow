@@ -36,6 +36,16 @@ VerificationSettingsAjax.prototype = Object.extendsObject(global.AbstractAjaxPro
     }
   },
 
+  getEmailDeliveryStatus: function () {
+    try {
+      var verificationSettingsService = require('./src/server/services/verification-settings-service.ts');
+      return JSON.stringify(verificationSettingsService.getEmailDeliveryStatus());
+    } catch (error) {
+      gs.error('[Entrust IDV] Failed to load email delivery status: ' + error.message);
+      return JSON.stringify({ success: false, enabled: false });
+    }
+  },
+
   saveConfig: function () {
     var verificationSettingsService;
     var input;

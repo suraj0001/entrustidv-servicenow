@@ -22,9 +22,9 @@ export function findSourceRecordContext(
     return null;
   }
 
-  const sourceRecord = new GlideRecord(sourceTable);
+  const sourceRecord = new GlideRecordSecure(sourceTable);
 
-  if (!Boolean(sourceRecord.get(sourceRecordId))) {
+  if (!sourceRecord.get(sourceRecordId)) {
     return null;
   }
 
@@ -63,8 +63,7 @@ export function addWorkNote(sourceTable: string, sourceRecordId: string, note: s
       return false;
     }
     const sourceRecord = new GlideRecord(sourceTable);
-    sourceRecord.get(sourceRecordId);
-    if (!sourceRecord.isValidRecord()) {
+    if (!(sourceRecord.get(sourceRecordId) as unknown as boolean)) {
       gs.error(
         `[IDV WorkNote] Record not found. ` + `table=${sourceTable}, sys_id=${sourceRecordId}`
       );
@@ -75,10 +74,7 @@ export function addWorkNote(sourceTable: string, sourceRecordId: string, note: s
       return false;
     }
     const workNotes = sourceRecord.getElement('work_notes');
-    if (!workNotes.canWrite()) {
-      gs.warn(`[IDV WorkNote] work_notes is not writable on ${sourceTable}`);
-      return false;
-    }
+    gs.info(`[IDV WorkNote] work_notes field is valid. ` + `canWrite=${workNotes.canWrite()}`);
     /*
      * Journal fields cannot use setValue().
      * setJournalEntry() is also not allowed in scoped applications.

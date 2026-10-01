@@ -1,4 +1,4 @@
-import { GlideRecord } from '@servicenow/glide';
+import { GlideRecordSecure } from '@servicenow/glide';
 
 export interface SubjectUser {
   userId: string;
@@ -12,8 +12,8 @@ export function findSubjectUser(userId: string): SubjectUser | null {
     return null;
   }
 
-  const user = new GlideRecord('sys_user');
-  if (!Boolean(user.get(userId))) {
+  const user = new GlideRecordSecure('sys_user');
+  if (!user.get(userId)) {
     return null;
   }
 

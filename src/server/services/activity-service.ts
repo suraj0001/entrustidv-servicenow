@@ -7,7 +7,7 @@ export function addWorkNote(tableName: string, recordId: string, message: string
 
   if (!success) {
     gs.warn(
-      `[ActivityService] Unable to add work note. Record not found or unsupported: ${tableName}/${recordId}`
+      `[ActivityService] Unable to add work note to ${tableName}/${recordId}; see [IDV WorkNote] log for details.`
     );
   }
 }

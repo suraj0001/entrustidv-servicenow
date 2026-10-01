@@ -1,4 +1,10 @@
-import { GlideAggregate, GlideDateTime, GlideRecord, gs } from '@servicenow/glide';
+import {
+  GlideAggregate,
+  GlideDateTime,
+  GlideRecord,
+  GlideRecordSecure,
+  gs,
+} from '@servicenow/glide';
 import { VERIFICATION_REQUEST_TABLE } from '../constants.ts';
 
 export interface CreateVerificationRequest {
@@ -94,13 +100,13 @@ export function countVerificationRequests(sourceTable: string, sourceRecordId: s
   }
 
   const ga = new GlideAggregate(VERIFICATION_REQUEST_TABLE);
-  ga.addQuery('source_table', sourceTable);
-  ga.addQuery('source_record', sourceRecordId);
-  ga.addAggregate('COUNT');
+  ga.addQuery('source_table', '=', sourceTable);
+  ga.addQuery('source_record', '=', sourceRecordId);
+  ga.addAggregate('COUNT', '');
   ga.query();
 
   if (ga.next()) {
-    return Number.parseInt(ga.getAggregate('COUNT'), 10) || 0;
+    return Number.parseInt(ga.getAggregate('COUNT', ''), 10) || 0;
   }
 
   return 0;
@@ -110,7 +116,7 @@ export function findApplicantIdBySubjectUser(subjectUserId: string): string | nu
     return null;
   }
 
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  const gr = new GlideRecordSecure(VERIFICATION_REQUEST_TABLE);
   gr.addQuery('subject_user', subjectUserId);
   gr.addNotNullQuery('applicant_id');
   gr.orderByDesc('sys_created_on');
@@ -131,7 +137,7 @@ export function findVerificationRequestById(sysId: string): GlideRecord | null {
   }
   const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
 
-  if (Boolean(gr.get(sysId))) {
+  if ((gr.get(sysId) as unknown as boolean)) {
     return gr;
   }
 
@@ -177,7 +183,7 @@ export function findLatestVerificationStatus(
     return null;
   }
 
-  const gr = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  const gr = new GlideRecordSecure(VERIFICATION_REQUEST_TABLE);
   gr.addQuery('source_table', sourceTable);
   gr.addQuery('source_record', sourceRecordId);
   gr.addQuery('active', true);
@@ -209,7 +215,7 @@ export function findLatestVerificationStatus(
 export function findVerificationStatusByWorkflowRunId(
   workflowRunId: string
 ): VerificationStatusRecord | null {
-  const verificationRequest = new GlideRecord(VERIFICATION_REQUEST_TABLE);
+  const verificationRequest = new GlideRecordSecure(VERIFICATION_REQUEST_TABLE);
 
   verificationRequest.addQuery('workflow_run_id', workflowRunId);
 

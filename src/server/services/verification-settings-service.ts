@@ -1,3 +1,4 @@
+import { gs } from '@servicenow/glide';
 import {
   type VerificationSettingsInput,
   validateVerificationSettings,
@@ -27,6 +28,11 @@ export type WebhookSecretStatusResult = {
   configured: boolean;
 };
 
+export type EmailDeliveryStatusResult = {
+  success: boolean;
+  enabled: boolean;
+};
+
 export function getVerificationSettingsConfig(): GetVerificationSettingsResult {
   const settings = getConfigSettings();
 
@@ -51,6 +57,13 @@ export function getWebhookSecretStatus(): WebhookSecretStatusResult {
   return {
     success: true,
     configured: !!(settings && settings.webhookSecret),
+  };
+}
+
+export function getEmailDeliveryStatus(): EmailDeliveryStatusResult {
+  return {
+    success: true,
+    enabled: gs.getProperty('glide.email.smtp.active', 'false') === 'true',
   };
 }
 

@@ -6,6 +6,8 @@ function _el(id) {
   return document.getElementById(id);
 }
 
+document.addEventListener('DOMContentLoaded', getEmailDeliveryStatus);
+
 document.addEventListener('DOMContentLoaded', function () {
   var webhookUrl = window.location.origin + WEBHOOK_PATH;
 
@@ -27,6 +29,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
   getWebhookTokenStatus();
 });
+
+function getEmailDeliveryStatus() {
+  try {
+    var ajax = new GlideAjax('x_entru_entrustidv.VerificationSettingsAjax');
+    ajax.addParam('sysparm_name', 'getEmailDeliveryStatus');
+    ajax.getXMLAnswer(function (answer) {
+      var result;
+      try {
+        result = JSON.parse(answer);
+      } catch (error) {
+        _el('email_status_unavailable').textContent = 'Unable to check outbound email status.';
+        return;
+      }
+
+      if (result && result.success && typeof result.enabled === 'boolean') {
+        applyEmailDeliveryStatus(result.enabled);
+      } else {
+        _el('email_status_unavailable').textContent = 'Unable to check outbound email status.';
+      }
+    });
+  } catch (error) {
+    _el('email_status_unavailable').textContent = 'Unable to check outbound email status.';
+  }
+}
+
+function applyEmailDeliveryStatus(emailEnabled) {
+  _el('email_status_enabled').style.display = emailEnabled ? 'flex' : 'none';
+  _el('email_helper_enabled').style.display = emailEnabled ? 'block' : 'none';
+  _el('email_status_disabled').style.display = emailEnabled ? 'none' : 'flex';
+  _el('email_helper_disabled').style.display = emailEnabled ? 'none' : 'block';
+  _el('email_settings_path').style.display = emailEnabled ? 'none' : 'block';
+  _el('email_status_unavailable').style.display = 'none';
+}
 
 function getWebhookTokenStatus() {
   var ajax = new GlideAjax('x_entru_entrustidv.VerificationSettingsAjax');
